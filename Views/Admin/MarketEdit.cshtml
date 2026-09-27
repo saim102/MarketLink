@@ -1,0 +1,961 @@
+﻿```cshtml
+@model IdentityDemoApp.Models.Market
+
+@{
+    ViewData["Title"] = "Edit Market";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Markets.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<div class="market-form-page">
+
+    <div class="form-page-header">
+
+        <div>
+
+            <a asp-controller="Admin"
+               asp-action="Markets"
+               class="back-link">
+
+                <i class="fas fa-arrow-left"></i>
+                Back to Markets
+
+            </a>
+
+            <span class="page-label">
+
+                <i class="fas fa-pen"></i>
+                MARKET MANAGEMENT
+
+            </span>
+
+            <h1>Edit Market</h1>
+
+            <p>
+                Update the location, operating hours and other market information.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="market-form-card">
+
+        <div class="form-card-heading">
+
+            <div class="form-heading-icon">
+
+                <i class="fas fa-store"></i>
+
+            </div>
+
+            <div>
+
+                <h3>Market Information</h3>
+
+                <p>
+                    Update the details of this market.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form asp-controller="Admin"
+              asp-action="MarketEdit"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input asp-for="MarketId"
+                   type="hidden" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary"></div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label asp-for="MarketName">
+                        Market Name <span>*</span>
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-store"></i>
+
+                        <input asp-for="MarketName"
+                               placeholder="Enter market name" />
+
+                    </div>
+
+                    <span asp-validation-for="MarketName"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="Location">
+                        Location / Address <span>*</span>
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-location-dot"></i>
+
+                        <input asp-for="Location"
+                               placeholder="Enter market address or location" />
+
+                    </div>
+
+                    <span asp-validation-for="Location"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="City">
+                        City
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-city"></i>
+
+                        <input asp-for="City"
+                               placeholder="Enter city" />
+
+                    </div>
+
+                    <span asp-validation-for="City"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="OperatingDays">
+                        Operating Days
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-calendar-days"></i>
+
+                        <input asp-for="OperatingDays"
+                               placeholder="e.g. Monday, Wednesday, Saturday" />
+
+                    </div>
+
+                    <span class="field-hint">
+                        Enter the days when this market operates.
+                    </span>
+
+                    <span asp-validation-for="OperatingDays"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="OpeningTime">
+                        Opening Time
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-clock"></i>
+
+                        <input asp-for="OpeningTime"
+                               type="time" />
+
+                    </div>
+
+                    <span asp-validation-for="OpeningTime"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="ClosingTime">
+                        Closing Time
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-clock"></i>
+
+                        <input asp-for="ClosingTime"
+                               type="time" />
+
+                    </div>
+
+                    <span class="field-hint">
+                        Closing time must be later than opening time.
+                    </span>
+
+                    <span asp-validation-for="ClosingTime"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="Latitude">
+                        Latitude
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-map-pin"></i>
+
+                        <input asp-for="Latitude"
+                               id="Latitude"
+                               type="number"
+                               step="0.000001"
+                               placeholder="Latitude" />
+
+                    </div>
+
+                    <span class="field-hint">
+                        Updated automatically from the map.
+                    </span>
+
+                    <span asp-validation-for="Latitude"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="Longitude">
+                        Longitude
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-map-pin"></i>
+
+                        <input asp-for="Longitude"
+                               id="Longitude"
+                               type="number"
+                               step="0.000001"
+                               placeholder="Longitude" />
+
+                    </div>
+
+                    <span class="field-hint">
+                        Updated automatically from the map.
+                    </span>
+
+                    <span asp-validation-for="Longitude"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <!-- MAP -->
+
+                <div class="form-group full-width">
+
+                    <div class="market-map-heading">
+
+                        <div class="map-heading-content">
+
+                            <label>
+
+                                <i class="fas fa-map-location-dot"></i>
+
+                                Update Market Location
+
+                            </label>
+
+                            <p>
+                                Search for a location, click the map,
+                                or drag the marker to update the exact position.
+                            </p>
+
+                        </div>
+
+
+                        <button type="button"
+                                id="useLocationBtn"
+                                class="map-location-btn">
+
+                            <i class="fas fa-crosshairs"></i>
+
+                            <span>Use My Location</span>
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="market-map-search">
+
+                        <div class="map-search-input">
+
+                            <i class="fas fa-search"></i>
+
+                            <input type="text"
+                                   id="mapSearch"
+                                   placeholder="Search market location..." />
+
+                        </div>
+
+
+                        <button type="button"
+                                id="mapSearchBtn"
+                                class="map-search-btn">
+
+                            <i class="fas fa-search"></i>
+
+                            <span>Search</span>
+
+                        </button>
+
+                    </div>
+
+
+                    <div id="marketMap"
+                         class="market-map">
+                    </div>
+
+
+                    <div class="map-selected-info">
+
+                        <div class="map-info-item">
+
+                            <div class="map-info-icon">
+
+                                <i class="fas fa-location-dot"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span>Selected Location</span>
+
+                                <strong id="selectedCoordinates">
+                                    No location selected
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="map-info-item">
+
+                            <div class="map-info-icon">
+
+                                <i class="fas fa-arrows-up-down-left-right"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span>Map Tip</span>
+
+                                <strong>
+                                    Click or drag the marker
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MAP LINK -->
+
+                <div class="form-group full-width">
+
+                    <label asp-for="MapLink">
+                        Map Link
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="fas fa-map-location-dot"></i>
+
+                        <input asp-for="MapLink"
+                               id="MapLink"
+                               type="url"
+                               placeholder="Map link will be generated automatically" />
+
+                    </div>
+
+                    <span class="field-hint">
+                        Automatically generated from the selected coordinates.
+                    </span>
+
+                    <span asp-validation-for="MapLink"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="form-group full-width">
+
+                    <label asp-for="Description">
+                        Description
+                    </label>
+
+                    <div class="textarea-wrapper">
+
+                        <i class="fas fa-align-left"></i>
+
+                        <textarea asp-for="Description"
+                                  rows="5"
+                                  placeholder="Enter market description"></textarea>
+
+                    </div>
+
+                    <span asp-validation-for="Description"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <!-- STATUS -->
+
+                <div class="form-group full-width">
+
+                    <label class="toggle-label">
+                        Market Status
+                    </label>
+
+                    <label class="switch-container">
+
+                        <input asp-for="IsActive" />
+
+                        <span class="switch-slider"></span>
+
+                        <span class="switch-text">
+                            Active Market
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="form-actions">
+
+                <a asp-controller="Admin"
+                   asp-action="Markets"
+                   class="btn-cancel">
+
+                    <i class="fas fa-xmark"></i>
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="btn-save">
+
+                    <i class="fas fa-save"></i>
+
+                    Update Market
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const latitudeInput =
+                document.getElementById("Latitude");
+
+            const longitudeInput =
+                document.getElementById("Longitude");
+
+            const mapLinkInput =
+                document.getElementById("MapLink");
+
+            const coordinatesText =
+                document.getElementById("selectedCoordinates");
+
+            const searchInput =
+                document.getElementById("mapSearch");
+
+            const searchButton =
+                document.getElementById("mapSearchBtn");
+
+            const locationButton =
+                document.getElementById("useLocationBtn");
+
+
+            const defaultLatitude = 24.8607;
+
+            const defaultLongitude = 67.0011;
+
+
+            const savedLatitude =
+                parseFloat(latitudeInput.value);
+
+            const savedLongitude =
+                parseFloat(longitudeInput.value);
+
+
+            const hasSavedLocation =
+                !isNaN(savedLatitude) &&
+                !isNaN(savedLongitude);
+
+
+            const startLatitude =
+                hasSavedLocation
+                    ? savedLatitude
+                    : defaultLatitude;
+
+
+            const startLongitude =
+                hasSavedLocation
+                    ? savedLongitude
+                    : defaultLongitude;
+
+
+            const startZoom =
+                hasSavedLocation
+                    ? 16
+                    : 12;
+
+
+            const map =
+                L.map("marketMap", {
+                    zoomControl: true
+                }).setView(
+                    [
+                        startLatitude,
+                        startLongitude
+                    ],
+                    startZoom
+                );
+
+
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    maxZoom: 19,
+                    attribution:
+                        "&copy; OpenStreetMap contributors"
+                }
+            ).addTo(map);
+
+
+            let marker = null;
+
+
+            function updateLocation(lat, lng) {
+
+                const latitude =
+                    Number(lat).toFixed(6);
+
+                const longitude =
+                    Number(lng).toFixed(6);
+
+
+                latitudeInput.value =
+                    latitude;
+
+                longitudeInput.value =
+                    longitude;
+
+
+                coordinatesText.textContent =
+                    latitude +
+                    ", " +
+                    longitude;
+
+
+                mapLinkInput.value =
+                    "https://www.openstreetmap.org/?mlat=" +
+                    latitude +
+                    "&mlon=" +
+                    longitude +
+                    "#map=18/" +
+                    latitude +
+                    "/" +
+                    longitude;
+
+            }
+
+
+            function createOrMoveMarker(
+                lat,
+                lng,
+                moveMap = true
+            ) {
+
+                if (marker === null) {
+
+                    marker =
+                        L.marker(
+                            [lat, lng],
+                            {
+                                draggable: true
+                            }
+                        ).addTo(map);
+
+
+                    marker.bindPopup(
+                        "<strong>Market Location</strong><br>Drag the marker to adjust."
+                    );
+
+
+                    marker.on(
+                        "dragend",
+                        function () {
+
+                            const position =
+                                marker.getLatLng();
+
+
+                            updateLocation(
+                                position.lat,
+                                position.lng
+                            );
+
+                        }
+                    );
+
+                }
+                else {
+
+                    marker.setLatLng(
+                        [lat, lng]
+                    );
+
+                }
+
+
+                updateLocation(
+                    lat,
+                    lng
+                );
+
+
+                if (moveMap) {
+
+                    map.setView(
+                        [lat, lng],
+                        16
+                    );
+
+                }
+
+            }
+
+
+            if (hasSavedLocation) {
+
+                createOrMoveMarker(
+                    savedLatitude,
+                    savedLongitude,
+                    false
+                );
+
+            }
+
+
+            map.on(
+                "click",
+                function (event) {
+
+                    createOrMoveMarker(
+                        event.latlng.lat,
+                        event.latlng.lng,
+                        false
+                    );
+
+                }
+            );
+
+
+            async function searchLocation() {
+
+                const query =
+                    searchInput.value.trim();
+
+
+                if (!query) {
+
+                    alert(
+                        "Please enter a location to search."
+                    );
+
+                    searchInput.focus();
+
+                    return;
+
+                }
+
+
+                const oldButtonText =
+                    searchButton.innerHTML;
+
+
+                searchButton.disabled = true;
+
+
+                searchButton.innerHTML =
+                    '<i class="fas fa-spinner fa-spin"></i><span>Searching...</span>';
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+                            encodeURIComponent(query),
+                            {
+                                headers: {
+                                    "Accept": "application/json"
+                                }
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            "Search failed"
+                        );
+
+                    }
+
+
+                    const results =
+                        await response.json();
+
+
+                    if (
+                        !results ||
+                        results.length === 0
+                    ) {
+
+                        alert(
+                            "Location not found. Try a more specific address."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const result =
+                        results[0];
+
+
+                    const latitude =
+                        parseFloat(result.lat);
+
+
+                    const longitude =
+                        parseFloat(result.lon);
+
+
+                    createOrMoveMarker(
+                        latitude,
+                        longitude,
+                        true
+                    );
+
+                }
+                catch {
+
+                    alert(
+                        "Unable to search this location. Please try again."
+                    );
+
+                }
+                finally {
+
+                    searchButton.disabled =
+                        false;
+
+                    searchButton.innerHTML =
+                        oldButtonText;
+
+                }
+
+            }
+
+
+            searchButton.addEventListener(
+                "click",
+                searchLocation
+            );
+
+
+            searchInput.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        searchLocation();
+
+                    }
+
+                }
+            );
+
+
+            locationButton.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        !navigator.geolocation
+                    ) {
+
+                        alert(
+                            "Your browser does not support location services."
+                        );
+
+                        return;
+
+                    }
+
+
+                    const oldButtonText =
+                        locationButton.innerHTML;
+
+
+                    locationButton.disabled =
+                        true;
+
+
+                    locationButton.innerHTML =
+                        '<i class="fas fa-spinner fa-spin"></i><span>Locating...</span>';
+
+
+                    navigator.geolocation.getCurrentPosition(
+
+                        function (position) {
+
+                            createOrMoveMarker(
+                                position.coords.latitude,
+                                position.coords.longitude,
+                                true
+                            );
+
+
+                            locationButton.disabled =
+                                false;
+
+
+                            locationButton.innerHTML =
+                                oldButtonText;
+
+                        },
+
+
+                        function () {
+
+                            alert(
+                                "Unable to access your location. Please allow location permission in your browser."
+                            );
+
+
+                            locationButton.disabled =
+                                false;
+
+
+                            locationButton.innerHTML =
+                                oldButtonText;
+
+                        },
+
+
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        }
+
+                    );
+
+                }
+            );
+
+
+            if (hasSavedLocation) {
+
+                updateLocation(
+                    savedLatitude,
+                    savedLongitude
+                );
+
+            }
+
+
+            setTimeout(
+                function () {
+
+                    map.invalidateSize();
+
+                },
+                300
+            );
+
+        });
+
+    </script>
+
+}
+```

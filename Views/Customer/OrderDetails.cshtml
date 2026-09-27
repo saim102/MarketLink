@@ -1,0 +1,525 @@
+﻿@model IdentityDemoApp.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-order-details.css"
+      asp-append-version="true" />
+
+<div class="ml-order-details-page">
+
+    <section class="ml-details-hero">
+
+        <div class="ml-details-glow"></div>
+        <div class="ml-details-glow second"></div>
+
+        <div class="container">
+
+            <div class="ml-details-hero-content">
+
+                <a asp-controller="Customer"
+                   asp-action="Order"
+                   class="ml-back-orders">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Back to My Orders
+
+                </a>
+
+                <div class="ml-details-title-row">
+
+                    <div class="ml-details-icon">
+
+                        <i class="fa-solid fa-receipt"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            ORDER DETAILS
+                        </span>
+
+                        <h1>
+                            @Model.OrderNumber
+                        </h1>
+
+                        <p>
+                            Complete information about your pre-order.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="ml-details-section">
+
+        <div class="container">
+
+            <div class="ml-details-layout">
+
+
+                <div class="ml-details-main">
+
+
+                    <div class="ml-details-card">
+
+                        <div class="ml-card-heading">
+
+                            <div>
+
+                                <span>
+                                    ORDER INFORMATION
+                                </span>
+
+                                <h2>
+                                    Order Summary
+                                </h2>
+
+                            </div>
+
+
+                            <div class="ml-detail-status
+                                @(Model.Status?.ToLower() == "completed"
+                                                                     ? "completed"
+                                                                     : Model.Status?.ToLower() == "cancelled"
+                                                                         ? "cancelled"
+                                                                         : Model.Status?.ToLower() == "approved"
+                                                                             ? "approved"
+                                                                             : "pending")">
+
+                                <span></span>
+
+                                @Model.Status
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ml-info-grid">
+
+                            <div class="ml-info-item">
+
+                                <div class="ml-info-icon">
+                                    <i class="fa-solid fa-hashtag"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Order Number
+                                    </span>
+
+                                    <strong>
+                                        @Model.OrderNumber
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-info-item">
+
+                                <div class="ml-info-icon">
+                                    <i class="fa-regular fa-calendar"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Order Date
+                                    </span>
+
+                                    <strong>
+                                        @Model.OrderDate.ToLocalTime().ToString("dd MMM yyyy")
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-info-item">
+
+                                <div class="ml-info-icon">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Order Time
+                                    </span>
+
+                                    <strong>
+                                        @Model.OrderDate.ToLocalTime().ToString("hh:mm tt")
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-info-item">
+
+                                <div class="ml-info-icon">
+                                    <i class="fa-solid fa-box"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Total Items
+                                    </span>
+
+                                    <strong>
+                                        @(Model.OrderItems?.Count ?? 0)
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (Model.PickupSlot != null)
+                    {
+                        <div class="ml-details-card">
+
+                            <div class="ml-card-heading">
+
+                                <div>
+
+                                    <span>
+                                        PICKUP INFORMATION
+                                    </span>
+
+                                    <h2>
+                                        Your Pickup Slot
+                                    </h2>
+
+                                </div>
+
+                                <div class="ml-pickup-heading-icon">
+
+                                    <i class="fa-solid fa-location-dot"></i>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-pickup-details">
+
+                                <div class="ml-pickup-detail">
+
+                                    <i class="fa-regular fa-calendar"></i>
+
+                                    <div>
+
+                                        <span>
+                                            Pickup Date
+                                        </span>
+
+                                        <strong>
+                                            @Model.PickupSlot.PickupDate.ToString("dd MMM yyyy")
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="ml-pickup-detail">
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    <div>
+
+                                        <span>
+                                            Pickup Time
+                                        </span>
+
+                                        <strong>
+                                            @Model.PickupSlot.StartTime -
+                                            @Model.PickupSlot.EndTime
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+
+                    <div class="ml-details-card">
+
+                        <div class="ml-card-heading">
+
+                            <div>
+
+                                <span>
+                                    PRODUCTS
+                                </span>
+
+                                <h2>
+                                    Ordered Items
+                                </h2>
+
+                            </div>
+
+                            <div class="ml-items-count">
+
+                                @(Model.OrderItems?.Count ?? 0)
+
+                                @(Model.OrderItems?.Count == 1 ? "Item" : "Items")
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ml-items-list">
+
+                            @if (Model.OrderItems != null &&
+                                                        Model.OrderItems.Any())
+                            {
+                                foreach (var item in Model.OrderItems)
+                                {
+                                    <div class="ml-detail-product">
+
+                                        <div class="ml-detail-product-icon">
+
+                                            <i class="fa-solid fa-leaf"></i>
+
+                                        </div>
+
+
+                                        <div class="ml-detail-product-info">
+
+                                            <strong>
+                                                @(item.Product?.ProductName ?? "Product")
+                                            </strong>
+
+                                            <span>
+                                                Quantity: @item.Quantity
+                                            </span>
+
+                                            <small>
+                                                Unit Price:
+                                                Rs. @item.UnitPrice.ToString("N2")
+                                            </small>
+
+                                        </div>
+
+
+                                        <div class="ml-detail-product-total">
+
+                                            Rs. @item.TotalPrice.ToString("N2")
+
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="ml-no-order-items">
+
+                                    <i class="fa-solid fa-box-open"></i>
+
+                                    <span>
+                                        No products found in this order.
+                                    </span>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                    {
+                        <div class="ml-details-card">
+
+                            <div class="ml-card-heading">
+
+                                <div>
+
+                                    <span>
+                                        CUSTOMER NOTE
+                                    </span>
+
+                                    <h2>
+                                        Additional Notes
+                                    </h2>
+
+                                </div>
+
+                                <div class="ml-note-icon">
+
+                                    <i class="fa-regular fa-note-sticky"></i>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-order-note">
+
+                                @Model.Notes
+
+                            </div>
+
+                        </div>
+                    }
+
+
+                </div>
+
+
+                <aside class="ml-details-sidebar">
+
+
+                    <div class="ml-total-card">
+
+                        <div class="ml-total-top">
+
+                            <div class="ml-total-icon">
+
+                                <i class="fa-solid fa-receipt"></i>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    ORDER TOTAL
+                                </span>
+
+                                <h3>
+                                    Rs. @Model.TotalAmount.ToString("N2")
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="ml-total-line"></div>
+
+
+                        <div class="ml-total-row">
+
+                            <span>
+                                Items Total
+                            </span>
+
+                            <strong>
+                                Rs. @Model.OrderItems.Sum(i => i.TotalPrice).ToString("N2")
+                            </strong>
+
+                        </div>
+
+
+                        <div class="ml-total-row">
+
+                            <span>
+                                Delivery / Pickup
+                            </span>
+
+                            <strong>
+                                Pickup
+                            </strong>
+
+                        </div>
+
+
+                        <div class="ml-total-line"></div>
+
+
+                        <div class="ml-grand-total">
+
+                            <span>
+                                Total Amount
+                            </span>
+
+                            <strong>
+                                Rs. @Model.TotalAmount.ToString("N2")
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ml-help-card">
+
+                        <div class="ml-help-icon">
+
+                            <i class="fa-solid fa-headset"></i>
+
+                        </div>
+
+                        <h3>
+                            Need Help?
+                        </h3>
+
+                        <p>
+                            If you have any questions about your order,
+                            please contact our support team.
+                        </p>
+
+                        <a asp-controller="Home"
+                           asp-action="Contact"
+                           class="ml-help-btn">
+
+                            Contact Support
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+
+                    <a asp-controller="Customer"
+                       asp-action="Order"
+                       class="ml-back-btn">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                        Back to My Orders
+
+                    </a>
+
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

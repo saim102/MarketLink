@@ -1,0 +1,394 @@
+﻿@model IdentityDemoApp.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<link rel="stylesheet" href="~/css/admin-ProductModeration.css" />
+
+<div class="pm-page">
+
+
+
+    <div class="pm-header">
+
+        <div class="pm-header-left">
+
+            <div class="pm-title-icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+
+            <div>
+                <h1>Product Details</h1>
+                <p>Review complete product information</p>
+            </div>
+
+        </div>
+
+        <div class="pm-header-buttons">
+
+            <a asp-controller="Admin"
+               asp-action="ProductModeration"
+               class="pm-secondary-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                Back to Products
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="pm-dashboard-btn">
+
+                <i class="fas fa-home"></i>
+                Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+ 
+
+    <div class="pm-details-card">
+
+        <div class="pm-details-top">
+
+            <div class="pm-big-product-icon">
+                <i class="fas fa-leaf"></i>
+            </div>
+
+            <div class="pm-details-title">
+
+                <h2>@Model.ProductName</h2>
+
+                <span>
+                    Product ID #@Model.ProductId
+                </span>
+
+            </div>
+
+            <div class="pm-details-status">
+
+                @if (Model.ModerationStatus == "Pending")
+                {
+                    <span class="pm-status pending-status">
+                        <i class="fas fa-clock"></i>
+                        Pending
+                    </span>
+                }
+                else if (Model.ModerationStatus == "Approved")
+                {
+                    <span class="pm-status approved-status">
+                        <i class="fas fa-check"></i>
+                        Approved
+                    </span>
+                }
+                else
+                {
+                    <span class="pm-status rejected-status">
+                        <i class="fas fa-times"></i>
+                        Rejected
+                    </span>
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="pm-detail-grid">
+
+            <div class="pm-detail-box">
+
+                <span>
+                    <i class="fas fa-user"></i>
+                    Vendor / Farm
+                </span>
+
+                <strong>
+                    @(Model.VendorProfile?.FarmName ?? "Not available")
+                </strong>
+
+            </div>
+
+
+            <div class="pm-detail-box">
+
+                <span>
+                    <i class="fas fa-tags"></i>
+                    Category
+                </span>
+
+                <strong>
+                    @(Model.Category?.CategoryName ?? "Not available")
+                </strong>
+
+            </div>
+
+
+            <div class="pm-detail-box">
+
+                <span>
+                    <i class="fas fa-money-bill-wave"></i>
+                    Price
+                </span>
+
+                <strong>
+                    Rs. @Model.Price.ToString("N2")
+                </strong>
+
+            </div>
+
+
+            <div class="pm-detail-box">
+
+                <span>
+                    <i class="fas fa-balance-scale"></i>
+                    Unit
+                </span>
+
+                <strong>
+                    @Model.Unit
+                </strong>
+
+            </div>
+
+
+            <div class="pm-detail-box">
+
+                <span>
+                    <i class="fas fa-calendar-alt"></i>
+                    Created Date
+                </span>
+
+                <strong>
+                    @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                </strong>
+
+            </div>
+
+
+            <div class="pm-detail-box">
+
+                <span>
+                    <i class="fas fa-toggle-on"></i>
+                    Availability
+                </span>
+
+                @if (Model.IsAvailable)
+                {
+                    <strong class="pm-green-text">
+                        Available
+                    </strong>
+                }
+                else
+                {
+                    <strong class="pm-red-text">
+                        Unavailable
+                    </strong>
+                }
+
+            </div>
+
+        </div>
+
+
+
+        <div class="pm-description">
+
+            <div class="pm-description-heading">
+
+                <i class="fas fa-align-left"></i>
+
+                <h3>Description</h3>
+
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p>@Model.Description</p>
+            }
+            else
+            {
+                <p class="pm-muted">
+                    No description has been provided for this product.
+                </p>
+            }
+
+        </div>
+
+
+   
+
+        <div class="pm-details-actions">
+
+            @if (Model.ModerationStatus != "Approved")
+            {
+                <button type="button"
+                        class="pm-detail-action approve"
+                        onclick="confirmApprove('@Model.ProductId', '@Html.Raw(Model.ProductName.Replace("'", "\\'"))')">
+
+                    <i class="fas fa-check"></i>
+                    Approve Product
+
+                </button>
+            }
+
+
+            @if (Model.ModerationStatus != "Rejected")
+            {
+                <button type="button"
+                        class="pm-detail-action reject"
+                        onclick="confirmReject('@Model.ProductId', '@Html.Raw(Model.ProductName.Replace("'", "\\'"))')">
+
+                    <i class="fas fa-times"></i>
+                    Reject Product
+
+                </button>
+            }
+
+
+            <button type="button"
+                    class="pm-detail-action delete"
+                    onclick="confirmRemove('@Model.ProductId', '@Html.Raw(Model.ProductName.Replace("'", "\\'"))')">
+
+                <i class="fas fa-trash-alt"></i>
+                Remove Product
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<form id="approveForm"
+      asp-controller="Admin"
+      asp-action="ApproveProduct"
+      method="post"
+      class="d-none">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           value="@Model.ProductId" />
+
+</form>
+
+
+<form id="rejectForm"
+      asp-controller="Admin"
+      asp-action="RejectProduct"
+      method="post"
+      class="d-none">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           value="@Model.ProductId" />
+
+</form>
+
+
+<form id="removeForm"
+      asp-controller="Admin"
+      asp-action="RemoveProduct"
+      method="post"
+      class="d-none">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           value="@Model.ProductId" />
+
+</form>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    const productName =
+        '@Html.Raw(Model.ProductName.Replace("'", "\\'"))';
+
+
+    function confirmApprove(id, name) {
+
+        Swal.fire({
+            title: 'Approve Product?',
+            html: '<strong>' + name + '</strong><br><br>' +
+                  'This product will be approved for customers.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Approve',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            confirmButtonColor: '#0b6b57'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                document.getElementById('approveForm').submit();
+            }
+
+        });
+
+    }
+
+
+    function confirmReject(id, name) {
+
+        Swal.fire({
+            title: 'Reject Product?',
+            html: '<strong>' + name + '</strong><br><br>' +
+                  'This product will be marked as rejected.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Reject',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            confirmButtonColor: '#c0392b'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                document.getElementById('rejectForm').submit();
+            }
+
+        });
+
+    }
+
+
+    function confirmRemove(id, name) {
+
+        Swal.fire({
+            title: 'Remove Product?',
+            html: '<strong>' + name + '</strong><br><br>' +
+                  'This product listing will be permanently removed.',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Remove',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            confirmButtonColor: '#b42318'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                document.getElementById('removeForm').submit();
+            }
+
+        });
+
+    }
+
+</script>

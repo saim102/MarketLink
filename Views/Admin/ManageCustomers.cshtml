@@ -1,0 +1,483 @@
+﻿
+@model IEnumerable<IdentityDemoApp.Models.CustomerProfile>
+
+@{
+    ViewData["Title"] = "Manage Customers";
+}
+
+<link rel="stylesheet" href="~/css/admin-customer.css" />
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+<div class="customers-page">
+
+ 
+
+    <div class="customers-header">
+
+        <div>
+
+            <span class="page-tag">
+                <i class="bi bi-people-fill"></i>
+                CUSTOMER MANAGEMENT
+            </span>
+
+            <h1>Manage Customers</h1>
+
+            <p>
+                View, approve and manage all registered customers
+                on MarketLink.
+            </p>
+
+        </div>
+
+
+        <div class="customers-header-right">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="back-dashboard-btn">
+
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to Dashboard</span>
+
+            </a>
+
+            <div class="header-icon">
+
+                <i class="bi bi-person-lines-fill"></i>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+   
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert-message success-message">
+
+            <i class="bi bi-check-circle-fill"></i>
+
+            <span>
+                @TempData["Success"]
+            </span>
+
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-message error-message">
+
+            <i class="bi bi-exclamation-circle-fill"></i>
+
+            <span>
+                @TempData["Error"]
+            </span>
+
+        </div>
+    }
+
+
+  
+
+    <div class="customer-toolbar">
+
+        <form asp-action="ManageCustomers"
+              asp-controller="Admin"
+              method="get"
+              class="search-form">
+
+            <div class="search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input type="text"
+                       name="search"
+                       value="@ViewBag.Search"
+                       placeholder="Search by name, email, phone or city..." />
+
+            </div>
+
+
+            <button type="submit"
+                    class="search-btn">
+
+                <i class="bi bi-search"></i>
+
+                Search
+
+            </button>
+
+
+            @if (!string.IsNullOrWhiteSpace(ViewBag.Search))
+            {
+                <a asp-action="ManageCustomers"
+                   class="clear-btn">
+
+                    <i class="bi bi-x-lg"></i>
+
+                    Clear
+
+                </a>
+            }
+
+        </form>
+
+    </div>
+
+
+
+    <div class="customers-card">
+
+        
+
+        <div class="card-top">
+
+            <div>
+
+                <h3>
+
+                    <i class="bi bi-person-check-fill"></i>
+
+                    Registered Customers
+
+                </h3>
+
+                <span>
+                    All customers registered on MarketLink
+                </span>
+
+            </div>
+
+
+            <div class="customer-count">
+
+                @Model.Count() Customers
+
+            </div>
+
+        </div>
+
+
+       
+        @if (Model.Any())
+        {
+            <div class="table-wrapper">
+
+                <table class="customers-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Customer</th>
+
+                            <th>Email</th>
+
+                            <th>Contact</th>
+
+                            <th>City</th>
+
+                            <th>Status</th>
+
+                            <th>Joined</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @{
+                            int count = 1;
+                        }
+
+
+                        @foreach (var customer in Model)
+                        {
+                            var firstLetter =
+                            !string.IsNullOrWhiteSpace(customer.FullName)
+                            ? customer.FullName.Substring(0, 1).ToUpper()
+                            : "C";
+
+
+                            <tr>
+
+                                
+
+                                <td>
+
+                                    <span class="row-number">
+                                        @count
+                                    </span>
+
+                                </td>
+
+
+                                
+
+                                <td>
+
+                                    <div class="customer-info">
+
+                                        <div class="customer-avatar">
+
+                                            @firstLetter
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <strong>
+                                                @customer.FullName
+                                            </strong>
+
+                                            <small>
+                                                Customer
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                               
+                                <td>
+
+                                    <span class="email-text">
+
+                                        @(customer.User?.Email
+                                                                        ?? "Not available")
+
+                                    </span>
+
+                                </td>
+
+
+                              
+
+                                <td>
+
+                                    <span class="phone-text">
+
+                                        @(string.IsNullOrWhiteSpace(
+                                                                        customer.ContactNumber)
+
+                                                                        ? "Not provided"
+
+                                                                        : customer.ContactNumber)
+
+                                    </span>
+
+                                </td>
+
+
+                               
+
+                                <td>
+
+                                    <span class="city-text">
+
+                                        @(string.IsNullOrWhiteSpace(
+                                                                        customer.City)
+
+                                                                        ? "Not provided"
+
+                                                                        : customer.City)
+
+                            </span>
+
+                                </td>
+
+
+                               
+
+                                <td>
+
+                            @if (customer.IsApproved)
+                                    {
+                                        <span class="customer-status approved">
+
+                                            <i class="bi bi-check-circle-fill"></i>
+
+                                            Approved
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="customer-status pending">
+
+                                            <i class="bi bi-clock-fill"></i>
+
+                                            Pending
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                              
+
+                                <td>
+                                    <span class="date-text">
+                                        @customer.CreatedAt.ToString("dd MMM yyyy")
+                                    </span>
+                                </td>
+
+
+                                
+
+                                <td>
+
+                                    <div class="customer-actions">
+
+                                       
+                                        <a asp-action="CustomerDetails"
+                                           asp-route-id="@customer.CustomerProfileId"
+                                           class="details-btn">
+
+                                            <i class="bi bi-eye-fill"></i>
+                                            Details
+
+                                        </a>
+
+                                        @if (!customer.IsApproved)
+                                        {
+                                         
+                                            <form asp-action="ApproveCustomer"
+                                                  asp-controller="Admin"
+                                                  asp-route-id="@customer.CustomerProfileId"
+                                                  method="post"
+                                                  class="action-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="approve-btn"
+                                                        onclick="return confirm('Are you sure you want to approve this customer?');">
+
+                                                    <i class="bi bi-check-lg"></i>
+                                                    Approve
+
+                                                </button>
+
+                                            </form>
+
+
+                                          
+                                            <form asp-action="RejectCustomer"
+                                                  asp-controller="Admin"
+                                                  asp-route-id="@customer.CustomerProfileId"
+                                                  method="post"
+                                                  class="action-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="reject-btn"
+                                                        onclick="return confirm('Are you sure you want to reject this customer?');">
+
+                                                    <i class="bi bi-x-lg"></i>
+                                                    Reject
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            
+                                            <span class="status-badge approved">
+
+                                                <i class="bi bi-check-circle"></i>
+                                                Approved
+
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+                            </tr>
+
+
+                            count++;
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+
+      
+        else
+        {
+        <div class="empty-state">
+
+            <div class="empty-icon">
+
+                <i class="bi bi-people"></i>
+
+            </div>
+
+
+            <h3>
+                No Customers Found
+            </h3>
+
+
+            <p>
+
+                @if (!string.IsNullOrWhiteSpace(ViewBag.Search))
+                {
+                    <span>
+                        No customer accounts match your search.
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        No customers have registered on MarketLink yet.
+                    </span>
+                }
+
+            </p>
+
+
+            @if (!string.IsNullOrWhiteSpace(ViewBag.Search))
+            {
+                <a asp-action="ManageCustomers"
+                   class="back-btn">
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    View All Customers
+
+                </a>
+            }
+
+        </div>
+        }
+
+    </div>
+
+</div>
+

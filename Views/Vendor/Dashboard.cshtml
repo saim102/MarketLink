@@ -1,0 +1,487 @@
+﻿
+@model IdentityDemoApp.Models.ViewModels.VendorDashboardViewModel
+
+@{
+    ViewData["Title"] = "Vendor Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/vendor-dashboard.css" asp-append-version="true" />
+
+<div class="vendor-dashboard">
+
+   
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div>
+                <span class="dashboard-label">
+                    <i class="fa-solid fa-store"></i>
+                    Vendor Panel
+                </span>
+
+                <h1>Welcome, @Model.FarmName</h1>
+
+                <p>
+                    Manage your products, stock, pickup slots and customer orders
+                    from one place.
+                </p>
+            </div>
+
+            <div class="approval-badge @(Model.IsApproved ? "approved" : "pending")">
+                <i class="fa-solid @(Model.IsApproved ? "fa-circle-check" : "fa-clock")"></i>
+
+                @(Model.IsApproved ? "Approved Vendor" : "Approval Pending")
+            </div>
+        </div>
+    </div>
+
+
+  
+    <div class="location-card">
+        <div class="location-icon">
+            <i class="fa-solid fa-location-dot"></i>
+        </div>
+
+        <div class="location-info">
+            <span>Farm Location</span>
+
+            <strong>
+                @Model.City
+                @if (!string.IsNullOrWhiteSpace(Model.Province))
+                {
+                    <text>, @Model.Province</text>
+                }
+            </strong>
+        </div>
+
+        <a asp-controller="Vendor"
+           asp-action="Profile"
+           class="location-btn">
+            <i class="fa-solid fa-user-pen"></i>
+            My Profile
+        </a>
+    </div>
+
+
+ 
+    <div class="stats-grid">
+
+    
+        <div class="stat-card products-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-box-open"></i>
+            </div>
+
+            <div class="stat-content">
+                <span>Total Products</span>
+                <h2>@Model.TotalProducts</h2>
+
+                <small>
+                    @Model.AvailableProducts available
+                </small>
+            </div>
+        </div>
+
+
+        <div class="stat-card stock-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-wheat-awn"></i>
+            </div>
+
+            <div class="stat-content">
+                <span>Weekly Stock</span>
+                <h2>@Model.TotalWeeklyStock</h2>
+
+                <small>
+                    Stock entries
+                </small>
+            </div>
+        </div>
+
+
+      
+        <div class="stat-card orders-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+
+            <div class="stat-content">
+                <span>Total Orders</span>
+                <h2>@Model.TotalOrders</h2>
+
+                <small>
+                    @Model.PendingOrders pending
+                </small>
+            </div>
+        </div>
+
+
+ 
+        <div class="stat-card sales-card">
+            <div class="stat-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+
+            <div class="stat-content">
+                <span>Total Sales</span>
+
+                <h2>
+                    Rs. @Model.TotalSales.ToString("N0")
+                </h2>
+
+                <small>
+                    Completed orders
+                </small>
+            </div>
+        </div>
+
+    </div>
+
+
+   
+    <div class="secondary-grid">
+
+        <div class="mini-stat">
+            <div class="mini-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div>
+                <span>Approved Products</span>
+                <strong>@Model.ApprovedProducts</strong>
+            </div>
+        </div>
+
+
+        <div class="mini-stat">
+            <div class="mini-icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div>
+                <span>Pending Products</span>
+                <strong>@Model.PendingProducts</strong>
+            </div>
+        </div>
+
+
+        <div class="mini-stat">
+            <div class="mini-icon">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <div>
+                <span>Pickup Slots</span>
+                <strong>@Model.AvailablePickupSlots</strong>
+            </div>
+        </div>
+
+
+        <div class="mini-stat">
+            <div class="mini-icon">
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <div>
+                <span>Average Rating</span>
+
+                <strong>
+                    @Model.AverageRating.ToString("0.0")
+                    <small>/ 5</small>
+                </strong>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <div class="section-heading">
+        <div>
+            <span>Manage Your Business</span>
+            <h3>Quick Actions</h3>
+        </div>
+    </div>
+
+
+    <div class="quick-actions">
+
+        <a asp-controller="Vendor"
+           asp-action="Profile"
+           class="action-card">
+            <div class="action-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div>
+                <h4>My Profile</h4>
+                <p>Update your farm information</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+
+        <a asp-controller="Vendor"
+           asp-action="Products"
+           class="action-card">
+            <div class="action-icon">
+                <i class="fa-solid fa-box"></i>
+            </div>
+
+            <div>
+                <h4>My Products</h4>
+                <p>Manage your product listings</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+
+        <a asp-controller="Vendor"
+           asp-action="WeeklyStock"
+           class="action-card">
+            <div class="action-icon">
+                <i class="fa-solid fa-wheat-awn"></i>
+            </div>
+
+            <div>
+                <h4>Weekly Stock</h4>
+                <p>Manage weekly availability</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+
+        <a asp-controller="Vendor"
+           asp-action="PickupSlots"
+           class="action-card">
+            <div class="action-icon">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+
+            <div>
+                <h4>Pickup Slots</h4>
+                <p>Manage customer pickup times</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+
+        <a asp-controller="Vendor"
+           asp-action="Orders"
+           class="action-card">
+            <div class="action-icon">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+
+            <div>
+                <h4>Incoming Orders</h4>
+                <p>View and manage new orders</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+
+        <a asp-controller="Vendor"
+           asp-action="CustomerReviews"
+           class="action-card">
+
+            <div class="action-icon">
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <div>
+                <h4>Customer Reviews</h4>
+                <p>View and respond to customer feedback</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+
+        </a>
+
+        <a asp-controller="Vendor"
+           asp-action="MyMarkets"
+           class="action-card">
+            <div class="action-icon">
+                <i class="fa-solid fa-store"></i>
+            </div>
+
+            <div>
+                <h4>My Markets</h4>
+                <p>View your assigned markets</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right action-arrow"></i>
+        </a>
+
+    </div>
+
+
+    <div class="dashboard-columns">
+
+       
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+                <div>
+                    <span>Schedule</span>
+                    <h3>Upcoming Pickup Slots</h3>
+                </div>
+
+                <a asp-controller="Vendor"
+                   asp-action="PickupSlots">
+                    View All
+                </a>
+            </div>
+
+
+            @if (Model.UpcomingPickupSlots != null &&
+                        Model.UpcomingPickupSlots.Any())
+            {
+                <div class="pickup-list">
+
+                    @foreach (var slot in Model.UpcomingPickupSlots)
+                    {
+                        <div class="pickup-item">
+
+                            <div class="pickup-date">
+                                <strong>
+                                    @slot.PickupDate.ToString("dd")
+                                </strong>
+
+                                <span>
+                                    @slot.PickupDate.ToString("MMM")
+                                </span>
+                            </div>
+
+                            <div class="pickup-details">
+
+                                <h4>
+                                    @slot.StartTime.ToString(@"hh\:mm")
+                                    -
+                                    @slot.EndTime.ToString(@"hh\:mm")
+                                </h4>
+
+                                <p>
+                                    Maximum Orders:
+                                    @slot.MaxOrders
+                                </p>
+
+                            </div>
+
+                            <span class="slot-status @(slot.IsAvailable ? "available" : "closed")">
+                                @(slot.IsAvailable ? "Available" : "Closed")
+                            </span>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div>
+                        <i class="fa-regular fa-calendar-xmark"></i>
+                    </div>
+
+                    <h4>No Upcoming Pickup Slots</h4>
+
+                    <p>
+                        Create pickup slots so customers can select a pickup time.
+                    </p>
+
+                    <a asp-controller="Vendor"
+                       asp-action="PickupSlots"
+                       class="empty-btn">
+                        Add Pickup Slot
+                    </a>
+                </div>
+            }
+
+        </div>
+
+
+     
+        <div class="dashboard-panel">
+
+            <div class="panel-header">
+                <div>
+                    <span>Customer Feedback</span>
+                    <h3>Reviews</h3>
+                </div>
+
+                <a asp-controller="Vendor"
+                   asp-action="Reviews">
+                    View All
+                </a>
+            </div>
+
+
+            <div class="rating-summary">
+
+                <div class="rating-number">
+                    @Model.AverageRating.ToString("0.0")
+                </div>
+
+                <div class="rating-stars">
+
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= Math.Round(Model.AverageRating))
+                        {
+                            <i class="fa-solid fa-star"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-regular fa-star"></i>
+                        }
+                    }
+
+                    <span>
+                        @Model.TotalReviews reviews
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            @if (Model.TotalReviews == 0)
+            {
+                <div class="empty-state small-empty">
+
+                    <div>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+
+                    <h4>No Reviews Yet</h4>
+
+                    <p>
+                        Customer reviews will appear here after approved reviews are received.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="review-note">
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <span>
+                        You currently have
+                        <strong>@Model.TotalReviews</strong>
+                        approved customer reviews.
+                    </span>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+

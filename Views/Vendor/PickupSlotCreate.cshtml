@@ -1,0 +1,202 @@
+﻿@model IdentityDemoApp.Models.PickupSlot
+
+@{
+    ViewData["Title"] = "Add Pickup Slot";
+    Layout = "_Layout";
+}
+
+<link rel="stylesheet" href="~/css/vendor-pickup-slots.css" />
+
+<div class="pickup-form-page">
+
+    <div class="pickup-topbar">
+        <a asp-controller="Vendor"
+           asp-action="Dashboard"
+           class="dashboard-back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="pickup-form-header">
+        <div>
+            <span class="pickup-eyebrow">VENDOR MANAGEMENT</span>
+            <h1>Add Pickup Slot</h1>
+            <p>Create a new pickup date and time for your customers.</p>
+        </div>
+
+        <a asp-controller="Vendor"
+           asp-action="PickupSlots"
+           class="pickup-back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Pickup Slots
+        </a>
+    </div>
+
+    <div class="pickup-form-layout">
+
+        <div class="pickup-form-card">
+
+            <form asp-controller="Vendor"
+                  asp-action="PickupSlotCreate"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="validation-summary"></div>
+
+                <div class="form-section-title">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <div>
+                        <h3>Pickup Information</h3>
+                        <p>Set the date and timing customers can use.</p>
+                    </div>
+                </div>
+
+                <div class="pickup-form-grid">
+
+                    <div class="pickup-field">
+                        <label asp-for="PickupDate">Pickup Date</label>
+
+                        <div class="pickup-input-wrap">
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <input asp-for="PickupDate"
+                                   type="date"
+                                   class="pickup-input"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <span asp-validation-for="PickupDate"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="pickup-field">
+                        <label asp-for="MaxOrders">Maximum Orders</label>
+
+                        <div class="pickup-input-wrap">
+                            <i class="fa-solid fa-users"></i>
+
+                            <input asp-for="MaxOrders"
+                                   type="number"
+                                   min="1"
+                                   class="pickup-input" />
+                        </div>
+
+                        <span asp-validation-for="MaxOrders"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="pickup-field">
+                        <label asp-for="StartTime">Start Time</label>
+
+                        <div class="pickup-input-wrap">
+                            <i class="fa-regular fa-clock"></i>
+
+                            <input asp-for="StartTime"
+                                   type="time"
+                                   class="pickup-input" />
+                        </div>
+
+                        <span asp-validation-for="StartTime"
+                              class="field-error"></span>
+                    </div>
+
+                    <div class="pickup-field">
+                        <label asp-for="EndTime">End Time</label>
+
+                        <div class="pickup-input-wrap">
+                            <i class="fa-regular fa-clock"></i>
+
+                            <input asp-for="EndTime"
+                                   type="time"
+                                   class="pickup-input" />
+                        </div>
+
+                        <span asp-validation-for="EndTime"
+                              class="field-error"></span>
+                    </div>
+
+                </div>
+
+                <div class="pickup-form-note">
+                    <div class="note-icon">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+
+                    <div>
+                        <strong>How pickup capacity works</strong>
+                        <p>
+                            If you allow 10 orders and 3 customers book
+                            this slot, the remaining capacity becomes 7.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="pickup-form-actions">
+
+                    <a asp-controller="Vendor"
+                       asp-action="PickupSlots"
+                       class="pickup-cancel-btn">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="pickup-save-btn">
+                        <i class="fa-solid fa-plus"></i>
+                        Add Pickup Slot
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="pickup-side-card">
+
+            <div class="pickup-side-icon">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+
+            <h3>Pickup Schedule</h3>
+
+            <p>
+                Create clear pickup timings so customers know when
+                they can collect their orders.
+            </p>
+
+            <div class="pickup-side-list">
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    <span>Select pickup date</span>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    <span>Set start and end time</span>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    <span>Set maximum bookings</span>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-check"></i>
+                    <span>Customers can choose the slot</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

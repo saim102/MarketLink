@@ -1,0 +1,700 @@
+﻿@model IdentityDemoApp.Models.PickupSlot
+
+@{
+    ViewData["Title"] = "Pickup Slot Details";
+
+    var bookedOrders =
+        Model.Orders?.Count ?? 0;
+
+    var remainingOrders =
+        Math.Max(Model.MaxOrders - bookedOrders, 0);
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-PickupSlots.css"
+      asp-append-version="true" />
+
+
+<div class="pickup-details-page">
+
+    <!-- HEADER -->
+    <div class="pickup-details-header">
+
+        <div>
+
+            <div class="pickup-eyebrow">
+
+                <i class="fas fa-calendar-check"></i>
+
+                PICKUP SLOT DETAILS
+
+            </div>
+
+            <h1>
+                Pickup Schedule
+            </h1>
+
+            <p>
+                View vendor, schedule and order information.
+            </p>
+
+        </div>
+
+
+        <div class="pickup-details-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="pickup-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+
+            <a asp-controller="Admin"
+               asp-action="PickupSlots"
+               class="pickup-list-btn">
+
+                <i class="fas fa-list"></i>
+
+                Slot List
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN SUMMARY -->
+    <div class="pickup-summary-card">
+
+        <div class="pickup-summary-left">
+
+            <div class="large-pickup-icon">
+
+                <i class="fas fa-calendar-days"></i>
+
+            </div>
+
+            <div>
+
+                <span class="summary-small-label">
+                    PICKUP DATE
+                </span>
+
+                <h2>
+                    @Model.PickupDate.ToString("dd MMMM yyyy")
+                </h2>
+
+                <span class="pickup-summary-day">
+
+                    @Model.PickupDate.ToString("dddd")
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="pickup-summary-right">
+
+            @if (Model.IsAvailable)
+            {
+                <span class="pickup-status available">
+
+                    <i class="fas fa-check-circle"></i>
+
+                    Available
+
+                </span>
+            }
+            else
+            {
+                <span class="pickup-status unavailable">
+
+                    <i class="fas fa-times-circle"></i>
+
+                    Unavailable
+
+                </span>
+            }
+
+            <strong>
+
+                @Model.StartTime.ToString(@"hh\:mm")
+                -
+                @Model.EndTime.ToString(@"hh\:mm")
+
+            </strong>
+
+            <span>
+                Pickup Time
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- INFORMATION -->
+    <div class="pickup-information-grid">
+
+        <!-- VENDOR -->
+        <div class="pickup-info-card">
+
+            <div class="pickup-info-heading">
+
+                <div class="pickup-info-icon">
+
+                    <i class="fas fa-tractor"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>Vendor Information</h3>
+
+                    <p>
+                        Farmer / vendor assigned to this slot
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="pickup-info-content">
+
+                <div class="pickup-info-row">
+
+                    <span>Farm Name</span>
+
+                    <strong>
+                        @(Model.VendorProfile?.FarmName
+                                                ?? "Unknown Vendor")
+                    </strong>
+
+                </div>
+
+
+                <div class="pickup-info-row">
+
+                    <span>City</span>
+
+                    <strong>
+                        @(Model.VendorProfile?.City
+                                                ?? "Not available")
+                    </strong>
+
+                </div>
+
+
+                <div class="pickup-info-row">
+
+                    <span>Address</span>
+
+                    <strong>
+                        @(Model.VendorProfile?.Address
+                                                ?? "Not available")
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CAPACITY -->
+        <div class="pickup-info-card">
+
+            <div class="pickup-info-heading">
+
+                <div class="pickup-info-icon capacity">
+
+                    <i class="fas fa-users"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>Slot Capacity</h3>
+
+                    <p>
+                        Current booking capacity
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="capacity-overview">
+
+                <div class="capacity-number">
+
+                    <strong>
+                        @bookedOrders
+                    </strong>
+
+                    <span>
+                        Booked
+                    </span>
+
+                </div>
+
+
+                <div class="capacity-divider">
+                </div>
+
+
+                <div class="capacity-number">
+
+                    <strong>
+                        @remainingOrders
+                    </strong>
+
+                    <span>
+                        Remaining
+                    </span>
+
+                </div>
+
+
+                <div class="capacity-divider">
+                </div>
+
+
+                <div class="capacity-number">
+
+                    <strong>
+                        @Model.MaxOrders
+                    </strong>
+
+                    <span>
+                        Maximum
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ORDERS -->
+    <div class="pickup-orders-card">
+
+        <div class="pickup-section-heading">
+
+            <div>
+
+                <h2>
+
+                    <i class="fas fa-shopping-bag"></i>
+
+                    Orders Using This Slot
+
+                </h2>
+
+                <p>
+                    Customers currently assigned to this pickup schedule.
+                </p>
+
+            </div>
+
+            <span class="pickup-orders-count">
+
+                @bookedOrders
+                @(bookedOrders == 1 ? "Order" : "Orders")
+
+            </span>
+
+        </div>
+
+
+        @if (Model.Orders != null &&
+                Model.Orders.Any())
+        {
+            <div class="pickup-orders-wrapper">
+
+                <table class="pickup-orders-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order</th>
+
+                            <th>Customer</th>
+
+                            <th>Items</th>
+
+                            <th>Total</th>
+
+                            <th>Status</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var order in Model.Orders)
+                        {
+                            var orderClass =
+                            (order.Status ?? "Pending")
+                            .ToLower()
+                            .Replace(" ", "-");
+
+                            <tr>
+
+                                <td>
+
+                                    <strong class="slot-order-number">
+
+                                        @order.OrderNumber
+
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="slot-customer">
+
+                                        <div class="slot-customer-icon">
+
+                                            <i class="fas fa-user"></i>
+
+                                        </div>
+
+                                        <span>
+
+                                            @(order.CustomerProfile?.FullName
+                                                                                ?? "Unknown Customer")
+
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="slot-item-count">
+
+                                        @order.OrderItems.Count
+
+                                        @(order.OrderItems.Count == 1
+                                                                        ? "Item"
+                                                                        : "Items")
+
+                            </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong class="slot-order-total">
+
+                                        Rs.
+                                        @order.TotalAmount.ToString("N2")
+
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="slot-order-status @orderClass">
+
+                                        @order.Status
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <a asp-controller="Admin"
+                                       asp-action="OrderDetails"
+                                       asp-route-id="@order.OrderId"
+                                       class="slot-view-order">
+
+                                        <i class="fas fa-eye"></i>
+
+                                        View
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="pickup-no-orders">
+
+                <div>
+
+                    <i class="fas fa-shopping-bag"></i>
+
+                </div>
+
+                <h3>No Orders Yet</h3>
+
+                <p>
+                    No customer orders are currently assigned to this pickup slot.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <!-- ACTIONS -->
+    <div class="pickup-management-card">
+
+        <div>
+
+            <h3>
+                <i class="fas fa-sliders"></i>
+                Slot Management
+            </h3>
+
+            <p>
+                Change the availability of this pickup slot.
+            </p>
+
+        </div>
+
+
+        <button type="button"
+                class="pickup-detail-status-btn"
+                onclick="changePickupStatusDetails(
+                    @Model.PickupSlotId,
+                    @Model.IsAvailable
+                )">
+
+            <i class="fas fa-toggle-on"></i>
+
+            Update Availability
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- STATUS MODAL -->
+<div class="modal fade"
+     id="pickupDetailsModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content pickup-modal">
+
+            <div class="modal-header">
+
+                <div class="pickup-modal-title">
+
+                    <div class="pickup-modal-icon">
+
+                        <i class="fas fa-toggle-on"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5>Update Availability</h5>
+
+                        <p>
+                            @Model.PickupDate.ToString("dd MMM yyyy")
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <form asp-controller="Admin"
+                  asp-action="UpdatePickupSlotStatus"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="id"
+                       id="pickupDetailsId" />
+
+
+                <div class="modal-body">
+
+                    <label class="pickup-modal-label">
+                        Slot Availability
+                    </label>
+
+                    <select name="isAvailable"
+                            id="pickupDetailsAvailability"
+                            class="pickup-modal-select">
+
+                        <option value="true">
+                            Available
+                        </option>
+
+                        <option value="false">
+                            Unavailable
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="modal-footer pickup-modal-footer">
+
+                    <button type="button"
+                            class="pickup-modal-cancel"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit"
+                            class="pickup-modal-save">
+
+                        <i class="fas fa-check"></i>
+
+                        Update Availability
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function changePickupStatusDetails(
+            id,
+            currentStatus) {
+
+            document.getElementById(
+                "pickupDetailsId"
+            ).value = id;
+
+            document.getElementById(
+                "pickupDetailsAvailability"
+            ).value =
+                currentStatus.toString().toLowerCase();
+
+            const modal =
+                new bootstrap.Modal(
+                    document.getElementById(
+                        "pickupDetailsModal"
+                    )
+                );
+
+            modal.show();
+        }
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                @if (TempData["Success"] != null)
+                {
+                        <text>
+
+                            Swal.fire({
+
+                                icon: "success",
+
+                                title: "Success",
+
+                                text:
+                                    "@TempData["Success"]",
+
+                                confirmButtonColor:
+                                    "#0b3037",
+
+                                timer: 2200,
+
+                                timerProgressBar: true
+
+                            });
+
+                        </text>
+                }
+
+
+                @if (TempData["Error"] != null)
+                {
+                        <text>
+
+                            Swal.fire({
+
+                                icon: "error",
+
+                                title: "Something went wrong",
+
+                                text:
+                                    "@TempData["Error"]",
+
+                                confirmButtonColor:
+                                    "#0b3037"
+
+                            });
+
+                        </text>
+                }
+
+            });
+
+    </script>
+}

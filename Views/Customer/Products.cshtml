@@ -1,0 +1,440 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+
+    var search = ViewBag.Search as string ?? "";
+    var categoryId = ViewBag.CategoryId as int?;
+    var vendorId = ViewBag.VendorId as int?;
+
+    var categories = ViewBag.Categories as IEnumerable<IdentityDemoApp.Models.Category>
+                     ?? Enumerable.Empty<IdentityDemoApp.Models.Category>();
+
+    var vendors = ViewBag.Vendors as IEnumerable<IdentityDemoApp.Models.VendorProfile>
+                  ?? Enumerable.Empty<IdentityDemoApp.Models.VendorProfile>();
+
+    var favouriteProductIds = ViewBag.FavouriteProductIds as List<int>
+                              ?? new List<int>();
+
+    var products = Model?.ToList() ?? new List<IdentityDemoApp.Models.Product>();
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-Products.css"
+      asp-append-version="true" />
+
+<div class="products-page">
+
+    <section class="products-hero">
+        <div class="hero-glow hero-glow-one"></div>
+        <div class="hero-glow hero-glow-two"></div>
+
+        <div class="products-container hero-content">
+
+            <div class="hero-text">
+                <span class="hero-badge">
+                    <i class="bi bi-stars"></i>
+                    Fresh From Local Farmers
+                </span>
+
+                <h1>
+                    Discover Fresh
+                    <span>Farm Products</span>
+                </h1>
+
+                <p>
+                    Explore quality products from trusted local farmers
+                    and find exactly what you need for your next order.
+                </p>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="stat-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div>
+                            <strong>@products.Count</strong>
+                            <span>Products</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-stat">
+                        <div class="stat-icon">
+                            <i class="bi bi-grid"></i>
+                        </div>
+                        <div>
+                            <strong>@categories.Count()</strong>
+                            <span>Categories</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-stat">
+                        <div class="stat-icon">
+                            <i class="bi bi-shop"></i>
+                        </div>
+                        <div>
+                            <strong>@vendors.Count()</strong>
+                            <span>Farmers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-circle"></div>
+
+                <div class="floating-card floating-card-one">
+                    <i class="bi bi-leaf"></i>
+                    <span>Fresh Produce</span>
+                </div>
+
+                <div class="floating-card floating-card-two">
+                    <i class="bi bi-patch-check-fill"></i>
+                    <span>Verified Farmers</span>
+                </div>
+
+                <div class="hero-product-icon">
+                    <i class="bi bi-basket2-fill"></i>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <main class="products-container products-main">
+        <div class="products-navigation">
+
+            <a asp-controller="Customer"
+               asp-action="Dashboard"
+               class="products-back-btn">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+        </div>
+
+        <section class="filter-panel">
+
+            <div class="filter-heading">
+                <div class="filter-heading-icon">
+                    <i class="bi bi-sliders2"></i>
+                </div>
+
+                <div>
+                    <h2>Find Your Products</h2>
+                    <p>Search and filter products from our marketplace</p>
+                </div>
+            </div>
+
+            <form asp-controller="Customer"
+                  asp-action="Products"
+                  method="get"
+                  class="product-filter-form">
+
+                <div class="search-field">
+                    <i class="bi bi-search"></i>
+                    <input type="text"
+                           name="search"
+                           value="@search"
+                           placeholder="Search products..." />
+                </div>
+
+                <div class="filter-field">
+                    <i class="bi bi-grid-3x3-gap"></i>
+
+                    <select name="categoryId">
+                        <option value="">All Categories</option>
+
+                        @foreach (var category in categories)
+                        {
+                            if (category.CategoryId == categoryId)
+                            {
+                                <option value="@category.CategoryId" selected>
+                                    @category.CategoryName
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@category.CategoryId">
+                                    @category.CategoryName
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <i class="bi bi-person-badge"></i>
+
+                    <select name="vendorId">
+                        <option value="">All Farmers</option>
+
+                        @foreach (var vendor in vendors)
+                        {
+                            if (vendor.VendorProfileId == vendorId)
+                            {
+                                <option value="@vendor.VendorProfileId" selected>
+                                    @vendor.FarmName
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@vendor.VendorProfileId">
+                                    @vendor.FarmName
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="filter-submit">
+                    <i class="bi bi-search"></i>
+                    <span>Search</span>
+                </button>
+
+                @if (!string.IsNullOrWhiteSpace(search) ||
+                                categoryId.HasValue ||
+                                vendorId.HasValue)
+                {
+                    <a asp-controller="Customer"
+                       asp-action="Products"
+                       class="clear-filter">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Reset
+                    </a>
+                }
+
+            </form>
+
+        </section>
+
+        <section class="products-toolbar">
+
+            <div class="results-info">
+                <span class="results-icon">
+                    <i class="bi bi-box2-heart"></i>
+                </span>
+
+                <div>
+                    <strong>
+                        @products.Count
+                        @(products.Count == 1 ? "Product" : "Products")
+                    </strong>
+
+                    @if (!string.IsNullOrWhiteSpace(search))
+                    {
+                        <span>
+                            Results for "<b>@search</b>"
+                        </span>
+                    }
+                    else
+                    {
+                        <span>Available in MarketLink</span>
+                    }
+                </div>
+            </div>
+
+            <div class="availability-label">
+                <span class="availability-dot"></span>
+                Available Products
+            </div>
+
+        </section>
+
+        @if (products.Any())
+        {
+            <section class="products-grid">
+
+                @foreach (var product in products)
+                {
+                    var isFavourite = favouriteProductIds.Contains(product.ProductId);
+
+                    <article class="product-card">
+
+                        <div class="product-card-top">
+
+                            <div class="product-category">
+                                <i class="bi bi-tag-fill"></i>
+                                @(product.Category?.CategoryName ?? "General")
+                            </div>
+
+                            <span class="available-badge">
+                                <i class="bi bi-check-circle-fill"></i>
+                                Available
+                            </span>
+
+                            <div class="product-icon-wrap">
+                                <div class="product-icon">
+                                    <i class="bi bi-basket3-fill"></i>
+                                </div>
+                            </div>
+
+                            <div class="product-shine"></div>
+                        </div>
+
+                        <div class="product-content">
+
+                            <div class="product-title-row">
+                                <h3>@product.ProductName</h3>
+
+                                @if (isFavourite)
+                                {
+                                    <span class="mini-favourite">
+                                        <i class="bi bi-heart-fill"></i>
+                                    </span>
+                                }
+                        </div>
+
+                        <p class="product-description">
+                            @(string.IsNullOrWhiteSpace(product.Description)
+                                                    ? "Fresh quality product supplied by a trusted local farmer."
+                                                    : product.Description)
+                    </p>
+
+                            <div class="product-meta">
+
+                                <div class="meta-item">
+                                    <span class="meta-icon">
+                                        <i class="bi bi-shop"></i>
+                                    </span>
+                                    <div>
+                                        <small>Farmer</small>
+                                        <strong>
+                                            @(product.VendorProfile?.FarmName ?? "Local Farmer")
+                                        </strong>
+                                    </div>
+                                </div>
+
+                                <div class="meta-item">
+                                    <span class="meta-icon">
+                                        <i class="bi bi-box-seam"></i>
+                                    </span>
+                                    <div>
+                                        <small>Unit</small>
+                                        <strong>@product.Unit</strong>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="product-bottom">
+
+                                <div class="price-box">
+                                    <span>Price</span>
+                                    <strong>
+                                        Rs. @product.Price.ToString("N2")
+                                    </strong>
+                                    <small>/ @product.Unit</small>
+                                </div>
+
+                                <div class="product-actions">
+
+                                    <form asp-controller="Customer"
+                                          asp-action="ToggleFavoriteProduct"
+                                          method="post"
+                                          class="favorite-product-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@product.ProductId" />
+
+                                        <button type="submit"
+                                                class="favorite-btn @(isFavourite ? "active" : "")"
+                                                title="@(isFavourite ? "Remove from favourites" : "Add to favourites")">
+
+                                    @if (isFavourite)
+                                            {
+                                                <i class="bi bi-heart-fill"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-heart"></i>
+                                            }
+
+                                        </button>
+
+                                    </form>
+
+                                    <a asp-controller="Customer"
+                                       asp-action="ProductDetails"
+                                       asp-route-id="@product.ProductId"
+                                       class="view-details-btn"
+                                       title="View product details">
+
+                                        <i class="fa-solid fa-eye"></i>
+                                        <span>Details</span>
+
+                                    </a>
+
+                                    <form asp-controller="Customer"
+                                          asp-action="AddToCart"
+                                          method="post"
+                                          class="cart-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@product.ProductId" />
+
+                                        <input type="hidden"
+                                               name="quantity"
+                                               value="1" />
+
+                                        <button type="submit"
+                                                class="add-cart-btn">
+
+                                            <i class="bi bi-cart-plus"></i>
+                                            <span>Add to Cart</span>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </article>
+                }
+
+            </section>
+        }
+        else
+        {
+            <section class="empty-products">
+
+                <div class="empty-icon">
+                    <i class="bi bi-search"></i>
+                </div>
+
+                <div class="empty-content">
+                    <span class="empty-label">Nothing Found</span>
+
+                    <h2>No products available</h2>
+
+                    <p>
+                        We couldn't find any products matching your search
+                        or selected filters.
+                    </p>
+
+                    <a asp-controller="Customer"
+                       asp-action="Products"
+                       class="empty-btn">
+                        <i class="bi bi-arrow-left"></i>
+                        View All Products
+                    </a>
+                </div>
+
+            </section>
+        }
+
+    </main>
+
+</div>

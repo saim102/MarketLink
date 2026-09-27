@@ -1,0 +1,316 @@
+﻿@model IdentityDemoApp.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<link rel="stylesheet" href="~/css/vendor-orders.css" />
+
+<div class="order-details-page">
+
+    <div class="details-topbar">
+
+        <div>
+            <span class="page-label">ORDER DETAILS</span>
+
+            <h1>
+                Order #@Model.OrderNumber
+            </h1>
+
+            <p>
+                Placed on
+                @Model.OrderDate.ToLocalTime().ToString("dd MMMM yyyy, hh:mm tt")
+            </p>
+        </div>
+
+        <a asp-action="IncomingOrders"
+           class="back-btn">
+            ← Back to Orders
+        </a>
+
+    </div>
+
+    <div class="details-grid">
+
+        <div class="details-main">
+
+            <div class="details-card">
+
+                <div class="card-title">
+                    <div>
+                        <h2>Order Items</h2>
+                        <p>Products included in this order</p>
+                    </div>
+                </div>
+
+                <div class="items-list">
+
+                    @foreach (var item in Model.OrderItems.Where(x => x.Product != null))
+                    {
+                        <div class="order-item">
+
+                            <div class="item-icon">
+                                🛒
+                            </div>
+
+                            <div class="item-information">
+
+                                <h3>
+                                    @item.Product!.ProductName
+                                </h3>
+
+                                <span>
+                                    @item.Quantity @item.Product.Unit
+                                </span>
+
+                            </div>
+
+                            <div class="item-price">
+
+                                <span>
+                                    Rs. @item.UnitPrice.ToString("N2")
+                                </span>
+
+                                <strong>
+                                    Rs. @item.TotalPrice.ToString("N2")
+                                </strong>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+
+                <div class="total-section">
+
+                    <div>
+                        <span>Order Total</span>
+                        <strong>
+                            Rs. @Model.TotalAmount.ToString("N2")
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.Notes))
+            {
+                <div class="details-card notes-card">
+
+                    <div class="card-title">
+                        <div>
+                            <h2>Customer Notes</h2>
+                            <p>Additional information from customer</p>
+                        </div>
+                    </div>
+
+                    <div class="customer-notes">
+                        @Model.Notes
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <div class="details-sidebar">
+
+            <div class="details-card">
+
+                <div class="card-title">
+                    <div>
+                        <h2>Order Status</h2>
+                        <p>Current order progress</p>
+                    </div>
+                </div>
+
+                @{
+                    var statusClass = Model.Status?.ToLower() switch
+                    {
+                        "pending" => "status-pending",
+                        "accepted" => "status-accepted",
+                        "processing" => "status-processing",
+                        "shipped" => "status-shipped",
+                        "delivered" => "status-delivered",
+                        "rejected" => "status-rejected",
+                        "cancelled" => "status-cancelled",
+                        _ => "status-pending"
+                    };
+                }
+
+                <div class="details-status">
+                    <span class="status-badge @statusClass">
+                        @Model.Status
+                    </span>
+                </div>
+
+                <div class="status-actions">
+
+                    @if (Model.Status == "Pending")
+                    {
+                        <form asp-action="UpdateOrderStatus" method="post">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.OrderId" />
+
+                            <input type="hidden"
+                                   name="status"
+                                   value="Accepted" />
+
+                            <button type="submit"
+                                    class="large-action accept-btn">
+                                Accept Order
+                            </button>
+
+                        </form>
+
+                        <form asp-action="UpdateOrderStatus" method="post">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.OrderId" />
+
+                            <input type="hidden"
+                                   name="status"
+                                   value="Rejected" />
+
+                            <button type="submit"
+                                    class="large-action reject-btn">
+                                Reject Order
+                            </button>
+
+                        </form>
+                    }
+
+                    @if (Model.Status == "Accepted")
+                    {
+                        <form asp-action="UpdateOrderStatus" method="post">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.OrderId" />
+
+                            <input type="hidden"
+                                   name="status"
+                                   value="Processing" />
+
+                            <button type="submit"
+                                    class="large-action process-btn">
+                                Start Processing
+                            </button>
+
+                        </form>
+                    }
+
+                    @if (Model.Status == "Processing")
+                    {
+                        <form asp-action="UpdateOrderStatus" method="post">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.OrderId" />
+
+                            <input type="hidden"
+                                   name="status"
+                                   value="Shipped" />
+
+                            <button type="submit"
+                                    class="large-action ship-btn">
+                                Mark as Shipped
+                            </button>
+
+                        </form>
+                    }
+
+                    @if (Model.Status == "Shipped")
+                    {
+                        <form asp-action="UpdateOrderStatus" method="post">
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@Model.OrderId" />
+
+                            <input type="hidden"
+                                   name="status"
+                                   value="Delivered" />
+
+                            <button type="submit"
+                                    class="large-action deliver-btn">
+                                Mark as Delivered
+                            </button>
+
+                        </form>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="details-card customer-card">
+
+                <div class="card-title">
+                    <div>
+                        <h2>Customer</h2>
+                        <p>Customer information</p>
+                    </div>
+                </div>
+
+                <div class="customer-detail">
+
+                    <div class="large-avatar">
+                        C
+                    </div>
+
+                    <div>
+                        <strong>
+                            Customer #@Model.CustomerProfileId
+                        </strong>
+
+                        <span>
+                            Customer
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="details-card">
+
+                <div class="card-title">
+                    <div>
+                        <h2>Pickup</h2>
+                        <p>Pickup information</p>
+                    </div>
+                </div>
+
+                <div class="pickup-information">
+
+                    @if (Model.PickupSlot != null)
+                    {
+                        <div class="info-row">
+                            <span>Pickup Slot</span>
+                            <strong>
+                                @Model.PickupSlot
+                            </strong>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="no-pickup">
+                            No pickup slot assigned.
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

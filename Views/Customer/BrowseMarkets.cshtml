@@ -1,0 +1,1005 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Market>
+
+@{
+    ViewData["Title"] = "Browse Markets";
+
+var search = ViewBag.Search as string ?? "";
+    var city = ViewBag.City as string ?? "";
+    var cities = ViewBag.Cities as List<string> ?? new List<string>();
+
+    var favouriteMarketIds = ViewBag.FavouriteMarketIds as List<int>
+                             ?? new List<int>();
+
+    var markets = Model?.ToList() ?? new List<IdentityDemoApp.Models.Market>();
+
+    var mappedMarkets = markets
+        .Where(m => m.Latitude.HasValue && m.Longitude.HasValue)
+        .ToList();
+
+
+}
+
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<link rel="stylesheet"
+      href="~/css/customer-BrowseMarkets.css"
+      asp-append-version="true" />
+
+<div class="customer-markets-page">
+
+    ```
+    <div class="markets-header">
+
+        <div class="markets-header-content">
+
+            <span class="page-badge">
+                <i class="bi bi-shop"></i>
+                Explore Markets
+            </span>
+
+            <h1>Browse Markets</h1>
+
+            <p>
+                Discover active markets and find the best places to
+                explore products from local vendors.
+            </p>
+
+            <a asp-controller="Customer"
+               asp-action="Dashboard"
+               class="back-dashboard-btn">
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </a>
+
+        </div>
+
+        <div class="market-header-icon">
+            <i class="bi bi-shop-window"></i>
+        </div>
+
+    </div>
+
+
+    <div class="market-filter-card">
+
+        <form asp-controller="Customer"
+              asp-action="BrowseMarkets"
+              method="get">
+
+            <div class="filter-grid">
+
+                <div class="filter-field">
+
+                    <label>
+                        <i class="bi bi-search"></i>
+                        Search Market
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text"
+                               name="search"
+                               value="@search"
+                               placeholder="Search by market, location or city..." />
+
+                    </div>
+
+                </div>
+
+
+                <div class="filter-field">
+
+                    <label>
+                        <i class="bi bi-geo-alt"></i>
+                        City
+                    </label>
+
+                    <select name="city">
+
+                        <option value="">All Cities</option>
+
+                        @foreach (var item in cities)
+                        {
+                            <option value="@item"
+                                    selected="@(city == item ? "selected" : null)">
+                                @item
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <div class="filter-actions">
+
+                    <button type="submit"
+                            class="btn-search">
+                        <i class="bi bi-search"></i>
+                        Search
+                    </button>
+
+                    <a asp-controller="Customer"
+                       asp-action="BrowseMarkets"
+                       class="btn-reset">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        Reset
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    @if (mappedMarkets.Any())
+    {
+        <section class="markets-map-section">
+
+            <div class="map-section-header">
+
+                <div class="map-heading-content">
+
+                    <div class="map-heading-icon">
+                        <i class="bi bi-map"></i>
+                    </div>
+
+                    <div class="map-heading-text">
+
+                        <span class="map-eyebrow">
+                            Find Your Market
+                        </span>
+
+                        <h2>Markets on Map</h2>
+
+                        <p>
+                            Explore active market locations and select a
+                            marker to view market information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="map-market-count">
+
+                    <i class="bi bi-geo-alt-fill"></i>
+
+                    <div>
+                        <strong>@mappedMarkets.Count</strong>
+                        <span>Mapped Markets</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="market-map-wrapper">
+
+                <div id="customerMarketsMap"
+                     class="customer-markets-map">
+                </div>
+
+                <div class="map-overlay-badge">
+                    <i class="bi bi-hand-index-thumb"></i>
+                    <span>Select a marker</span>
+                </div>
+
+            </div>
+
+        </section>
+    }
+
+
+    <div class="markets-result-bar">
+
+        <div class="result-content">
+
+            <span class="result-eyebrow">
+                Market Directory
+            </span>
+
+            <h3>Available Markets</h3>
+
+            <span class="result-count">
+                @markets.Count active market@(markets.Count == 1 ? "" : "s") found
+            </span>
+
+        </div>
+
+        <div class="result-icon">
+            <i class="bi bi-grid-3x3-gap"></i>
+        </div>
+
+    </div>
+
+
+    @if (markets.Any())
+    {
+        <div class="markets-grid">
+
+            @foreach (var market in markets)
+            {
+                var isFavourite =
+                favouriteMarketIds.Contains(market.MarketId);
+
+                <article class="market-card">
+
+                    <div class="market-card-top">
+
+                        <div class="market-icon">
+                            <i class="bi bi-shop"></i>
+                        </div>
+
+                        <span class="active-badge">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Active
+                        </span>
+
+                    </div>
+
+
+                    <div class="market-card-body">
+
+                        <h2>@market.MarketName</h2>
+
+
+                        <div class="market-location">
+
+                            <i class="bi bi-geo-alt-fill"></i>
+
+                            <span>
+
+                                @market.Location
+
+                                @if (!string.IsNullOrWhiteSpace(market.City))
+                                {
+                                    <text>, @market.City</text>
+                                }
+
+                            </span>
+
+                        </div>
+
+
+                        @if (!string.IsNullOrWhiteSpace(market.Description))
+                        {
+                            <p class="market-description">
+                                @market.Description
+                            </p>
+                        }
+
+
+                        <div class="market-info">
+
+                            @if (!string.IsNullOrWhiteSpace(market.OperatingDays))
+                            {
+                                <div class="info-item">
+
+                                    <div class="info-icon">
+                                        <i class="bi bi-calendar3"></i>
+                                    </div>
+
+                                    <div class="info-content">
+
+                                        <small>Operating Days</small>
+
+                                        <strong>
+                                            @market.OperatingDays
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+                            }
+
+
+                            @if (market.OpeningTime.HasValue ||
+                                                market.ClosingTime.HasValue)
+                            {
+                                <div class="info-item">
+
+                                    <div class="info-icon">
+                                        <i class="bi bi-clock"></i>
+                                    </div>
+
+                                    <div class="info-content">
+
+                                        <small>Opening Hours</small>
+
+                                        <strong>
+
+                                            @if (market.OpeningTime.HasValue)
+                                            {
+                                                @market.OpeningTime.Value.ToString(@"hh\:mm")
+                                            }
+
+                                            @if (market.OpeningTime.HasValue &&
+                                                                            market.ClosingTime.HasValue)
+                                            {
+                                                <text> - </text>
+                                            }
+
+                                            @if (market.ClosingTime.HasValue)
+                                            {
+                                                @market.ClosingTime.Value.ToString(@"hh\:mm")
+                                            }
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="market-card-footer">
+
+                        @if (market.Latitude.HasValue &&
+                                        market.Longitude.HasValue)
+                        {
+                            <button type="button"
+                                    class="map-btn"
+                                    onclick="focusMarketOnMap(
+                                                @market.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                                                @market.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture))">
+
+                                <i class="bi bi-geo-alt"></i>
+                                <span>View on Map</span>
+
+                            </button>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(market.MapLink))
+                        {
+                            <a href="@market.MapLink"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="map-btn">
+
+                                <i class="bi bi-map"></i>
+                                <span>View Map</span>
+
+                            </a>
+                        }
+
+
+                        <form asp-controller="Customer"
+                              asp-action="ToggleFavoriteMarket"
+                              method="post"
+                              class="favorite-market-form">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="marketId"
+                                   value="@market.MarketId" />
+
+                            @if (isFavourite)
+                            {
+                                <button type="submit"
+                                        class="favorite-market-btn saved">
+
+                                    <i class="bi bi-heart-fill"></i>
+                                    <span>Saved</span>
+
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit"
+                                        class="favorite-market-btn">
+
+                                    <i class="bi bi-heart"></i>
+                                    <span>Add to Favourite</span>
+
+                                </button>
+                            }
+
+                        </form>
+
+
+                        <button type="button"
+                                class="view-market-btn"
+                                onclick="showMarketDetails(
+                                        '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(market.MarketName))',
+                                        '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(market.Location))',
+                                        '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(market.City ?? ""))',
+                                        '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(market.OperatingDays ?? ""))',
+                                        '@(market.OpeningTime?.ToString(@"hh\:mm") ?? "")',
+                                        '@(market.ClosingTime?.ToString(@"hh\:mm") ?? "")',
+                                        '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(market.Description ?? ""))'
+                                    )">
+
+                            <i class="bi bi-eye"></i>
+                            <span>View Details</span>
+
+                        </button>
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="empty-markets">
+
+            <div class="empty-icon">
+                <i class="bi bi-shop"></i>
+            </div>
+
+            <h2>No Markets Found</h2>
+
+            <p>
+                We couldn't find any active markets matching your search.
+                Try another market name or city.
+            </p>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseMarkets"
+               class="empty-reset">
+
+                <i class="bi bi-arrow-clockwise"></i>
+                View All Markets
+
+            </a>
+
+        </div>
+    }
+    ```
+
+</div>
+
+<div class="market-modal"
+     id="marketDetailsModal">
+
+    ```
+    <div class="market-modal-overlay"
+         onclick="closeMarketDetails()">
+    </div>
+
+    <div class="market-modal-box">
+
+        <button type="button"
+                class="modal-close"
+                onclick="closeMarketDetails()">
+
+            <i class="bi bi-x-lg"></i>
+
+        </button>
+
+
+        <div class="modal-market-icon">
+            <i class="bi bi-shop"></i>
+        </div>
+
+
+        <span class="modal-active">
+            <i class="bi bi-check-circle-fill"></i>
+            Active Market
+        </span>
+
+
+        <h2 id="modalMarketName"></h2>
+
+
+        <div class="modal-location">
+
+            <i class="bi bi-geo-alt-fill"></i>
+
+            <span id="modalLocation"></span>
+
+        </div>
+
+
+        <div class="modal-details">
+
+            <div class="modal-detail">
+
+                <i class="bi bi-calendar3"></i>
+
+                <div>
+                    <small>Operating Days</small>
+                    <span id="modalDays"></span>
+                </div>
+
+            </div>
+
+
+            <div class="modal-detail">
+
+                <i class="bi bi-clock"></i>
+
+                <div>
+                    <small>Opening Hours</small>
+                    <span id="modalHours"></span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-description">
+
+            <h4>
+                <i class="bi bi-info-circle"></i>
+                About Market
+            </h4>
+
+            <p id="modalDescription"></p>
+
+        </div>
+
+    </div>
+    ```
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+    const marketMapData = [
+        @foreach (var market in mappedMarkets)
+        {
+                <text>
+                {
+                    id: @market.MarketId,
+                    name: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(market.MarketName)),
+                    location: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(market.Location)),
+                    city: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(market.City ?? "")),
+                    days: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(market.OperatingDays ?? "")),
+                    opening: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(market.OpeningTime?.ToString(@"hh\:mm") ?? "")),
+                    closing: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(market.ClosingTime?.ToString(@"hh\:mm") ?? "")),
+                    lat: @market.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    lng: @market.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                    mapLink: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(market.MapLink ?? ""))
+                },
+                </text>
+        }
+    ];
+
+
+    let customerMarketsMap = null;
+
+    const marketMarkers = {};
+
+
+    function initializeMarketsMap() {
+
+        const mapElement =
+            document.getElementById("customerMarketsMap");
+
+        if (!mapElement ||
+            !marketMapData.length) {
+            return;
+        }
+
+
+        customerMarketsMap = L.map(
+            "customerMarketsMap",
+            {
+                scrollWheelZoom: true,
+                zoomControl: true
+            }
+        );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution:
+                    '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(customerMarketsMap);
+
+
+        const bounds = [];
+
+
+        marketMapData.forEach(function (market) {
+
+            const lat = Number(market.lat);
+            const lng = Number(market.lng);
+
+
+            if (!Number.isFinite(lat) ||
+                !Number.isFinite(lng)) {
+                return;
+            }
+
+
+            const marker =
+                L.marker([lat, lng])
+                    .addTo(customerMarketsMap);
+
+
+            marketMarkers[market.id] = marker;
+
+
+            bounds.push([lat, lng]);
+
+
+            let locationText =
+                market.location || "";
+
+
+            if (market.city) {
+                locationText +=
+                    ", " + market.city;
+            }
+
+
+            let hours =
+                "Not specified";
+
+
+            if (market.opening &&
+                market.closing) {
+
+                hours =
+                    market.opening +
+                    " - " +
+                    market.closing;
+
+            }
+            else if (market.opening) {
+
+                hours =
+                    "From " +
+                    market.opening;
+
+            }
+            else if (market.closing) {
+
+                hours =
+                    "Until " +
+                    market.closing;
+
+            }
+
+
+            const directionsUrl =
+                "https://www.google.com/maps/dir/?api=1&destination=" +
+                encodeURIComponent(
+                    lat + "," + lng
+                );
+
+
+            let mapButton = "";
+
+
+            if (market.mapLink) {
+
+                mapButton =
+                    '<a href="' +
+                    escapeHtml(market.mapLink) +
+                    '" target="_blank" rel="noopener noreferrer" class="map-popup-btn secondary">' +
+                    '<i class="bi bi-map"></i>' +
+                    '<span>Open Map</span>' +
+                    '</a>';
+
+            }
+
+
+            const popupHtml =
+                '<div class="market-map-popup">' +
+
+                '<div class="popup-icon">' +
+                '<i class="bi bi-shop"></i>' +
+                '</div>' +
+
+                '<div class="popup-content">' +
+
+                '<span class="popup-badge">' +
+                '<i class="bi bi-check-circle-fill"></i>' +
+                ' Active' +
+                '</span>' +
+
+                '<h3>' +
+                escapeHtml(market.name) +
+                '</h3>' +
+
+                '<div class="popup-location">' +
+                '<i class="bi bi-geo-alt-fill"></i>' +
+                '<span>' +
+                escapeHtml(locationText) +
+                '</span>' +
+                '</div>' +
+
+                '<div class="popup-info">' +
+
+                '<div>' +
+                '<i class="bi bi-calendar3"></i>' +
+                '<span>' +
+                escapeHtml(
+                    market.days ||
+                    "Not specified"
+                ) +
+                '</span>' +
+                '</div>' +
+
+                '<div>' +
+                '<i class="bi bi-clock"></i>' +
+                '<span>' +
+                escapeHtml(hours) +
+                '</span>' +
+                '</div>' +
+
+                '</div>' +
+
+                '<div class="popup-actions">' +
+
+                '<a href="' +
+                directionsUrl +
+                '" target="_blank" rel="noopener noreferrer" class="map-popup-btn primary">' +
+                '<i class="bi bi-sign-turn-right"></i>' +
+                '<span>Directions</span>' +
+                '</a>' +
+
+                mapButton +
+
+                '</div>' +
+
+                '</div>' +
+
+                '</div>';
+
+
+            marker.bindPopup(
+                popupHtml,
+                {
+                    maxWidth: 330,
+                    minWidth: 250,
+                    className:
+                        "customer-market-popup"
+                }
+            );
+
+        });
+
+
+        if (bounds.length === 1) {
+
+            customerMarketsMap.setView(
+                bounds[0],
+                14
+            );
+
+        }
+        else if (bounds.length > 1) {
+
+            customerMarketsMap.fitBounds(
+                bounds,
+                {
+                    padding: [35, 35],
+                    maxZoom: 14
+                }
+            );
+
+        }
+
+
+        setTimeout(function () {
+
+            customerMarketsMap.invalidateSize();
+
+        }, 300);
+
+    }
+
+
+    function focusMarketOnMap(lat, lng) {
+
+        if (!customerMarketsMap) {
+            return;
+        }
+
+
+        customerMarketsMap.setView(
+            [lat, lng],
+            16,
+            {
+                animate: true
+            }
+        );
+
+
+        const matchingMarket =
+            marketMapData.find(function (market) {
+
+                return Math.abs(
+                    Number(market.lat) - lat
+                ) < 0.000001 &&
+                Math.abs(
+                    Number(market.lng) - lng
+                ) < 0.000001;
+
+            });
+
+
+        if (matchingMarket &&
+            marketMarkers[matchingMarket.id]) {
+
+            setTimeout(function () {
+
+                marketMarkers[
+                    matchingMarket.id
+                ].openPopup();
+
+            }, 450);
+
+        }
+
+
+        const mapElement =
+            document.getElementById(
+                "customerMarketsMap"
+            );
+
+
+        if (mapElement) {
+
+            mapElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+        }
+
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    function showMarketDetails(
+        name,
+        location,
+        city,
+        days,
+        opening,
+        closing,
+        description) {
+
+        document.getElementById(
+            "modalMarketName"
+        ).textContent = name;
+
+
+        let fullLocation = location;
+
+
+        if (city &&
+            city.trim() !== "") {
+
+            fullLocation +=
+                ", " + city;
+
+        }
+
+
+        document.getElementById(
+            "modalLocation"
+        ).textContent = fullLocation;
+
+
+        document.getElementById(
+            "modalDays"
+        ).textContent =
+            days || "Not specified";
+
+
+        let hours =
+            "Not specified";
+
+
+        if (opening && closing) {
+
+            hours =
+                opening +
+                " - " +
+                closing;
+
+        }
+        else if (opening) {
+
+            hours =
+                "From " +
+                opening;
+
+        }
+        else if (closing) {
+
+            hours =
+                "Until " +
+                closing;
+
+        }
+
+
+        document.getElementById(
+            "modalHours"
+        ).textContent = hours;
+
+
+        document.getElementById(
+            "modalDescription"
+        ).textContent =
+            description ||
+            "No description available.";
+
+
+        document.getElementById(
+            "marketDetailsModal"
+        ).classList.add("show");
+
+
+        document.body.classList.add(
+            "modal-open"
+        );
+
+    }
+
+
+    function closeMarketDetails() {
+
+        document.getElementById(
+            "marketDetailsModal"
+        ).classList.remove("show");
+
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Escape") {
+                closeMarketDetails();
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeMarketsMap();
+
+        }
+    );
+
+</script>

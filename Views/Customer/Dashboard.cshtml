@@ -1,0 +1,332 @@
+﻿
+@model IdentityDemoApp.Models.CustomerProfile
+
+@{
+    ViewData["Title"] = "Customer Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/customer-dashboard.css" />
+
+<div class="customer-dashboard">
+
+    <section class="dashboard-hero">
+        <div class="hero-glow hero-glow-one"></div>
+        <div class="hero-glow hero-glow-two"></div>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <span class="welcome-badge">
+                    <i class="fa-solid fa-sparkles"></i>
+                    Welcome Back
+                </span>
+
+                <h1>
+                    Hello, <span>@Model.FullName</span>
+                </h1>
+
+                <p>
+                    Discover fresh products, trusted farmers and manage
+                    everything from your MarketLink dashboard.
+                </p>
+
+                <div class="hero-actions">
+                    <a asp-controller="Customer"
+                       asp-action="Products"
+                       class="primary-btn">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        Explore Products
+                    </a>
+
+                    <a asp-controller="Customer"
+                       asp-action="Profile"
+                       class="secondary-btn">
+                        <i class="fa-regular fa-user"></i>
+                        My Profile
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-ring ring-one"></div>
+                <div class="visual-ring ring-two"></div>
+
+                <div class="hero-icon">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+
+                <div class="floating-card floating-card-one">
+                    <i class="fa-solid fa-seedling"></i>
+                    <div>
+                        <strong>Fresh</strong>
+                        <span>Products</span>
+                    </div>
+                </div>
+
+                <div class="floating-card floating-card-two">
+                    <i class="fa-solid fa-star"></i>
+                    <div>
+                        <strong>Trusted</strong>
+                        <span>Farmers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+
+        <div class="section-heading">
+            <div>
+                <span class="section-label">Your Activity</span>
+                <h2>Overview</h2>
+            </div>
+
+            <span class="live-status">
+                <span></span>
+                Account Active
+            </span>
+        </div>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon orders">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <span class="stat-arrow">
+                        <i class="fa-solid fa-arrow-up-right"></i>
+                    </span>
+                </div>
+
+                <div class="stat-value">@ViewBag.OrderCount</div>
+                <div class="stat-title">My Orders</div>
+                <div class="stat-description">Total orders placed</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon products">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+                    <span class="stat-arrow">
+                        <i class="fa-solid fa-arrow-up-right"></i>
+                    </span>
+                </div>
+
+                <div class="stat-value">@ViewBag.FavouriteProducts</div>
+                <div class="stat-title">Favorite Products</div>
+                <div class="stat-description">Products you saved</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon farmers">
+                        <i class="fa-solid fa-tractor"></i>
+                    </div>
+                    <span class="stat-arrow">
+                        <i class="fa-solid fa-arrow-up-right"></i>
+                    </span>
+                </div>
+
+                <div class="stat-value">@ViewBag.FavouriteFarmers</div>
+                <div class="stat-title">Favorite Farmers</div>
+                <div class="stat-description">Farmers you follow</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon reviews">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <span class="stat-arrow">
+                        <i class="fa-solid fa-arrow-up-right"></i>
+                    </span>
+                </div>
+
+                <div class="stat-value">@ViewBag.ReviewCount</div>
+                <div class="stat-title">My Reviews</div>
+                <div class="stat-description">Your product feedback</div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="quick-section">
+
+        <div class="section-heading">
+            <div>
+                <span class="section-label">MarketLink</span>
+                <h2>Quick Access</h2>
+            </div>
+
+            <p>Everything you need, one click away.</p>
+        </div>
+
+        <div class="quick-grid">
+
+            <a asp-controller="Customer"
+               asp-action="Products"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>Products</h3>
+                    <p>Explore fresh products</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseMarkets"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>Browse Markets</h3>
+                    <p>Find nearby markets</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseVendors"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-tractor"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>Browse Vendors</h3>
+                    <p>Discover trusted farmers</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="FavoriteProducts"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>Favorite Products</h3>
+                    <p>View your saved products</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="FavoriteFarmers"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-user-group"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>Favorite Farmers</h3>
+                    <p>Manage favorite farmers</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="Cart"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>My Cart</h3>
+                    <p>Review your shopping cart</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="Order"
+               class="quick-card">
+
+                <div class="quick-icon">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+
+                <div class="quick-content">
+                    <h3>My Orders</h3>
+                    <p>Track your orders</p>
+                </div>
+
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="Reviews"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>Reviews</h3>
+                    <p>Manage your feedback</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+            <a asp-controller="Customer"
+               asp-action="Notifications"
+               class="quick-card">
+                <div class="quick-icon">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+                <div class="quick-content">
+                    <h3>Notifications</h3>
+                    <p>Stay updated</p>
+                </div>
+                <div class="quick-arrow">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <section class="dashboard-footer-card">
+        <div class="footer-card-icon">
+            <i class="fa-solid fa-leaf"></i>
+        </div>
+
+        <div>
+            <span>MarketLink</span>
+            <h3>Fresh products. Trusted farmers. Better shopping.</h3>
+            <p>
+                Connect with local farmers and discover quality products
+                through one simple marketplace.
+            </p>
+        </div>
+
+        <a asp-controller="Customer"
+           asp-action="Products"
+           class="footer-card-btn">
+            Start Shopping
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </section>
+
+</div>

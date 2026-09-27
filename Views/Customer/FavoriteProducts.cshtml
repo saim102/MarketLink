@@ -1,0 +1,507 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.FavouriteProduct>
+
+@{
+    ViewData["Title"] = "Favorite Products";
+
+    var products = Model?.Where(x => x.Product != null)
+                         .Select(x => x)
+                         .ToList()
+                     ?? new List<IdentityDemoApp.Models.FavouriteProduct>();
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-FavoriteProducts.css"
+      asp-append-version="true" />
+
+<div class="favorite-products-page">
+
+    <section class="products-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-icon">
+                <i class="bi bi-bag-heart-fill"></i>
+            </div>
+
+            <div>
+                <span class="hero-label">CUSTOMER COLLECTION</span>
+
+                <h1>Favorite Products</h1>
+
+                <p>
+                    Keep your favorite farm products saved and easily
+                    access them whenever you need them.
+                </p>
+            </div>
+
+        </div>
+
+        <a asp-controller="Customer"
+           asp-action="Dashboard"
+           class="dashboard-btn">
+            <i class="bi bi-grid-1x2-fill"></i>
+            Dashboard
+        </a>
+
+    </section>
+
+    @if (products.Any())
+    {
+        <section class="products-toolbar">
+
+            <div class="toolbar-info">
+
+                <div class="toolbar-icon">
+                    <i class="bi bi-heart-fill"></i>
+                </div>
+
+                <div>
+                    <span>Saved Products</span>
+                    <strong>@products.Count</strong>
+                </div>
+
+            </div>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseProducts"
+               class="browse-products-btn">
+                <i class="bi bi-shop-window"></i>
+                Browse Products
+            </a>
+
+        </section>
+
+        <section class="favorite-products-grid">
+
+            @foreach (var favorite in products)
+            {
+                var product = favorite.Product;
+
+                var modalId = $"productModal_{product!.ProductId}";
+
+                <article class="product-card">
+
+                    <div class="product-visual">
+
+                        <div class="product-icon">
+                            <i class="bi bi-basket2-fill"></i>
+                        </div>
+
+                        <span class="favorite-heart">
+                            <i class="bi bi-heart-fill"></i>
+                        </span>
+
+                        <span class="available-badge">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Available
+                        </span>
+
+                    </div>
+
+                    <div class="product-body">
+
+                        <div class="product-category">
+
+                            <i class="bi bi-tag-fill"></i>
+
+                            <span>
+                                @(product.Category?.CategoryName ?? "Farm Product")
+                            </span>
+
+                        </div>
+
+                        <h2>@product.ProductName</h2>
+
+                        <p class="product-description">
+
+                            @if (!string.IsNullOrWhiteSpace(product.Description))
+                            {
+                                @product.Description
+                            }
+                            else
+                            {
+                                <span>
+                                    Fresh agricultural product available
+                                    through MarketLink.
+                                </span>
+                            }
+
+                        </p>
+
+                        <div class="product-price-row">
+
+                            <div class="price-box">
+
+                                <span>Price</span>
+
+                                <strong>
+                                    Rs. @product.Price.ToString("N2")
+                                </strong>
+
+                                <small>
+                                    / @product.Unit
+                                </small>
+
+                            </div>
+
+                            <div class="unit-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="product-meta">
+
+                            <div class="meta-item">
+
+                                <div class="meta-icon">
+                                    <i class="bi bi-person-badge-fill"></i>
+                                </div>
+
+                                <div>
+                                    <span>Farmer</span>
+
+                                    <strong>
+                                        @(product.VendorProfile?.FarmName ?? "Farmer")
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="meta-item">
+
+                                <div class="meta-icon">
+                                    <i class="bi bi-calendar-check-fill"></i>
+                                </div>
+
+                                <div>
+                                    <span>Saved</span>
+
+                                    <strong>
+                                        @favorite.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="product-actions">
+
+                        <button type="button"
+                                class="details-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#@modalId">
+
+                            <i class="bi bi-eye-fill"></i>
+                            View Details
+
+                        </button>
+
+                        <form asp-controller="Customer"
+                              asp-action="ToggleFavoriteProduct"
+                              method="post"
+                              class="remove-favorite-form">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="productId"
+                                   value="@product.ProductId" />
+
+                            <button type="submit"
+                                    class="remove-favorite-btn"
+                                    onclick="return confirmRemoveProduct('@product.ProductName');">
+
+                                <i class="bi bi-heartbreak-fill"></i>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+            }
+
+        </section>
+    }
+    else
+    {
+        <section class="empty-products">
+
+            <div class="empty-visual">
+
+                <div class="empty-main-icon">
+                    <i class="bi bi-bag-heart"></i>
+                </div>
+
+                <span class="floating-product-icon icon-one">
+                    <i class="bi bi-flower1"></i>
+                </span>
+
+                <span class="floating-product-icon icon-two">
+                    <i class="bi bi-leaf-fill"></i>
+                </span>
+
+                <span class="floating-product-icon icon-three">
+                    <i class="bi bi-basket-fill"></i>
+                </span>
+
+            </div>
+
+            <span class="empty-label">YOUR COLLECTION</span>
+
+            <h2>No Favorite Products Yet</h2>
+
+            <p>
+                You haven't added any products to your favorites.
+                Explore fresh agricultural products and save the ones
+                you want to find quickly later.
+            </p>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseProducts"
+               class="explore-products-btn">
+
+                <i class="bi bi-compass-fill"></i>
+                Explore Products
+
+            </a>
+
+        </section>
+    }
+
+</div>
+
+@if (products.Any())
+{
+    foreach (var favorite in products)
+    {
+        var product = favorite.Product;
+
+        var modalId = $"productModal_{product!.ProductId}";
+
+        <div class="modal fade product-modal"
+             id="@modalId"
+             tabindex="-1"
+             aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <div class="modal-title-area">
+
+                            <div class="modal-product-icon">
+                                <i class="bi bi-basket2-fill"></i>
+                            </div>
+
+                            <div>
+
+                                <span>FAVORITE PRODUCT</span>
+
+                                <h3>@product.ProductName</h3>
+
+                            </div>
+
+                        </div>
+
+                        <button type="button"
+                                class="modal-close"
+                                data-bs-dismiss="modal">
+
+                            <i class="bi bi-x-lg"></i>
+
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="modal-status">
+
+                            <i class="bi bi-heart-fill"></i>
+
+                            Saved to Favorites
+
+                        </div>
+
+                        <div class="modal-details-grid">
+
+                            <div class="modal-detail">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-box-seam-fill"></i>
+                                </div>
+
+                                <div>
+                                    <span>Product</span>
+                                    <strong>@product.ProductName</strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-tags-fill"></i>
+                                </div>
+
+                                <div>
+                                    <span>Category</span>
+                                    <strong>
+                                        @(product.Category?.CategoryName ?? "Not specified")
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+
+                                <div>
+                                    <span>Farmer</span>
+                                    <strong>
+                                        @(product.VendorProfile?.FarmName ?? "Not specified")
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-currency-rupee"></i>
+                                </div>
+
+                                <div>
+                                    <span>Price</span>
+                                    <strong>
+                                        Rs. @product.Price.ToString("N2")
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-rulers"></i>
+                                </div>
+
+                                <div>
+                                    <span>Unit</span>
+                                    <strong>@product.Unit</strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-calendar-heart-fill"></i>
+                                </div>
+
+                                <div>
+                                    <span>Saved On</span>
+                                    <strong>
+                                        @favorite.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="product-description-box">
+
+                            <div class="description-title">
+
+                                <i class="bi bi-info-circle-fill"></i>
+
+                                Product Description
+
+                            </div>
+
+                            <p>
+
+                                @if (!string.IsNullOrWhiteSpace(product.Description))
+                                {
+                                    @product.Description
+                                }
+                                else
+                                {
+                                    <span>
+                                        No description has been provided for this product.
+                                    </span>
+                                }
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="modal-close-btn"
+                                data-bs-dismiss="modal">
+
+                            <i class="bi bi-check-lg"></i>
+                            Done
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+}
+
+@section Scripts {
+
+    <script>
+        function confirmRemoveProduct(productName) {
+            return confirm(
+                "Remove " + productName + " from your favorite products?"
+            );
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const cards = document.querySelectorAll(".product-card");
+
+            cards.forEach((card, index) => {
+                card.style.animationDelay = (index * 0.08) + "s";
+            });
+
+            const successMessage = '@TempData["Success"]';
+
+            if (successMessage && typeof Swal !== "undefined") {
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: successMessage,
+                    timer: 2200,
+                    showConfirmButton: false
+                });
+
+            }
+
+        });
+    </script>
+}

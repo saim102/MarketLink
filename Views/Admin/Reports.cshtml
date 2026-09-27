@@ -1,0 +1,1065 @@
+﻿@using IdentityDemoApp.Models
+@{
+    ViewData["Title"] = "Reports & Analytics";
+
+    var topProducts = ViewBag.TopProducts
+        as IEnumerable<dynamic>
+        ?? Enumerable.Empty<dynamic>();
+
+    var topVendors = ViewBag.TopVendors
+        as IEnumerable<dynamic>
+        ?? Enumerable.Empty<dynamic>();
+
+    var dailyOrders = ViewBag.DailyOrders
+        as IEnumerable<dynamic>
+        ?? Enumerable.Empty<dynamic>();
+
+    var recentOrders = ViewBag.RecentOrders
+        as IEnumerable<Order>
+        ?? Enumerable.Empty<Order>();
+
+    var reportHistory = ViewBag.ReportHistory
+        as IEnumerable<Report>
+        ?? Enumerable.Empty<Report>();
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Reports.css"
+      asp-append-version="true" />
+
+<div class="reports-page">
+
+    <!-- HEADER -->
+    <div class="reports-header">
+
+        <div>
+            <div class="reports-title">
+                <i class="fas fa-chart-line"></i>
+
+                <div>
+                    <h1>Reports & Analytics</h1>
+
+                    <p>
+                        Monitor MarketLink platform performance,
+                        orders and activity.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="reports-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="reports-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- DATE / REPORT FILTER -->
+    <div class="reports-filter-card">
+
+        <div class="filter-heading">
+
+            <div class="filter-icon">
+                <i class="fas fa-filter"></i>
+            </div>
+
+            <div>
+                <h3>Report Filters</h3>
+
+                <p>
+                    Select a period and report type.
+                </p>
+            </div>
+
+        </div>
+
+        <form asp-controller="Admin"
+              asp-action="Reports"
+              method="get"
+              class="reports-filter-form">
+
+            <div class="filter-group">
+
+                <label>Report Type</label>
+
+                <select name="reportType"
+                        class="form-control">
+
+                    <option value="All"
+                            selected="@(ViewBag.ReportType == "All")">
+                        All Orders
+                    </option>
+
+                    <option value="Pending Orders"
+                            selected="@(ViewBag.ReportType == "Pending Orders")">
+                        Pending Orders
+                    </option>
+
+                    <option value="Completed Orders"
+                            selected="@(ViewBag.ReportType == "Completed Orders")">
+                        Completed Orders
+                    </option>
+
+                    <option value="Cancelled Orders"
+                            selected="@(ViewBag.ReportType == "Cancelled Orders")">
+                        Cancelled Orders
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="filter-group">
+
+                <label>From Date</label>
+
+                <input type="date"
+                       name="fromDate"
+                       value="@ViewBag.FromDate"
+                       class="form-control" />
+
+            </div>
+
+            <div class="filter-group">
+
+                <label>To Date</label>
+
+                <input type="date"
+                       name="toDate"
+                       value="@ViewBag.ToDate"
+                       class="form-control" />
+
+            </div>
+
+            <div class="filter-actions">
+
+                <button type="submit"
+                        class="reports-filter-btn">
+
+                    <i class="fas fa-chart-bar"></i>
+
+                    Generate Analytics
+
+                </button>
+
+                <a asp-controller="Admin"
+                   asp-action="Reports"
+                   class="reports-reset-btn">
+
+                    <i class="fas fa-rotate-left"></i>
+
+                    Reset
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- PLATFORM STATISTICS -->
+    <div class="section-heading">
+
+        <div>
+            <span class="section-label">
+                PLATFORM OVERVIEW
+            </span>
+
+            <h2>Overall Statistics</h2>
+        </div>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon vendors">
+                <i class="fas fa-tractor"></i>
+            </div>
+
+            <div>
+                <span>Total Vendors</span>
+                <strong>@ViewBag.TotalVendors</strong>
+                <small>
+                    @ViewBag.ApprovedVendors approved
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon customers">
+                <i class="fas fa-users"></i>
+            </div>
+
+            <div>
+                <span>Total Customers</span>
+                <strong>@ViewBag.TotalCustomers</strong>
+                <small>Registered customers</small>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon markets">
+                <i class="fas fa-store"></i>
+            </div>
+
+            <div>
+                <span>Total Markets</span>
+                <strong>@ViewBag.TotalMarkets</strong>
+                <small>
+                    @ViewBag.ActiveMarkets active
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon products">
+                <i class="fas fa-leaf"></i>
+            </div>
+
+            <div>
+                <span>Total Products</span>
+                <strong>@ViewBag.TotalProducts</strong>
+                <small>
+                    @ViewBag.ApprovedProducts approved
+                </small>
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon reviews">
+                <i class="fas fa-star"></i>
+            </div>
+
+            <div>
+                <span>Total Reviews</span>
+                <strong>@ViewBag.TotalReviews</strong>
+                <small>
+                    @ViewBag.ApprovedReviews approved
+                </small>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ORDER ANALYTICS -->
+    <div class="section-heading section-space">
+
+        <div>
+            <span class="section-label">
+                ORDER ANALYTICS
+            </span>
+
+            <h2>
+                @ViewBag.TotalOrders Orders
+            </h2>
+        </div>
+
+    </div>
+
+    <div class="analytics-grid">
+
+        <div class="analytics-card">
+
+            <div class="analytics-card-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+
+            <div>
+                <span>Total Orders</span>
+                <strong>@ViewBag.TotalOrders</strong>
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-card-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+
+            <div>
+                <span>Pending</span>
+                <strong>@ViewBag.PendingOrders</strong>
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-card-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <div>
+                <span>Completed</span>
+                <strong>@ViewBag.CompletedOrders</strong>
+            </div>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <div class="analytics-card-icon">
+                <i class="fas fa-ban"></i>
+            </div>
+
+            <div>
+                <span>Cancelled</span>
+                <strong>@ViewBag.CancelledOrders</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- AMOUNT SUMMARY -->
+    <div class="amount-grid">
+
+        <div class="amount-card">
+
+            <span>Total Order Amount</span>
+
+            <strong>
+                Rs. @(((decimal)ViewBag.TotalOrderAmount)
+                                .ToString("N2"))
+            </strong>
+
+            <small>
+                Selected date range
+            </small>
+
+        </div>
+
+
+        <div class="amount-card">
+
+            <span>Completed Amount</span>
+
+            <strong>
+                Rs. @(((decimal)ViewBag.CompletedOrderAmount)
+                                .ToString("N2"))
+            </strong>
+
+            <small>
+                Completed orders
+            </small>
+
+        </div>
+
+
+        <div class="amount-card">
+
+            <span>Pending Amount</span>
+
+            <strong>
+                Rs. @(((decimal)ViewBag.PendingOrderAmount)
+                                .ToString("N2"))
+            </strong>
+
+            <small>
+                Pending orders
+            </small>
+
+        </div>
+
+
+        <div class="amount-card">
+
+            <span>Average Order Value</span>
+
+            <strong>
+                Rs. @(((decimal)ViewBag.AverageOrderValue)
+                                .ToString("N2"))
+            </strong>
+
+            <small>
+                Average per order
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOP PRODUCTS / VENDORS -->
+    <div class="two-column-grid section-space">
+
+        <!-- TOP PRODUCTS -->
+        <div class="report-card">
+
+            <div class="report-card-header">
+
+                <div>
+                    <span class="section-label">
+                        PRODUCT PERFORMANCE
+                    </span>
+
+                    <h3>Top Products</h3>
+                </div>
+
+                <div class="header-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="reports-table">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Sales</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int productNumber = 1;
+                        }
+
+                        @foreach (var item in topProducts)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="table-number">
+                                        @productNumber
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.ProductName
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @item.TotalQuantity
+                                </td>
+
+                                <td>
+                                    Rs. @item.TotalSales.ToString("N2")
+                                </td>
+
+                            </tr>
+
+                            productNumber++;
+                        }
+
+                        @if (!topProducts.Any())
+                        {
+                            <tr>
+                                <td colspan="4"
+                                    class="empty-cell">
+                                    No product sales found.
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOP VENDORS -->
+        <div class="report-card">
+
+            <div class="report-card-header">
+
+                <div>
+                    <span class="section-label">
+                        VENDOR PERFORMANCE
+                    </span>
+
+                    <h3>Top Vendors</h3>
+                </div>
+
+                <div class="header-icon">
+                    <i class="fas fa-tractor"></i>
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="reports-table">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Vendor</th>
+                            <th>Items</th>
+                            <th>Sales</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int vendorNumber = 1;
+                        }
+
+                        @foreach (var item in topVendors)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="table-number">
+                                        @vendorNumber
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.FarmName
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @item.TotalItems
+                                </td>
+
+                                <td>
+                                    Rs. @item.TotalSales.ToString("N2")
+                                </td>
+
+                            </tr>
+
+                            vendorNumber++;
+                        }
+
+                        @if (!topVendors.Any())
+                        {
+                            <tr>
+                                <td colspan="4"
+                                    class="empty-cell">
+                                    No vendor sales found.
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DAILY ORDERS -->
+    <div class="report-card section-space">
+
+        <div class="report-card-header">
+
+            <div>
+                <span class="section-label">
+                    DAILY ACTIVITY
+                </span>
+
+                <h3>Orders by Date</h3>
+            </div>
+
+            <div class="header-icon">
+                <i class="fas fa-calendar-days"></i>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="reports-table">
+
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Orders</th>
+                        <th>Total Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var day in dailyOrders)
+                    {
+                        <tr>
+
+                            <td>
+                                @day.Date.ToString("dd MMM yyyy")
+                            </td>
+
+                            <td>
+                                <span class="status-pill">
+                                    @day.Orders
+                                </span>
+                            </td>
+
+                            <td>
+                                <strong>
+                                    Rs. @day.Amount.ToString("N2")
+                                </strong>
+                            </td>
+
+                        </tr>
+                    }
+
+                    @if (!dailyOrders.Any())
+                    {
+                        <tr>
+                            <td colspan="3"
+                                class="empty-cell">
+                                No orders found for the selected period.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- RECENT ORDERS -->
+    <div class="report-card section-space">
+
+        <div class="report-card-header">
+
+            <div>
+                <span class="section-label">
+                    RECENT ACTIVITY
+                </span>
+
+                <h3>Recent Orders</h3>
+            </div>
+
+            <a asp-controller="Admin"
+               asp-action="Orders"
+               class="view-all-btn">
+
+                View All
+                <i class="fas fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="reports-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var order in recentOrders)
+                    {
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    @order.OrderNumber
+                                </strong>
+                            </td>
+
+                            <td>
+                                @(order.CustomerProfile?.FullName
+                                                            ?? "Unknown")
+                        </td>
+
+                            <td>
+                                @order.OrderDate.ToLocalTime().ToString("dd MMM yyyy")
+                            </td>
+
+                            <td>
+                                Rs.
+                                @order.TotalAmount.ToString("N2")
+                            </td>
+
+                            <td>
+
+                                <span class="order-status
+                                    @order.Status
+                                    .ToLower()">
+
+                                    @order.Status
+
+                                </span>
+
+                            </td>
+
+                        </tr>
+                                        }
+
+                    @if (!recentOrders.Any())
+                    {
+                        <tr>
+                            <td colspan="5"
+                                class="empty-cell">
+                                No recent orders found.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- GENERATE REPORT -->
+    <div class="generate-report-card section-space">
+
+        <div class="generate-content">
+
+            <div class="generate-icon">
+                <i class="fas fa-file-circle-plus"></i>
+            </div>
+
+            <div>
+
+                <span class="section-label">
+                    REPORT HISTORY
+                </span>
+
+                <h3>
+                    Generate & Save Report
+                </h3>
+
+                <p>
+                    Save the selected report period and type
+                    in the report history.
+                </p>
+
+            </div>
+
+        </div>
+
+        <form asp-controller="Admin"
+              asp-action="GenerateReport"
+              method="post"
+              class="generate-form">
+
+            @Html.AntiForgeryToken()
+
+            <div class="generate-fields">
+
+                <div class="filter-group">
+
+                    <label>Report Type</label>
+
+                    <select name="reportType"
+                            class="form-control">
+
+                        <option value="General">
+                            General
+                        </option>
+
+                        <option value="All Orders">
+                            All Orders
+                        </option>
+
+                        <option value="Pending Orders">
+                            Pending Orders
+                        </option>
+
+                        <option value="Completed Orders">
+                            Completed Orders
+                        </option>
+
+                        <option value="Cancelled Orders">
+                            Cancelled Orders
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="filter-group">
+
+                    <label>From Date</label>
+
+                    <input type="date"
+                           name="fromDate"
+                           value="@ViewBag.FromDate"
+                           required
+                           class="form-control" />
+
+                </div>
+
+                <div class="filter-group">
+
+                    <label>To Date</label>
+
+                    <input type="date"
+                           name="toDate"
+                           value="@ViewBag.ToDate"
+                           required
+                           class="form-control" />
+
+                </div>
+
+                <div class="filter-group description-group">
+
+                    <label>Description</label>
+
+                    <input type="text"
+                           name="description"
+                           maxlength="1000"
+                           placeholder="Optional report description..."
+                           class="form-control" />
+
+                </div>
+
+            </div>
+
+            <button type="submit"
+                    class="generate-btn">
+
+                <i class="fas fa-file-export"></i>
+
+                Save Report
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- REPORT HISTORY TABLE -->
+    <div class="report-card section-space">
+
+        <div class="report-card-header">
+
+            <div>
+                <span class="section-label">
+                    SAVED REPORTS
+                </span>
+
+                <h3>Report History</h3>
+            </div>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="reports-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Type</th>
+                        <th>Period</th>
+                        <th>Description</th>
+                        <th>Generated By</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var report in reportHistory)
+                    {
+                        <tr>
+
+                            <td>
+                                <span class="report-type">
+                                    @report.ReportType
+                                </span>
+                            </td>
+
+                            <td>
+                                @report.FromDate.ToString("dd MMM yyyy")
+                                -
+                                @report.ToDate.ToString("dd MMM yyyy")
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrWhiteSpace(
+                                                            report.Description)
+                                                            ? "—"
+                                                            : report.Description)
+                                                                             </td>
+
+                            <td>
+                                @(report.GeneratedByUser?.FullName
+                                                            ?? "Admin")
+                        </td>
+
+                            <td>
+                                @report.CreatedAt.ToLocalTime().ToString("dd MMM yyyy hh:mm tt")
+                            </td>
+
+                            <td>
+
+                                <form asp-controller="Admin"
+                                      asp-action="RemoveReport"
+                                      method="post"
+                                      class="delete-report-form">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@report.ReportId" />
+
+                                    <button type="submit"
+                                            class="delete-report-btn"
+                                            title="Remove Report">
+
+                                        <i class="fas fa-trash"></i>
+
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+                                        }
+
+                    @if (!reportHistory.Any())
+                    {
+                        <tr>
+                            <td colspan="6"
+                                class="empty-cell">
+                                No saved reports yet.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- SWEETALERT -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    document.querySelectorAll(".delete-report-form")
+        .forEach(function (form) {
+
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Remove Report?",
+                    text: "This report history record will be deleted.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Remove",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#0B3037"
+                }).then(function (result) {
+
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+
+    @if (TempData["Success"] != null)
+    {
+            <text>
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: "@TempData["Success"]",
+                    confirmButtonColor: "#0B3037"
+                });
+
+            </text>
+    }
+
+
+    @if (TempData["Error"] != null)
+    {
+            <text>
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "@TempData["Error"]",
+                    confirmButtonColor: "#0B3037"
+                });
+
+            </text>
+    }
+
+</script>

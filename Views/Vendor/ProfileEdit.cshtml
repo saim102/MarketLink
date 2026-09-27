@@ -1,0 +1,235 @@
+﻿
+@model IdentityDemoApp.Models.VendorProfile
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<link rel="stylesheet" href="~/css/vendor-profile.css" asp-append-version="true" />
+
+<div class="vendor-profile-page">
+
+   
+    <div class="profile-header edit-header">
+
+        <div class="profile-header-content">
+
+            <div class="profile-avatar">
+                <i class="fa-solid fa-user-pen"></i>
+            </div>
+
+            <div class="profile-heading">
+
+                <span>Vendor Account</span>
+
+                <h1>Edit Profile</h1>
+
+                <p>
+                    Keep your farm information accurate and up to date.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+  
+    <div class="edit-profile-card">
+
+        <div class="form-card-heading">
+
+            <div class="title-icon">
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+
+            <div>
+                <span>Farm Information</span>
+                <h3>Update Your Details</h3>
+            </div>
+
+        </div>
+
+
+        <form asp-controller="Vendor"
+              asp-action="ProfileEdit"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary"></div>
+
+
+          
+            <div class="form-group">
+
+                <label asp-for="FarmName">
+                    <i class="fa-solid fa-tractor"></i>
+                    Farm Name
+                </label>
+
+                <input asp-for="FarmName"
+                       class="form-control"
+                       placeholder="Enter your farm name" />
+
+                <span asp-validation-for="FarmName"
+                      class="field-error"></span>
+
+            </div>
+
+
+        
+            <div class="form-group">
+
+                <label asp-for="Address">
+                    <i class="fa-solid fa-location-dot"></i>
+                    Address
+                </label>
+
+                <input asp-for="Address"
+                       class="form-control"
+                       placeholder="Enter your complete farm address" />
+
+                <span asp-validation-for="Address"
+                      class="field-error"></span>
+
+            </div>
+
+
+            <div class="form-row">
+
+              
+                <div class="form-group">
+
+                    <label asp-for="City">
+                        <i class="fa-solid fa-city"></i>
+                        City
+                    </label>
+
+                    <input asp-for="City"
+                           class="form-control"
+                           placeholder="Enter city" />
+
+                    <span asp-validation-for="City"
+                          class="field-error"></span>
+
+                </div>
+
+
+           
+                <div class="form-group">
+
+                    <label asp-for="Province">
+                        <i class="fa-solid fa-map"></i>
+                        Province
+                    </label>
+
+                    <input asp-for="Province"
+                           class="form-control"
+                           placeholder="Enter province" />
+
+                    <span asp-validation-for="Province"
+                          class="field-error"></span>
+
+                </div>
+
+            </div>
+
+
+         
+            <div class="form-group">
+
+                <label asp-for="FarmDescription">
+                    <i class="fa-solid fa-align-left"></i>
+                    Farm Description
+                </label>
+
+                <textarea asp-for="FarmDescription"
+                          class="form-control description-input"
+                          rows="5"
+                          placeholder="Tell customers a little about your farm..."></textarea>
+
+                <span asp-validation-for="FarmDescription"
+                      class="field-error"></span>
+
+                <small>
+                    Describe your farm, products, farming practices or anything useful for customers.
+                </small>
+
+            </div>
+
+
+           
+            <div class="readonly-status">
+
+                <div class="readonly-icon">
+
+                    @if (Model.IsApproved)
+                    {
+                        <i class="fa-solid fa-circle-check"></i>
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-clock"></i>
+                    }
+
+                </div>
+
+                <div>
+
+                    <span>Approval Status</span>
+
+                    <strong>
+                        @(Model.IsApproved
+                                                ? "Approved"
+                                                : "Pending Approval")
+                    </strong>
+
+                    <p>
+                        This status is managed by the administrator.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a asp-controller="Vendor"
+                   asp-action="Profile"
+                   class="cancel-btn">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="save-profile-btn">
+
+                    <i class="fa-solid fa-check"></i>
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}
+

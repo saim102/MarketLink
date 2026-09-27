@@ -1,0 +1,423 @@
+﻿@model IdentityDemoApp.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+
+    var reviews = ViewBag.Reviews as IEnumerable<IdentityDemoApp.Models.Review>
+                   ?? Enumerable.Empty<IdentityDemoApp.Models.Review>();
+
+    var averageRating = ViewBag.AverageRating is double
+        ? (double)ViewBag.AverageRating
+        : Convert.ToDouble(ViewBag.AverageRating ?? 0);
+
+    var reviewCount = Convert.ToInt32(ViewBag.ReviewCount ?? 0);
+
+    var hasPurchased = Convert.ToBoolean(ViewBag.HasPurchased ?? false);
+    var hasReviewed = Convert.ToBoolean(ViewBag.HasReviewed ?? false);
+    var isFavourite = Convert.ToBoolean(ViewBag.IsFavourite ?? false);
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-ProductDetails.css"
+      asp-append-version="true" />
+
+<div class="product-details-page">
+
+    <div class="product-details-container">
+
+        <a asp-controller="Customer"
+           asp-action="Products"
+           class="back-products-link">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Products
+        </a>
+
+        <section class="product-detail-card">
+
+            <div class="product-detail-visual">
+
+                <div class="visual-glow visual-glow-one"></div>
+                <div class="visual-glow visual-glow-two"></div>
+
+                <div class="product-detail-icon">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+
+                <span class="detail-available-badge">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Available
+                </span>
+
+                <div class="floating-detail-icon detail-icon-one">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+
+                <div class="floating-detail-icon detail-icon-two">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+
+            </div>
+
+            <div class="product-detail-content">
+
+                <div class="detail-category">
+                    <i class="fa-solid fa-tag"></i>
+                    @(Model.Category?.CategoryName ?? "General")
+                </div>
+
+                <h1>@Model.ProductName</h1>
+
+                <div class="detail-farmer">
+                    <div class="farmer-icon">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+
+                    <div>
+                        <span>Supplied by</span>
+                        <strong>
+                            @(Model.VendorProfile?.FarmName ?? "Local Farmer")
+                        </strong>
+                    </div>
+                </div>
+
+                <p class="detail-description">
+                    @(string.IsNullOrWhiteSpace(Model.Description)
+                                        ? "Fresh quality product supplied by a trusted local farmer."
+                                        : Model.Description)
+                </p>
+
+                <div class="detail-rating">
+
+                    <div class="detail-stars">
+                        @for (var star = 1; star <= 5; star++)
+                        {
+                            if (star <= Math.Round(averageRating))
+                            {
+                                <i class="fa-solid fa-star filled"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-regular fa-star"></i>
+                            }
+                        }
+                    </div>
+
+                    <strong>
+                        @averageRating.ToString("0.0")
+                    </strong>
+
+                    <span>
+                        (@reviewCount
+                        @(reviewCount == 1 ? "Review" : "Reviews"))
+                    </span>
+
+                </div>
+
+                <div class="detail-info-grid">
+
+                    <div class="detail-info-box">
+                        <span class="info-icon">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </span>
+
+                        <div>
+                            <small>Unit</small>
+                            <strong>@Model.Unit</strong>
+                        </div>
+                    </div>
+
+                    <div class="detail-info-box">
+                        <span class="info-icon">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </span>
+
+                        <div>
+                            <small>Status</small>
+                            <strong>Available</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="detail-price">
+                    <span>Price</span>
+                    <strong>
+                        Rs. @Model.Price.ToString("N2")
+                    </strong>
+                    <small>/ @Model.Unit</small>
+                </div>
+
+                <div class="detail-actions">
+
+                    <form asp-controller="Customer"
+                          asp-action="ToggleFavoriteProduct"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="productId"
+                               value="@Model.ProductId" />
+
+                        <button type="submit"
+                                class="detail-favourite-btn @(isFavourite ? "active" : "")">
+
+                            <i class="fa-@(isFavourite ? "solid" : "regular") fa-heart"></i>
+
+                            @(isFavourite
+                                                        ? "Saved"
+                                                        : "Favourite")
+                        </button>
+
+                    </form>
+
+                    <form asp-controller="Customer"
+                          asp-action="AddToCart"
+                          method="post"
+                          class="detail-cart-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="productId"
+                               value="@Model.ProductId" />
+
+                        <input type="number"
+                               name="quantity"
+                               value="1"
+                               min="1"
+                               step="1"
+                               class="quantity-input" />
+
+                        <button type="submit"
+                                class="detail-cart-btn">
+
+                            <i class="fa-solid fa-cart-plus"></i>
+                            Add to Cart
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+                @if (hasPurchased && !hasReviewed)
+                {
+                    <div class="write-review-box">
+
+                        <div class="write-review-icon">
+                            <i class="fa-solid fa-star"></i>
+                        </div>
+
+                        <div class="write-review-content">
+
+                            <strong>
+                                Have you tried this product?
+                            </strong>
+
+                            <span>
+                                Share your experience with other customers.
+                            </span>
+
+                        </div>
+
+                        <a asp-controller="Customer"
+                           asp-action="CreateReview"
+                           asp-route-productId="@Model.ProductId"
+                           class="write-review-btn">
+
+                            <i class="fa-solid fa-pen"></i>
+                            Write a Review
+
+                        </a>
+
+                    </div>
+                }
+                else if (hasReviewed)
+                {
+                    <div class="review-submitted-box">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <div>
+                            <strong>Review Submitted</strong>
+                            <span>
+                                You have already reviewed this product.
+                            </span>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+
+        </section>
+
+        <section class="customer-reviews-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-label">
+                        Customer Feedback
+                    </span>
+
+                    <h2>
+                        Reviews & Ratings
+                    </h2>
+
+                    <p>
+                        See what customers are saying about this product.
+                    </p>
+                </div>
+
+                <div class="review-summary-badge">
+                    <i class="fa-solid fa-star"></i>
+
+                    <strong>
+                        @averageRating.ToString("0.0")
+                    </strong>
+
+                    <span>
+                        @reviewCount
+                        @(reviewCount == 1 ? "review" : "reviews")
+                    </span>
+                </div>
+
+            </div>
+
+            @if (reviews.Any())
+            {
+                <div class="customer-reviews-grid">
+
+                    @foreach (var review in reviews)
+                    {
+                        var customerName =
+                        review.CustomerProfile?.FullName
+                        ?? "Customer";
+
+                        <article class="customer-review-card">
+
+                            <div class="customer-review-top">
+
+                                <div class="customer-avatar">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+
+                                <div class="customer-review-author">
+
+                                    <strong>
+                                        @customerName
+                                    </strong>
+
+                                    <span>
+                                        @review.CreatedAt
+                                        .ToLocalTime()
+                                        .ToString("dd MMM yyyy")
+                                    </span>
+
+                                </div>
+
+                                <div class="customer-review-rating">
+
+                                    @for (var star = 1; star <= 5; star++)
+                                    {
+                                        if (star <= review.Rating)
+                                        {
+                                            <i class="fa-solid fa-star filled"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-regular fa-star"></i>
+                                        }
+                                    }
+
+                            </div>
+
+                        </div>
+
+                        <div class="customer-review-comment">
+
+                            <i class="fa-solid fa-quote-left"></i>
+
+                            <p>
+                                @(string.IsNullOrWhiteSpace(review.Comment)
+                                                            ? "No comment added."
+                                                            : review.Comment)
+                        </p>
+
+                            </div>
+
+                    @if (review.ReviewResponses != null &&
+                                        review.ReviewResponses.Any())
+                            {
+                                <div class="customer-review-response">
+
+                                    <div class="response-icon">
+                                        <i class="fa-solid fa-reply"></i>
+                                    </div>
+
+                                    <div>
+                                        <strong>
+                                            Response
+                                        </strong>
+
+                                        @foreach (var response in review.ReviewResponses
+                                                                    .OrderByDescending(r => r.CreatedAt))
+                                        {
+                                            <p>
+                                                @response.Response
+                                            </p>
+                                        }
+                                    </div>
+
+                                </div>
+                            }
+
+                        </article>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="no-reviews">
+
+                    <div class="no-reviews-icon">
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+
+                    <span>
+                        No Reviews Yet
+                    </span>
+
+                    <h3>
+                        Be the first to review this product
+                    </h3>
+
+                    <p>
+                        Customer feedback will appear here after
+                        reviews are approved.
+                    </p>
+
+                    @if (hasPurchased && !hasReviewed)
+                    {
+                        <a asp-controller="Customer"
+                           asp-action="CreateReview"
+                           asp-route-productId="@Model.ProductId"
+                           class="first-review-btn">
+
+                            <i class="fa-solid fa-star"></i>
+                            Write the First Review
+
+                        </a>
+                    }
+
+                </div>
+            }
+
+        </section>
+
+    </div>
+
+</div>

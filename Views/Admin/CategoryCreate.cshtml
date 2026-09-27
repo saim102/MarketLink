@@ -1,0 +1,157 @@
+﻿@model IdentityDemoApp.Models.Category
+
+@{
+    ViewData["Title"] = "Add Category";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Categories.css"
+      asp-append-version="true" />
+
+<div class="category-form-page">
+
+    <div class="category-form-header">
+
+        <div>
+            <div class="category-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>Admin</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Categories</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Add</span>
+            </div>
+
+            <h1>Add Category</h1>
+
+            <p>
+                Create a new product category.
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="Categories"
+           class="category-back-btn">
+
+            <i class="fas fa-arrow-left"></i>
+            Back to Categories
+
+        </a>
+
+    </div>
+
+
+    <div class="category-form-card">
+
+        <div class="category-form-card-header">
+
+            <div class="category-form-icon">
+                <i class="fas fa-tag"></i>
+            </div>
+
+            <div>
+                <h3>Category Information</h3>
+                <p>Enter the details of the new category.</p>
+            </div>
+
+        </div>
+
+
+        <form asp-controller="Admin"
+              asp-action="CategoryCreate"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="category-validation">
+            </div>
+
+
+            <div class="category-form-group">
+
+                <label asp-for="CategoryName">
+                    Category Name
+                    <span>*</span>
+                </label>
+
+                <input asp-for="CategoryName"
+                       class="category-input"
+                       placeholder="e.g. Vegetables" />
+
+                <span asp-validation-for="CategoryName"
+                      class="category-field-error">
+                </span>
+
+            </div>
+
+
+            <div class="category-form-group">
+
+                <label asp-for="Description">
+                    Description
+                </label>
+
+                <textarea asp-for="Description"
+                          class="category-textarea"
+                          rows="5"
+                          placeholder="Enter a short description of this category..."></textarea>
+
+                <span asp-validation-for="Description"
+                      class="category-field-error">
+                </span>
+
+            </div>
+
+
+            <div class="category-toggle-box">
+
+                <div>
+                    <strong>Category Status</strong>
+
+                    <span>
+                        Active categories can be used for products.
+                    </span>
+                </div>
+
+                <label class="category-switch">
+
+                    <input asp-for="IsActive" />
+
+                    <span class="category-slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="category-form-actions">
+
+                <a asp-controller="Admin"
+                   asp-action="Categories"
+                   class="category-cancel-btn">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="category-save-btn">
+
+                    <i class="fas fa-check"></i>
+                    Save Category
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

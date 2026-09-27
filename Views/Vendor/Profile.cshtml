@@ -1,0 +1,284 @@
+﻿
+@model IdentityDemoApp.Models.VendorProfile
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<link rel="stylesheet" href="~/css/vendor-profile.css" asp-append-version="true" />
+
+<div class="vendor-profile-page">
+
+    
+    <div class="profile-header">
+
+        <div class="profile-header-content">
+
+            <div class="profile-avatar">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div class="profile-heading">
+                <span>Vendor Account</span>
+
+                <h1>My Profile</h1>
+
+                <p>
+                    View and manage your farm information.
+                </p>
+            </div>
+
+        </div>
+
+        <a asp-controller="Vendor"
+           asp-action="ProfileEdit"
+           class="edit-profile-btn">
+
+            <i class="fa-solid fa-pen-to-square"></i>
+
+            Edit Profile
+
+        </a>
+
+    </div>
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="profile-alert success-alert">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <span>
+                @TempData["Success"]
+            </span>
+
+        </div>
+    }
+
+
+
+    <div class="profile-grid">
+
+      
+        <div class="profile-card">
+
+            <div class="card-title">
+
+                <div class="title-icon">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+
+                <div>
+                    <span>Farm Information</span>
+                    <h3>Basic Details</h3>
+                </div>
+
+            </div>
+
+
+            <div class="profile-details">
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        <i class="fa-solid fa-tractor"></i>
+                        Farm Name
+                    </span>
+
+                    <strong>
+                        @Model.FarmName
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        <i class="fa-solid fa-location-dot"></i>
+                        Address
+                    </span>
+
+                    <strong>
+                        @Model.Address
+                    </strong>
+
+                </div>
+
+
+                <div class="detail-row">
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            <i class="fa-solid fa-city"></i>
+                            City
+                        </span>
+
+                        <strong>
+                            @(string.IsNullOrWhiteSpace(Model.City)
+                                                        ? "Not provided"
+                                                        : Model.City)
+                        </strong>
+
+                    </div>
+
+
+                    <div class="detail-item">
+
+                        <span class="detail-label">
+                            <i class="fa-solid fa-map"></i>
+                            Province
+                        </span>
+
+                        <strong>
+                            @(string.IsNullOrWhiteSpace(Model.Province)
+                                                        ? "Not provided"
+                                                        : Model.Province)
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail-item description-item">
+
+                    <span class="detail-label">
+                        <i class="fa-solid fa-align-left"></i>
+                        Farm Description
+                    </span>
+
+                    <p>
+                        @(string.IsNullOrWhiteSpace(Model.FarmDescription)
+                                                ? "No farm description has been added yet."
+                                                : Model.FarmDescription)
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    
+        <div class="profile-card status-card">
+
+            <div class="card-title">
+
+                <div class="title-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <div>
+                    <span>Account</span>
+                    <h3>Vendor Status</h3>
+                </div>
+
+            </div>
+
+
+            <div class="status-box @(Model.IsApproved ? "approved" : "pending")">
+
+                <div class="status-icon">
+
+                    @if (Model.IsApproved)
+                    {
+                        <i class="fa-solid fa-circle-check"></i>
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-clock"></i>
+                    }
+
+                </div>
+
+                <div>
+
+                    <strong>
+                        @(Model.IsApproved
+                                                ? "Approved"
+                                                : "Pending Approval")
+                    </strong>
+
+                    <p>
+                        @if (Model.IsApproved)
+                        {
+                            <text>
+                                Your vendor profile has been approved by the administrator.
+                            </text>
+                        }
+                        else
+                        {
+                            <text>
+                                Your profile is waiting for administrator approval.
+                            </text>
+                        }
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="status-info">
+
+                <div>
+                    <span>Profile ID</span>
+                    <strong>#@Model.VendorProfileId</strong>
+                </div>
+
+                <div>
+                    <span>Created</span>
+                    <strong>
+                        @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="profile-note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <p>
+                    Your approval status can only be changed by the administrator.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="profile-footer">
+
+        <a asp-controller="Vendor"
+           asp-action="Dashboard"
+           class="back-btn">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Dashboard
+
+        </a>
+
+        <a asp-controller="Vendor"
+           asp-action="ProfileEdit"
+           class="footer-edit-btn">
+
+            <i class="fa-solid fa-pen"></i>
+
+            Update Profile
+
+        </a>
+
+    </div>
+
+</div>
+

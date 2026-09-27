@@ -1,0 +1,584 @@
+﻿@model IdentityDemoApp.Models.Review
+
+@{
+    ViewData["Title"] = "Review Details";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-ReviewModeration.css"
+      asp-append-version="true" />
+
+<div class="rm-page">
+
+
+
+    <div class="rm-header">
+
+        <div class="rm-header-content">
+
+            <span class="rm-eyebrow">
+                <i class="fas fa-comment-dots"></i>
+                REVIEW MODERATION
+            </span>
+
+            <h1>Review Details</h1>
+
+            <p>
+                View customer feedback, product information and vendor responses.
+            </p>
+
+        </div>
+
+        <div class="rm-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="rm-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="ReviewModeration"
+               class="rm-back-list-btn">
+
+                <i class="fas fa-list"></i>
+
+                <span>Review List</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="rm-details-grid">
+
+     
+
+        <div class="rm-detail-card">
+
+            <div class="rm-detail-card-header">
+
+                <div>
+
+                    <span class="rm-card-label">
+                        CUSTOMER REVIEW
+                    </span>
+
+                    <h2>
+                        Review #@Model.ReviewId
+                    </h2>
+
+                </div>
+
+
+                @if (Model.IsApproved)
+                {
+                    <span class="rm-status approved large">
+                        <i class="fas fa-check-circle"></i>
+                        Approved
+                    </span>
+                }
+                else
+                {
+                    <span class="rm-status pending large">
+                        <i class="fas fa-clock"></i>
+                        Pending
+                    </span>
+                }
+
+            </div>
+
+
+            <div class="rm-reviewer-box">
+
+                <div class="rm-large-avatar">
+
+                    <i class="fas fa-user"></i>
+
+                </div>
+
+                <div>
+
+                    <span>Reviewed By</span>
+
+                    <h3>
+                        @(Model.CustomerProfile?.FullName ?? "Customer")
+                    </h3>
+
+                    <small>
+                        @Model.CreatedAt.ToLocalTime()
+                        .ToString("dd MMM yyyy, hh:mm tt")
+                    </small>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="rm-detail-rating">
+
+                <span>Rating</span>
+
+                <div class="rm-big-stars">
+
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= Model.Rating)
+                        {
+                            <i class="fas fa-star active"></i>
+                        }
+                        else
+                        {
+                            <i class="far fa-star"></i>
+                        }
+                    }
+
+                    <strong>
+                        @Model.Rating / 5
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+         
+
+            <div class="rm-comment-section">
+
+                <span class="rm-section-label">
+                    CUSTOMER COMMENT
+                </span>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Comment))
+                {
+                    <div class="rm-full-comment">
+                        @Model.Comment
+                    </div>
+                }
+                else
+                {
+                    <div class="rm-full-comment no-comment">
+                        Customer did not provide a comment.
+                    </div>
+                }
+
+            </div>
+
+
+           
+
+            <div class="rm-detail-actions">
+
+                @if (!Model.IsApproved)
+                {
+                    <form asp-controller="Admin"
+                          asp-action="ApproveReview"
+                          asp-route-id="@Model.ReviewId"
+                          method="post"
+                          class="details-approve-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="rm-detail-btn approve">
+
+                            <i class="fas fa-check"></i>
+
+                            Approve Review
+
+                        </button>
+
+                    </form>
+                }
+
+
+                @if (Model.IsApproved)
+                {
+                    <form asp-controller="Admin"
+                          asp-action="RejectReview"
+                          asp-route-id="@Model.ReviewId"
+                          method="post"
+                          class="details-reject-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="rm-detail-btn reject">
+
+                            <i class="fas fa-ban"></i>
+
+                            Reject Review
+
+                        </button>
+
+                    </form>
+                }
+
+
+                <form asp-controller="Admin"
+                      asp-action="RemoveReview"
+                      asp-route-id="@Model.ReviewId"
+                      method="post"
+                      class="details-remove-form">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit"
+                            class="rm-detail-btn remove">
+
+                        <i class="fas fa-trash"></i>
+
+                        Remove Review
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+       
+
+        <div class="rm-detail-card">
+
+            <div class="rm-detail-card-header">
+
+                <div>
+
+                    <span class="rm-card-label">
+                        PRODUCT INFORMATION
+                    </span>
+
+                    <h2>
+                        Product
+                    </h2>
+
+                </div>
+
+                <div class="rm-product-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+
+            </div>
+
+
+            <div class="rm-info-list">
+
+                <div class="rm-info-row">
+
+                    <span>
+                        <i class="fas fa-box"></i>
+                        Product Name
+                    </span>
+
+                    <strong>
+                        @(Model.Product?.ProductName
+                                                ?? "Unknown Product")
+                    </strong>
+
+                </div>
+
+
+                <div class="rm-info-row">
+
+                    <span>
+                        <i class="fas fa-layer-group"></i>
+                        Category
+                    </span>
+
+                    <strong>
+                        @(Model.Product?.Category?.CategoryName
+                                                ?? "No Category")
+                    </strong>
+
+                </div>
+
+
+                <div class="rm-info-row">
+
+                    <span>
+                        <i class="fas fa-store"></i>
+                        Vendor / Farm
+                    </span>
+
+                    <strong>
+                        @(Model.Product?.VendorProfile?.FarmName
+                                                ?? "Unknown Vendor")
+                    </strong>
+
+                </div>
+
+
+                <div class="rm-info-row">
+
+                    <span>
+                        <i class="fas fa-tag"></i>
+                        Price
+                    </span>
+
+                    <strong>
+                        Rs. @Model.Product?.Price.ToString("N2")
+                    </strong>
+
+                </div>
+
+
+                <div class="rm-info-row">
+
+                    <span>
+                        <i class="fas fa-balance-scale"></i>
+                        Unit
+                    </span>
+
+                    <strong>
+                        @(Model.Product?.Unit ?? "-")
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <div class="rm-response-card">
+
+        <div class="rm-response-header">
+
+            <div>
+
+                <span class="rm-card-label">
+                    VENDOR RESPONSES
+                </span>
+
+                <h2>
+                    Responses to this Review
+                </h2>
+
+            </div>
+
+            <div class="rm-response-count">
+
+                <i class="fas fa-reply"></i>
+
+                @(Model.ReviewResponses?.Count ?? 0)
+
+            </div>
+
+        </div>
+
+
+        @if (Model.ReviewResponses != null &&
+                Model.ReviewResponses.Any())
+        {
+            <div class="rm-responses-list">
+
+                @foreach (var response in Model.ReviewResponses
+                            .OrderByDescending(r => r.CreatedAt))
+                {
+                    <div class="rm-response-item">
+
+                        <div class="rm-response-avatar">
+
+                            <i class="fas fa-store"></i>
+
+                        </div>
+
+                        <div class="rm-response-content">
+
+                            <div class="rm-response-top">
+
+                                <div>
+
+                                    <strong>
+                                        @(response.User?.FullName
+                                                                        ?? "Vendor")
+                            </strong>
+
+                                    <span>
+                                        Vendor Response
+                                    </span>
+
+                                </div>
+
+                                <small>
+                                    @response.CreatedAt.ToLocalTime()
+                                    .ToString("dd MMM yyyy, hh:mm tt")
+                                </small>
+
+                            </div>
+
+                            <p>
+                                @response.Response
+                            </p>
+
+                        </div>
+
+                    </div>
+                        }
+
+            </div>
+        }
+        else
+        {
+            <div class="rm-no-responses">
+
+                <div class="rm-no-response-icon">
+                    <i class="fas fa-reply-all"></i>
+                </div>
+
+                <h3>No Response Yet</h3>
+
+                <p>
+                    The vendor has not responded to this review yet.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const approveForms =
+            document.querySelectorAll(".details-approve-form");
+
+        approveForms.forEach(function (form) {
+
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Approve Review?",
+                    text: "This review will become visible to customers.",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Approve",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#0b3037"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+
+        const rejectForms =
+            document.querySelectorAll(".details-reject-form");
+
+        rejectForms.forEach(function (form) {
+
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Reject Review?",
+                    text: "This review will remain hidden from customers.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Reject",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#dc3545"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+
+        const removeForms =
+            document.querySelectorAll(".details-remove-form");
+
+        removeForms.forEach(function (form) {
+
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Remove Review?",
+                    text: "This action will permanently remove the review.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Remove",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#dc3545"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+    });
+
+</script>
+
+
+@if (TempData["Success"] != null)
+{
+    <script>
+
+        Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "@TempData["Success"]",
+            confirmButtonColor: "#0b3037"
+        });
+
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script>
+
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "@TempData["Error"]",
+            confirmButtonColor: "#0b3037"
+        });
+
+    </script>
+}

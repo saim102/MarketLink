@@ -1,0 +1,363 @@
+﻿@model List<IdentityDemoApp.Models.VendorProfile>
+
+@{
+    ViewData["Title"] = "Vendors";
+
+    string? search = ViewBag.Search;
+}
+
+<link rel="stylesheet"
+      href="~/css/vendors.css"
+      asp-append-version="true" />
+
+<div class="ml-vendors-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="ml-vendors-hero">
+
+        <div class="container">
+
+            <div class="ml-vendors-hero-content">
+
+                <span class="ml-vendors-label">
+                    MARKETPLACE
+                </span>
+
+                <h1>
+                    Meet Our
+                    <span>Local Vendors</span>
+                </h1>
+
+                <p>
+                    Discover trusted local vendors and explore quality
+                    products available through the MarketLink marketplace.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         VENDORS SECTION
+         ===================================================== -->
+
+    <section class="ml-vendors-section">
+
+        <div class="container">
+
+            <!-- =================================================
+                 HEADER
+                 ================================================= -->
+
+            <div class="ml-vendors-header">
+
+                <div>
+
+                    <span class="ml-section-label">
+                        OUR VENDORS
+                    </span>
+
+                    <h2>
+                        Discover Local
+                        <span>Businesses</span>
+                    </h2>
+
+                    <p>
+                        Browse approved vendors and discover products
+                        available from local businesses.
+                    </p>
+
+                </div>
+
+                <div class="ml-vendor-count">
+
+                    <strong>
+                        @Model.Count
+                    </strong>
+
+                    <span>
+                        Vendors
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SEARCH
+                 ================================================= -->
+
+            <form asp-controller="Home"
+                  asp-action="Vendors"
+                  method="get"
+                  class="ml-vendors-search">
+
+                <div class="ml-vendor-search-box">
+
+                    <i class="fas fa-magnifying-glass"></i>
+
+                    <input type="text"
+                           name="search"
+                           value="@search"
+                           placeholder="Search vendors, businesses or locations..." />
+
+                </div>
+
+                <button type="submit"
+                        class="ml-vendor-search-btn">
+
+                    <i class="fas fa-search"></i>
+
+                    Search
+
+                </button>
+
+                @if (!string.IsNullOrWhiteSpace(search))
+                {
+                    <a asp-controller="Home"
+                       asp-action="Vendors"
+                       class="ml-vendor-clear">
+
+                        <i class="fas fa-xmark"></i>
+
+                        Clear
+
+                    </a>
+                }
+
+            </form>
+
+
+            <!-- =================================================
+                 VENDOR CARDS
+                 ================================================= -->
+            @if (Model != null && Model.Any())
+            {
+                <div class="ml-vendors-grid">
+
+                    @foreach (var vendor in Model)
+                    {
+                        <div class="ml-vendor-card">
+
+                            <!-- CARD TOP -->
+
+                            <div class="ml-vendor-card-top">
+
+                                <div class="ml-vendor-avatar">
+
+                                    <i class="fas fa-store"></i>
+
+                                </div>
+
+                                <span class="ml-vendor-status">
+
+                                    <i class="fas fa-circle"></i>
+
+                                    Approved
+
+                                </span>
+
+                            </div>
+
+
+                            <!-- CARD CONTENT -->
+
+                            <div class="ml-vendor-card-content">
+
+                                <span class="ml-vendor-small-label">
+                                    LOCAL VENDOR
+                                </span>
+
+                                <h3>
+                                    @vendor.FarmName
+                                </h3>
+
+                                @if (vendor.User != null &&
+                                                        !string.IsNullOrWhiteSpace(vendor.User.FullName))
+                                {
+                                    <div class="ml-vendor-contact">
+
+                                        <i class="fas fa-user"></i>
+
+                                        <span>
+                                            @vendor.User.FullName
+                                        </span>
+
+                                    </div>
+                                }
+
+
+                                @if (!string.IsNullOrWhiteSpace(vendor.FarmDescription))
+                                {
+                                    <p>
+                                        @vendor.FarmDescription
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p>
+                                        Explore products and offerings
+                                        from this local vendor.
+                                    </p>
+                                }
+
+
+                                <!-- LOCATION -->
+
+                                <div class="ml-vendor-location">
+
+                                    <div class="ml-vendor-location-icon">
+
+                                        <i class="fas fa-location-dot"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <span>Location</span>
+
+                                        <strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(vendor.City))
+                                            {
+                                                @vendor.City
+                                            }
+                                            else if (!string.IsNullOrWhiteSpace(vendor.Address))
+                                            {
+                                                @vendor.Address
+                                            }
+                                            else
+                                            {
+                                                @:Local Marketplace
+                                            }
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- FOOTER -->
+
+                                <div class="ml-vendor-card-footer">
+
+                                    <span>
+
+                                        <i class="fas fa-circle-check"></i>
+
+                                        Verified Vendor
+
+                                    </span>
+
+                                    <span class="ml-vendor-arrow">
+
+                                        <i class="fas fa-arrow-right"></i>
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <!-- =================================================
+                     EMPTY STATE
+                     ================================================= -->
+
+                <div class="ml-vendors-empty">
+
+                    <div class="ml-vendors-empty-icon">
+
+                        <i class="fas fa-store-slash"></i>
+
+                    </div>
+
+                    <h3>
+                        No Vendors Found
+                    </h3>
+
+                    <p>
+                        We couldn't find any approved vendors matching
+                        your search.
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(search))
+                    {
+                        <a asp-controller="Home"
+                           asp-action="Vendors"
+                           class="ml-vendor-empty-btn">
+
+                            <i class="fas fa-rotate-left"></i>
+
+                            View All Vendors
+
+                        </a>
+                    }
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CTA
+         ===================================================== -->
+
+    <section class="ml-vendors-cta">
+
+        <div class="container">
+
+            <div class="ml-vendors-cta-box">
+
+                <div>
+
+                    <span class="ml-section-label">
+                        EXPLORE MARKETLINK
+                    </span>
+
+                    <h2>
+                        Find Products From
+                        <span>Local Vendors</span>
+                    </h2>
+
+                    <p>
+                        Browse available products and discover what
+                        local vendors have to offer.
+                    </p>
+
+                </div>
+
+                <a asp-controller="Home"
+                   asp-action="Products"
+                   class="ml-vendor-cta-btn">
+
+                    Browse Products
+
+                    <i class="fas fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

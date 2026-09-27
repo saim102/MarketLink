@@ -1,0 +1,332 @@
+﻿@model IdentityDemoApp.Models.CustomerRegistrationViewModel
+
+@{
+    ViewData["Title"] = "Customer Registration";
+}
+
+<link rel="stylesheet"
+      href="~/css/account-auth.css"
+      asp-append-version="true" />
+
+<div class="ml-form-page">
+
+    <div class="ml-form-card">
+
+        <!-- HEADER -->
+        <div class="ml-form-header">
+
+            <a asp-controller="Account"
+               asp-action="Register"
+               class="ml-back-link">
+
+                <i class="fas fa-arrow-left"></i>
+                Back
+
+            </a>
+
+            <div class="ml-form-icon ml-customer-form-icon">
+
+                <i class="fas fa-user"></i>
+
+            </div>
+
+            <span class="ml-small-label">
+                CUSTOMER ACCOUNT
+            </span>
+
+            <h1>Create your customer account</h1>
+
+            <p>
+                Discover local farmers, explore products and
+                pre-order fresh products for pickup.
+            </p>
+
+        </div>
+
+
+        <!-- FORM -->
+        <form asp-controller="Account"
+              asp-action="CustomerRegister"
+              method="post"
+              class="ml-registration-form">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="ml-validation-summary">
+            </div>
+
+
+            <div class="ml-form-section-title">
+
+                <span>
+                    <i class="fas fa-user"></i>
+                </span>
+
+                Personal Information
+
+            </div>
+
+
+
+            <!-- FULL NAME -->
+            <div class="ml-input-group">
+
+                <label asp-for="FullName">
+                    Full Name
+                </label>
+
+                <div class="ml-input-wrapper">
+
+                    <i class="fas fa-user"></i>
+
+                    <input asp-for="FullName"
+                           placeholder="Enter your full name"
+                           autocomplete="name" />
+
+                </div>
+
+                <span asp-validation-for="FullName"
+                      class="ml-field-error">
+                </span>
+
+            </div>
+
+            <!-- CONTACT -->
+            <div class="ml-input-group">
+
+                <label asp-for="ContactNumber">
+                </label>
+
+                <div class="ml-input-wrapper">
+
+                    <i class="fas fa-phone"></i>
+
+                    <input asp-for="ContactNumber"
+                           type="tel"
+                           placeholder="Enter contact number" />
+
+                </div>
+
+                <span asp-validation-for="ContactNumber"
+                      class="ml-field-error">
+                </span>
+
+            </div>
+
+
+            <!-- EMAIL -->
+            <div class="ml-input-group">
+
+                <label asp-for="Email">
+                </label>
+
+                <div class="ml-input-wrapper">
+
+                    <i class="fas fa-envelope"></i>
+
+                    <input asp-for="Email"
+                           type="email"
+                           placeholder="Enter email address"
+                           autocomplete="email" />
+
+                </div>
+
+                <span asp-validation-for="Email"
+                      class="ml-field-error">
+                </span>
+
+            </div>
+
+
+            <!-- ADDRESS -->
+            <div class="ml-input-group">
+
+                <label asp-for="Address">
+                </label>
+
+                <div class="ml-input-wrapper ml-textarea-wrapper">
+
+                    <i class="fas fa-location-dot"></i>
+
+                    <textarea asp-for="Address"
+                              rows="3"
+                              placeholder="Enter your address"></textarea>
+
+                </div>
+
+                <span asp-validation-for="Address"
+                      class="ml-field-error">
+                </span>
+
+            </div>
+
+            <!-- CITY -->
+            <div class="ml-input-group">
+
+                <label asp-for="City"></label>
+
+                <div class="ml-input-wrapper">
+
+                    <i class="fas fa-city"></i>
+
+                    <input asp-for="City"
+                           type="text"
+                           placeholder="Enter your city"
+                           autocomplete="address-level2" />
+
+                </div>
+
+                <span asp-validation-for="City"
+                      class="ml-field-error"></span>
+
+            </div>
+
+
+            <div class="ml-form-section-title ml-password-section">
+
+                <span>
+                    <i class="fas fa-shield-halved"></i>
+                </span>
+
+                Account Security
+
+            </div>
+
+
+            <!-- PASSWORD -->
+            <div class="ml-input-group">
+
+                <label asp-for="Password">
+                </label>
+
+                <div class="ml-input-wrapper">
+
+                    <i class="fas fa-lock"></i>
+
+                    <input asp-for="Password"
+                           type="password"
+                           placeholder="Create a strong password"
+                           id="customer-password" />
+
+                    <button type="button"
+                            class="ml-password-toggle"
+                            onclick="togglePassword('customer-password', this)">
+
+                        <i class="fas fa-eye"></i>
+
+                    </button>
+
+                </div>
+
+                <span asp-validation-for="Password"
+                      class="ml-field-error">
+                </span>
+
+            </div>
+
+
+            <!-- CONFIRM PASSWORD -->
+            <div class="ml-input-group">
+
+                <label asp-for="ConfirmPassword">
+                </label>
+
+                <div class="ml-input-wrapper">
+
+                    <i class="fas fa-lock"></i>
+
+                    <input asp-for="ConfirmPassword"
+                           type="password"
+                           placeholder="Confirm your password"
+                           id="customer-confirm-password" />
+
+                    <button type="button"
+                            class="ml-password-toggle"
+                            onclick="togglePassword('customer-confirm-password', this)">
+
+                        <i class="fas fa-eye"></i>
+
+                    </button>
+
+                </div>
+
+                <span asp-validation-for="ConfirmPassword"
+                      class="ml-field-error">
+                </span>
+
+            </div>
+
+
+            <!-- INFO -->
+            <div class="ml-registration-note">
+
+                <i class="fas fa-circle-info"></i>
+
+                <span>
+                    Your account will allow you to discover markets,
+                    browse products and place pickup orders.
+                </span>
+
+            </div>
+
+
+            <!-- SUBMIT -->
+            <button type="submit"
+                    class="ml-submit-btn ml-submit-customer">
+
+                <span>Create Customer Account</span>
+
+                <i class="fas fa-arrow-right"></i>
+
+            </button>
+
+        </form>
+
+
+        <div class="ml-form-footer">
+
+            Already registered?
+
+            <a asp-controller="Account"
+               asp-action="Login">
+                Sign in
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        function togglePassword(inputId, button) {
+
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector("i");
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+
+            } else {
+
+                input.type = "password";
+
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+
+            }
+        }
+
+    </script>
+}

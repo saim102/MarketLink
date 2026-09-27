@@ -1,0 +1,308 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.PickupSlot>
+
+@{
+    ViewData["Title"] = "Pickup Slots";
+    Layout = "_Layout";
+
+    var totalSlots = Model.Count();
+    var availableSlots = Model.Count(x => x.IsAvailable);
+    var unavailableSlots = Model.Count(x => !x.IsAvailable);
+    var totalBookings = Model.Sum(x => x.Orders?.Count ?? 0);
+}
+
+<link rel="stylesheet" href="~/css/vendor-pickup-slots.css" />
+
+<div class="pickup-page">
+
+    <div class="pickup-topbar">
+        <a asp-controller="Vendor"
+           asp-action="Dashboard"
+           class="dashboard-back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <div class="pickup-header">
+        <div class="pickup-heading">
+            <span class="pickup-eyebrow">VENDOR MANAGEMENT</span>
+            <h1>Pickup Slots</h1>
+            <p>Manage pickup dates and time slots for your customers.</p>
+        </div>
+
+        <a asp-controller="Vendor"
+           asp-action="PickupSlotCreate"
+           class="pickup-add-btn">
+            <i class="fa-solid fa-plus"></i>
+            Add Pickup Slot
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="pickup-alert pickup-success">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>@TempData["Success"]</span>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="pickup-alert pickup-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+    <div class="pickup-stats">
+
+        <div class="pickup-stat-card">
+            <div class="pickup-stat-icon">
+                <i class="fa-solid fa-calendar-days"></i>
+            </div>
+            <div>
+                <span>Total Slots</span>
+                <strong>@totalSlots</strong>
+            </div>
+        </div>
+
+        <div class="pickup-stat-card">
+            <div class="pickup-stat-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <span>Available</span>
+                <strong>@availableSlots</strong>
+            </div>
+        </div>
+
+        <div class="pickup-stat-card">
+            <div class="pickup-stat-icon">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+            <div>
+                <span>Unavailable</span>
+                <strong>@unavailableSlots</strong>
+            </div>
+        </div>
+
+        <div class="pickup-stat-card">
+            <div class="pickup-stat-icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+                <span>Total Bookings</span>
+                <strong>@totalBookings</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="pickup-info">
+        <div class="pickup-info-icon">
+            <i class="fa-solid fa-circle-info"></i>
+        </div>
+
+        <div>
+            <strong>Pickup capacity</strong>
+            <p>
+                Remaining capacity is calculated automatically as
+                <b>Maximum Orders − Current Bookings</b>.
+            </p>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="pickup-table-card">
+
+            <div class="pickup-table-heading">
+                <div>
+                    <h3>Pickup Schedule</h3>
+                    <p>View and manage your customer pickup timings.</p>
+                </div>
+            </div>
+
+            <div class="pickup-table-wrapper">
+
+                <table class="pickup-table">
+
+                    <thead>
+                        <tr>
+                            <th>Pickup Date</th>
+                            <th>Time</th>
+                            <th>Max Orders</th>
+                            <th>Booked</th>
+                            <th>Remaining</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var slot in Model)
+                        {
+                            var booked = slot.Orders?.Count ?? 0;
+                            var remaining = Math.Max(0, slot.MaxOrders - booked);
+
+                            <tr>
+
+                                <td>
+                                    <div class="pickup-date">
+                                        <strong>
+                                            @slot.PickupDate.ToString("dd MMM yyyy")
+                                        </strong>
+                                        <span>
+                                            @slot.PickupDate.ToString("dddd")
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="pickup-time">
+                                        <i class="fa-regular fa-clock"></i>
+                                        <span>
+                                            @DateTime.Today.Add(slot.StartTime).ToString("hh:mm tt")
+                                            -
+                                            @DateTime.Today.Add(slot.EndTime).ToString("hh:mm tt")
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="number-badge">
+                                        @slot.MaxOrders
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="number-badge booked-badge">
+                                        @booked
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="number-badge remaining-badge">
+                                        @remaining
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (slot.IsAvailable && remaining > 0)
+                                    {
+                                        <span class="pickup-status available">
+                                            <i class="fa-solid fa-circle"></i>
+                                            Available
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="pickup-status unavailable">
+                                            <i class="fa-solid fa-circle"></i>
+                                            Unavailable
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="pickup-actions">
+
+                                        <a asp-controller="Vendor"
+                                           asp-action="PickupSlotEdit"
+                                           asp-route-id="@slot.PickupSlotId"
+                                           class="pickup-action edit-action"
+                                           title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+
+                                        @if (booked == 0)
+                                        {
+                                            <form asp-controller="Vendor"
+                                                  asp-action="PickupSlotDelete"
+                                                  asp-route-id="@slot.PickupSlotId"
+                                                  method="post"
+                                                  class="delete-slot-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="pickup-action delete-action"
+                                                        title="Delete">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="delete-disabled"
+                                                  title="Cannot delete a slot with orders">
+                                                <i class="fa-solid fa-lock"></i>
+                                            </span>
+                                        }
+
+                                    </div>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="pickup-empty">
+
+            <div class="pickup-empty-icon">
+                <i class="fa-solid fa-calendar-plus"></i>
+            </div>
+
+            <h3>No Pickup Slots Yet</h3>
+
+            <p>
+                Create your first pickup slot so customers can select
+                a convenient time when placing an order.
+            </p>
+
+            <a asp-controller="Vendor"
+               asp-action="PickupSlotCreate"
+               class="pickup-add-btn">
+                <i class="fa-solid fa-plus"></i>
+                Create First Slot
+            </a>
+
+        </div>
+    }
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.querySelectorAll(".delete-slot-form").forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Delete Pickup Slot?",
+                text: "This pickup slot will be permanently removed.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Delete",
+                cancelButtonText: "Cancel",
+                reverseButtons: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>
