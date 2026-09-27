@@ -1,0 +1,349 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.FavouriteVendor>
+
+@{
+    ViewData["Title"] = "Favorite Farmers";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-FavoriteFarmers.css"
+      asp-append-version="true" />
+
+<div class="favorite-page">
+
+    <div class="favorite-hero">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+
+            <div>
+                <span class="hero-label">CUSTOMER SPACE</span>
+                <h1>Favorite Farmers</h1>
+                <p>Keep your trusted farmers close and access them anytime.</p>
+            </div>
+        </div>
+
+        <a asp-controller="Customer"
+           asp-action="Dashboard"
+           class="dashboard-btn">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="favorite-topbar">
+            <div class="result-info">
+                <div class="result-icon">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+
+                <div>
+                    <span>Saved Farmers</span>
+                    <strong>@Model.Count()</strong>
+                </div>
+            </div>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseVendors"
+               class="browse-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Browse Farmers
+            </a>
+        </div>
+
+        <div class="farmer-grid">
+            @foreach (var favorite in Model)
+            {
+                var farmer = favorite.VendorProfile;
+
+                if (farmer == null)
+                {
+                    continue;
+                }
+
+                <div class="farmer-card">
+
+                    <div class="card-top">
+                        <div class="farmer-avatar">
+                            <i class="fa-solid fa-tractor"></i>
+                        </div>
+
+                        <div class="favorite-badge">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+                    </div>
+
+                    <div class="farmer-content">
+
+                        <div class="verified-name">
+                            <h2>@farmer.FarmName</h2>
+                            <span class="verified">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </span>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(farmer.FarmDescription))
+                        {
+                            <p class="farmer-description">
+                                @farmer.FarmDescription
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="farmer-description muted">
+                                Trusted agricultural vendor available on MarketLink.
+                            </p>
+                        }
+
+                    <div class="farmer-details">
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <span>Location</span>
+                                <strong>
+                                    @(string.IsNullOrWhiteSpace(farmer.City)
+                                                                    ? farmer.Address
+                                                                    : farmer.City)
+                            </strong>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(farmer.Province))
+                            {
+                                <div class="detail-item">
+                                    <div class="detail-icon">
+                                        <i class="fa-solid fa-map"></i>
+                                    </div>
+                                    <div>
+                                        <span>Province</span>
+                                        <strong>@farmer.Province</strong>
+                                    </div>
+                                </div>
+                            }
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="fa-solid fa-calendar-days"></i>
+                            </div>
+                            <div>
+                                <span>Saved On</span>
+                                <strong>@favorite.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</strong>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-actions">
+                        <button type="button"
+                                class="view-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#farmerModal-@farmer.VendorProfileId">
+                            <i class="fa-solid fa-eye"></i>
+                            View Details
+                        </button>
+
+                        <form asp-controller="Customer"
+                              asp-action="ToggleFavoriteVendor"
+                              method="post"
+                              class="remove-form">
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="vendorProfileId"
+                                   value="@farmer.VendorProfileId" />
+
+                            <button type="submit"
+                                    class="remove-btn"
+                                    onclick="return confirmRemove('@farmer.FarmName');">
+                                <i class="fa-solid fa-heart-crack"></i>
+                                Remove
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal fade"
+                 id="farmerModal-@farmer.VendorProfileId"
+                 tabindex="-1"
+                 aria-hidden="true">
+
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content farmer-modal">
+
+                        <div class="modal-header">
+                            <div class="modal-title-area">
+                                <div class="modal-farmer-icon">
+                                    <i class="fa-solid fa-tractor"></i>
+                                </div>
+
+                                <div>
+                                    <span>FARMER PROFILE</span>
+                                    <h3>@farmer.FarmName</h3>
+                                </div>
+                            </div>
+
+                            <button type="button"
+                                    class="modal-close"
+                                    data-bs-dismiss="modal">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="modal-status">
+                                <i class="fa-solid fa-circle-check"></i>
+                                Approved Farmer
+                            </div>
+
+                            <div class="modal-info-grid">
+
+                                <div class="modal-info">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                    <div>
+                                        <span>Address</span>
+                                        <strong>@farmer.Address</strong>
+                                    </div>
+                                </div>
+
+                                <div class="modal-info">
+                                    <i class="fa-solid fa-city"></i>
+                                    <div>
+                                        <span>City</span>
+                                        <strong>
+                                            @(string.IsNullOrWhiteSpace(farmer.City)
+                                                                                    ? "Not specified"
+                                                                                    : farmer.City)
+                                                                                              </strong>
+                                                                                          </div>
+                                                                                      </div>
+
+                                <div class="modal-info">
+                                    <i class="fa-solid fa-map-location-dot"></i>
+                                    <div>
+                                        <span>Province</span>
+                                        <strong>
+                                            @(string.IsNullOrWhiteSpace(farmer.Province)
+                                                                                    ? "Not specified"
+                                                                                    : farmer.Province)
+                                                                                                  </strong>
+                                                                                              </div>
+                                                                                          </div>
+
+                                <div class="modal-info">
+                                    <i class="fa-solid fa-calendar-check"></i>
+                                    <div>
+                                        <span>Saved Date</span>
+                                        <strong>@favorite.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</strong>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="description-box">
+                                <div class="description-heading">
+                                    <i class="fa-solid fa-leaf"></i>
+                                    About This Farmer
+                                </div>
+
+                                <p>
+                                    @(string.IsNullOrWhiteSpace(farmer.FarmDescription)
+                                                                    ? "No description has been provided by this farmer."
+                                                                    : farmer.FarmDescription)
+                            </p>
+                        </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button"
+                                        class="modal-done"
+                                        data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-check"></i>
+                                    Done
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+
+            <div class="empty-animation">
+                <div class="empty-circle">
+                    <i class="fa-regular fa-heart"></i>
+                </div>
+
+                <span class="floating-icon icon-one">
+                    <i class="fa-solid fa-seedling"></i>
+                </span>
+
+                <span class="floating-icon icon-two">
+                    <i class="fa-solid fa-leaf"></i>
+                </span>
+
+                <span class="floating-icon icon-three">
+                    <i class="fa-solid fa-tractor"></i>
+                </span>
+            </div>
+
+            <span class="empty-label">YOUR FAVORITES</span>
+
+            <h2>No Favorite Farmers Yet</h2>
+
+            <p>
+                You haven't saved any farmers yet.
+                Browse approved farmers and add the ones you trust to your favorites.
+            </p>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseVendors"
+               class="empty-btn">
+                <i class="fa-solid fa-compass"></i>
+                Explore Farmers
+            </a>
+
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        function confirmRemove(farmerName) {
+            return confirm("Remove " + farmerName + " from your favorite farmers?");
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const cards = document.querySelectorAll(".farmer-card");
+
+            cards.forEach((card, index) => {
+                card.style.animationDelay = (index * 0.08) + "s";
+            });
+
+            const successMessage = '@TempData["Success"]';
+
+            if (successMessage) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Success",
+                    text: successMessage,
+                    timer: 2200,
+                    showConfirmButton: false
+                });
+            }
+        });
+    </script>
+}

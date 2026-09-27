@@ -1,0 +1,280 @@
+﻿@model IdentityDemoApp.Models.Notification
+
+@{
+    ViewData["Title"] = "Notification Details";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Notifications.css"
+      asp-append-version="true" />
+
+<div class="notification-page">
+
+    <!-- HEADER -->
+    <div class="notification-header">
+
+        <div class="notification-heading">
+
+            <div class="notification-icon-box">
+                <i class="fas fa-bell"></i>
+            </div>
+
+            <div>
+
+                <h1>Notification Details</h1>
+
+                <p>
+                    View complete information about this notification.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="notification-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="notification-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="Notifications"
+               class="notification-back-btn">
+
+                <i class="fas fa-bell"></i>
+                <span>Notification List</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- DETAILS -->
+    <div class="notification-details-card">
+
+        <div class="notification-details-top">
+
+            <div class="notification-details-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+
+            <div class="notification-details-title">
+
+                <span class="notification-type-badge">
+
+                    <i class="fas fa-tag"></i>
+
+                    @Model.NotificationType
+
+                </span>
+
+                <h2>
+                    @Model.Title
+                </h2>
+
+                <p>
+                    Published
+                    @Model.CreatedAt.ToLocalTime().ToString("dd MMMM yyyy, hh:mm tt")
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="notification-details-divider"></div>
+
+
+        <!-- MESSAGE -->
+        <div class="notification-message-section">
+
+            <h3>
+                <i class="fas fa-message"></i>
+                Message
+            </h3>
+
+            <div class="notification-message-box">
+
+                @Model.Message
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMATION GRID -->
+        <div class="notification-detail-grid">
+
+            <div class="notification-detail-item">
+
+                <span>
+                    <i class="fas fa-user"></i>
+                    Recipient
+                </span>
+
+                @if (Model.User != null)
+                {
+                    <strong>
+                        @Model.User.FullName
+                    </strong>
+
+                    <small>
+                        @Model.User.UserType
+                    </small>
+                }
+                else
+                {
+                    <strong>
+                        User unavailable
+                    </strong>
+                }
+
+            </div>
+
+
+            <div class="notification-detail-item">
+
+                <span>
+                    <i class="fas fa-envelope"></i>
+                    Email
+                </span>
+
+                <strong>
+                    @(Model.User?.Email ?? "Not available")
+                </strong>
+
+            </div>
+
+
+            <div class="notification-detail-item">
+
+                <span>
+                    <i class="fas fa-circle-check"></i>
+                    Status
+                </span>
+
+                @if (Model.IsRead)
+                {
+                    <strong class="notification-detail-read">
+                        <i class="fas fa-check-circle"></i>
+                        Read
+                    </strong>
+                }
+                else
+                {
+                    <strong class="notification-detail-unread">
+                        <i class="fas fa-circle"></i>
+                        Unread
+                    </strong>
+                }
+
+            </div>
+
+
+            <div class="notification-detail-item">
+
+                <span>
+                    <i class="fas fa-calendar"></i>
+                    Created At
+                </span>
+
+                <strong>
+                    @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                </strong>
+
+                <small>
+                    @Model.CreatedAt.ToLocalTime().ToString("hh:mm tt")
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+        <div class="notification-details-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Notifications"
+               class="notification-cancel-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                Back to Notifications
+
+            </a>
+
+            <button type="button"
+                    class="notification-delete-large"
+                    onclick="deleteNotification(@Model.NotificationId, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(Model.Title))')">
+
+                <i class="fas fa-trash"></i>
+                Delete Notification
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<form id="deleteNotificationForm"
+      asp-controller="Admin"
+      asp-action="RemoveNotification"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           id="deleteNotificationId"
+           name="id"
+           value="" />
+
+</form>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    function deleteNotification(id, title) {
+
+        Swal.fire({
+            title: 'Delete Notification?',
+            html: 'Are you sure you want to delete <strong>' + title + '</strong>?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0B3037',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                document.getElementById(
+                    'deleteNotificationId'
+                ).value = id;
+
+                document.getElementById(
+                    'deleteNotificationForm'
+                ).submit();
+
+            }
+
+        });
+
+    }
+
+</script>

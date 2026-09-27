@@ -1,0 +1,295 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.WeeklyStock>
+
+@{
+    ViewData["Title"] = "Weekly Stock";
+    Layout = "_Layout";
+}
+<link rel="stylesheet" href="~/css/vendor-weekly-stock.css" />
+
+<div class="weekly-stock-page">
+
+    <div class="weekly-stock-header">
+        <div>
+            <span class="page-eyebrow">
+                <i class="fa-solid fa-boxes-stacked"></i>
+                Inventory Management
+            </span>
+            <h1>Weekly Stock</h1>
+            <p>Manage your weekly product availability and stock quantities.</p>
+        </div>
+
+        <div class="weekly-header-actions">
+            <a asp-controller="Vendor"
+               asp-action="Dashboard"
+               class="weekly-dashboard-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+
+            <a asp-action="WeeklyStockCreate" class="weekly-add-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add Weekly Stock
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="weekly-alert weekly-alert-success">
+            <div class="alert-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <strong>Success</strong>
+                <span>@TempData["Success"]</span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="weekly-alert weekly-alert-error">
+            <div class="alert-icon">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <div>
+                <strong>Action Failed</strong>
+                <span>@TempData["Error"]</span>
+            </div>
+            <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    }
+
+    @{
+        var stockList = Model?.ToList() ?? new List<IdentityDemoApp.Models.WeeklyStock>();
+
+        var totalRecords = stockList.Count;
+        var totalAvailable = stockList.Sum(x => x.AvailableQuantity);
+        var totalReserved = stockList.Sum(x => x.ReservedQuantity);
+        var remainingStock = totalAvailable - totalReserved;
+    }
+
+    <div class="weekly-stat-grid">
+
+        <div class="weekly-stat-card">
+            <div class="weekly-stat-icon">
+                <i class="fa-solid fa-box"></i>
+            </div>
+            <div>
+                <span>Total Records</span>
+                <strong>@totalRecords</strong>
+            </div>
+        </div>
+
+        <div class="weekly-stat-card">
+            <div class="weekly-stat-icon">
+                <i class="fa-solid fa-cubes"></i>
+            </div>
+            <div>
+                <span>Available Quantity</span>
+                <strong>@totalAvailable.ToString("0.##")</strong>
+            </div>
+        </div>
+
+        <div class="weekly-stat-card">
+            <div class="weekly-stat-icon">
+                <i class="fa-solid fa-bookmark"></i>
+            </div>
+            <div>
+                <span>Reserved Quantity</span>
+                <strong>@totalReserved.ToString("0.##")</strong>
+            </div>
+        </div>
+
+        <div class="weekly-stat-card">
+            <div class="weekly-stat-icon">
+                <i class="fa-solid fa-chart-simple"></i>
+            </div>
+            <div>
+                <span>Remaining Stock</span>
+                <strong>@remainingStock.ToString("0.##")</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="weekly-info-box">
+        <div class="weekly-info-icon">
+            <i class="fa-solid fa-circle-info"></i>
+        </div>
+        <div>
+            <strong>Stock calculation</strong>
+            <p>
+                Remaining Stock = Available Quantity − Reserved Quantity
+            </p>
+        </div>
+    </div>
+
+    <div class="weekly-table-card">
+
+        <div class="weekly-table-heading">
+            <div>
+                <h2>Stock Records</h2>
+                <p>Your weekly product availability records</p>
+            </div>
+
+            <div class="record-count">
+                @totalRecords Records
+            </div>
+        </div>
+
+        @if (stockList.Any())
+        {
+            <div class="weekly-table-wrapper">
+                <table class="weekly-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Week Start</th>
+                            <th>Available</th>
+                            <th>Reserved</th>
+                            <th>Remaining</th>
+                            <th>Last Updated</th>
+                            <th class="action-column">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var stock in stockList)
+                        {
+                            var remaining = stock.AvailableQuantity - stock.ReservedQuantity;
+
+                            <tr>
+                                <td>
+                                    <div class="product-cell">
+                                        <div class="product-icon">
+                                            <i class="fa-solid fa-leaf"></i>
+                                        </div>
+                                        <div>
+                                            <strong>@stock.Product?.ProductName</strong>
+
+                                            @if (stock.Product?.Category != null)
+                                            {
+                                                <span>@stock.Product.Category.CategoryName</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="date-cell">
+                                        <i class="fa-regular fa-calendar"></i>
+                                        <span>@stock.WeekStartDate.ToString("dd MMM yyyy")</span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="quantity-badge available">
+                                        @stock.AvailableQuantity.ToString("0.##")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="quantity-badge reserved">
+                                        @stock.ReservedQuantity.ToString("0.##")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="quantity-badge remaining">
+                                        @remaining.ToString("0.##")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="updated-date">
+                                        @stock.UpdatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="stock-actions">
+
+                                        <a asp-action="WeeklyStockEdit"
+                                           asp-route-id="@stock.WeeklyStockId"
+                                           class="stock-action edit-action"
+                                           title="Edit">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+
+                                        <form asp-action="WeeklyStockDelete"
+                                              asp-route-id="@stock.WeeklyStockId"
+                                              method="post"
+                                              class="delete-stock-form">
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="stock-action delete-action"
+                                                    title="Delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="weekly-empty-state">
+                <div class="empty-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+
+                <h3>No Weekly Stock Yet</h3>
+
+                <p>
+                    You haven't added any weekly stock records.
+                    Add your first stock record to manage product availability.
+                </p>
+
+                <a asp-action="WeeklyStockCreate" class="empty-add-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Weekly Stock
+                </a>
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.querySelectorAll(".delete-stock-form").forEach(function (form) {
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: "Delete weekly stock?",
+                    text: "This stock record will be permanently deleted.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, delete it",
+                    cancelButtonText: "Cancel",
+                    reverseButtons: true
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

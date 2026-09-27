@@ -1,0 +1,591 @@
+﻿@model List<IdentityDemoApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Products";
+
+    var categories =
+        ViewBag.Categories as List<IdentityDemoApp.Models.Category>
+        ?? new List<IdentityDemoApp.Models.Category>();
+
+    string? search = ViewBag.Search;
+    int? selectedCategory = ViewBag.CategoryId;
+
+    var categoryImages = new Dictionary<string, string>(
+        StringComparer.OrdinalIgnoreCase)
+    {
+        { "vegetables", "~/images/vegetables.webp" },
+        { "fruits", "~/images/fruits.webp" },
+        { "grains", "~/images/grains.jpg" },
+        { "organic", "~/images/organic.jpg" }
+    };
+
+    var fallbackImages = new[]
+    {
+        "~/images/vegetables.webp",
+        "~/images/fruits.webp",
+        "~/images/grains.jpg",
+        "~/images/organic.jpg"
+    };
+}
+
+<link rel="stylesheet"
+      href="~/css/products.css"
+      asp-append-version="true" />
+
+<div class="ml-products-page">
+
+    <!-- HERO -->
+    <section class="ml-products-hero">
+
+        <div class="ml-hero-overlay"></div>
+
+        <div class="ml-hero-shape ml-hero-shape-one"></div>
+        <div class="ml-hero-shape ml-hero-shape-two"></div>
+
+        <div class="container">
+
+            <div class="ml-products-hero-content">
+
+                <div class="ml-products-badge">
+                    <span class="ml-badge-dot"></span>
+                    MARKETLINK MARKETPLACE
+                </div>
+
+                <h1>
+                    Explore Fresh
+                    <span>Local Products</span>
+                </h1>
+
+                <p>
+                    Discover fresh, quality products directly from trusted
+                    local vendors and farmers.
+                </p>
+
+                <div class="ml-hero-features">
+
+                    <div class="ml-hero-feature">
+                        <i class="fas fa-leaf"></i>
+                        <span>Fresh Products</span>
+                    </div>
+
+                    <div class="ml-hero-feature">
+                        <i class="fas fa-store"></i>
+                        <span>Trusted Vendors</span>
+                    </div>
+
+                    <div class="ml-hero-feature">
+                        <i class="fas fa-location-dot"></i>
+                        <span>Local Marketplace</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PRODUCTS SECTION -->
+    <section class="ml-products-section">
+
+        <div class="container">
+
+            <!-- TOOLBAR -->
+            <div class="ml-products-toolbar">
+
+                <div class="ml-toolbar-heading">
+
+                    <span class="ml-section-mini-label">
+                        FIND WHAT YOU NEED
+                    </span>
+
+                    <h2>
+                        Explore Products
+                    </h2>
+
+                    <p>
+                        Search by product, vendor or category.
+                    </p>
+
+                </div>
+
+
+                <!-- SEARCH -->
+                <form asp-controller="Home"
+                      asp-action="Products"
+                      method="get"
+                      class="ml-products-search">
+
+                    <div class="ml-search-box">
+
+                        <i class="fas fa-magnifying-glass"></i>
+
+                        <input type="text"
+                               name="search"
+                               value="@search"
+                               placeholder="Search products, vendors or categories..." />
+
+                    </div>
+
+
+                    <div class="ml-category-filter">
+
+                        <i class="fas fa-layer-group"></i>
+
+                        <select name="categoryId">
+
+                            <option value="">
+                                All Categories
+                            </option>
+
+                            @foreach (var category in categories)
+                            {
+                                if (selectedCategory == category.CategoryId)
+                                {
+                                    <option value="@category.CategoryId" selected>
+                                        @category.CategoryName
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@category.CategoryId">
+                                        @category.CategoryName
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <button type="submit"
+                            class="ml-products-search-btn">
+
+                        <i class="fas fa-search"></i>
+
+                        <span>
+                            Search
+                        </span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- ACTIVE FILTERS -->
+            @if (!string.IsNullOrWhiteSpace(search) || selectedCategory.HasValue)
+            {
+                <div class="ml-active-filter">
+
+                    <div class="ml-active-filter-left">
+
+                        <i class="fas fa-filter"></i>
+
+                        <span>
+                            Active Filters
+                        </span>
+
+
+                        @if (!string.IsNullOrWhiteSpace(search))
+                        {
+                            <span class="ml-filter-chip">
+                                Search: "@search"
+                            </span>
+                        }
+
+
+                        @if (selectedCategory.HasValue)
+                        {
+                            var selectedCat =
+                            categories.FirstOrDefault(
+                            x => x.CategoryId == selectedCategory.Value);
+
+                            if (selectedCat != null)
+                            {
+                                <span class="ml-filter-chip">
+                                    Category: @selectedCat.CategoryName
+                                </span>
+                            }
+                        }
+
+                    </div>
+
+
+                    <a asp-controller="Home"
+                       asp-action="Products"
+                       class="ml-clear-filters">
+
+                        <i class="fas fa-xmark"></i>
+
+                        Clear
+
+                    </a>
+
+                </div>
+            }
+
+
+            <!-- RESULT HEADER -->
+            <div class="ml-products-result-header">
+
+                <div class="ml-result-title">
+
+                    <span class="ml-section-label">
+                        AVAILABLE PRODUCTS
+                    </span>
+
+                    <h2>
+                        Fresh From Local Vendors
+                    </h2>
+
+                    <p>
+                        Quality products selected from our marketplace.
+                    </p>
+
+                </div>
+
+
+                <div class="ml-products-count">
+
+                    <div class="ml-count-icon">
+                        <i class="fas fa-basket-shopping"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            @(Model?.Count ?? 0)
+                        </strong>
+
+                        <span>
+                            Products Found
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRODUCTS -->
+            @if (Model != null && Model.Any())
+            {
+                <div class="ml-products-grid">
+
+                    @foreach (var productData in Model.Select(
+                                    (item, index) => new
+                                    {
+                                        item,
+                                        index
+                                    }))
+                    {
+                        var product = productData.item;
+
+                        var productImage =
+                        fallbackImages[
+                        productData.index % fallbackImages.Length
+                        ];
+
+
+                        if (product.Category != null &&
+                        !string.IsNullOrWhiteSpace(
+                        product.Category.CategoryName))
+                        {
+                            var categoryName =
+                            product.Category.CategoryName.Trim();
+
+                            if (categoryImages.ContainsKey(categoryName))
+                            {
+                                productImage =
+                                categoryImages[categoryName];
+                            }
+                        }
+
+
+                    <div class="ml-product-card">
+
+                        <!-- PRODUCT CLICK AREA -->
+                        <a asp-controller="Home"
+                           asp-action="ProductDetails"
+                           asp-route-id="@product.ProductId"
+                           class="ml-product-card-link">
+
+                            <!-- IMAGE -->
+                            <div class="ml-product-image">
+
+                                <img src="@Url.Content(productImage)"
+                                     alt="@product.ProductName" />
+
+                                <div class="ml-product-image-overlay"></div>
+
+
+                                <span class="ml-product-available">
+
+                                    <span class="ml-available-dot"></span>
+
+                                    Available
+
+                                </span>
+
+
+                                <span class="ml-product-view-image"
+                                      title="View Product Details">
+
+                                    <i class="fas fa-eye"></i>
+
+                                </span>
+
+
+                                <div class="ml-product-image-bottom">
+
+                                    <span>
+                                        @(product.Category?.CategoryName
+                                                                            ?? "General")
+                                                                                     </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- PRODUCT CONTENT -->
+                            <div class="ml-product-content">
+
+                                <div class="ml-product-top">
+
+                                    <span class="ml-product-category">
+
+                                        <i class="fas fa-leaf"></i>
+
+                                        @(product.Category?.CategoryName
+                                                                            ?? "General")
+
+                                </span>
+
+
+                                        <span class="ml-product-number">
+
+                                            #@product.ProductId.ToString("D3")
+
+                                        </span>
+
+                                    </div>
+
+
+                                    <h3>
+                                        @product.ProductName
+                                    </h3>
+
+
+                            @if (!string.IsNullOrWhiteSpace(
+                                                        product.Description))
+                                    {
+                                        <p class="ml-product-description">
+                                            @product.Description
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="ml-product-description">
+                                            Fresh quality product available
+                                            from a local vendor.
+                                        </p>
+                                    }
+
+
+                                <!-- VENDOR -->
+                                <div class="ml-product-vendor">
+
+                                    <div class="ml-vendor-icon">
+
+                                        <i class="fas fa-store"></i>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            SOLD BY
+                                        </span>
+
+                                        <strong>
+                                            @(product.VendorProfile?.FarmName
+                                                                                    ?? "Local Vendor")
+                                    </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </a>
+
+
+                            <!-- FOOTER -->
+                            <div class="ml-product-footer">
+
+                                <!-- PRICE -->
+                                <div class="ml-product-price">
+
+                                    <span>
+                                        PRICE
+                                    </span>
+
+                                    <div>
+
+                                        <strong>
+                                            Rs. @product.Price.ToString("N2")
+                                        </strong>
+
+                                        <small>
+                                            / @product.Unit
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- ACTIONS -->
+                                <div class="ml-product-actions">
+
+                                    <!-- FAVORITE -->
+                                    <form asp-controller="Customer"
+                                          asp-action="ToggleFavoriteProduct"
+                                          method="post"
+                                          class="ml-favorite-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@product.ProductId" />
+
+                                        <button type="submit"
+                                                class="ml-favorite-btn"
+                                                title="Add to Favourite">
+
+                                            <i class="far fa-heart"></i>
+
+                                            <span>
+                                                Add to Favourite
+                                            </span>
+
+                                        </button>
+
+                                    </form>
+
+
+                                    <!-- DETAILS -->
+                                    <a asp-controller="Home"
+                                       asp-action="ProductDetails"
+                                       asp-route-id="@product.ProductId"
+                                       class="ml-product-view"
+                                       title="View Details">
+
+                                        <i class="fas fa-eye"></i>
+
+                                        <span>
+                                            View Details
+                                        </span>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                                }
+
+                </div>
+            }
+            else
+            {
+                <!-- EMPTY STATE -->
+                <div class="ml-products-empty">
+
+                    <div class="ml-empty-decoration ml-empty-decoration-one"></div>
+                    <div class="ml-empty-decoration ml-empty-decoration-two"></div>
+
+                    <div class="ml-empty-icon">
+
+                        <i class="fas fa-basket-shopping"></i>
+
+                    </div>
+
+                    <span class="ml-empty-label">
+                        NOTHING HERE YET
+                    </span>
+
+                    <h3>
+                        No Products Found
+                    </h3>
+
+                    <p>
+                        We couldn't find any available products matching
+                        your search or selected category.
+                    </p>
+
+                    <a asp-controller="Home"
+                       asp-action="Products"
+                       class="ml-clear-filter">
+
+                        <i class="fas fa-rotate-left"></i>
+
+                        View All Products
+
+                    </a>
+
+                </div>
+            }
+
+
+            <!-- BOTTOM CTA -->
+            <div class="ml-products-bottom-cta">
+
+                <div class="ml-cta-icon">
+
+                    <i class="fas fa-seedling"></i>
+
+                </div>
+
+
+                <div class="ml-cta-content">
+
+                    <span>
+                        SUPPORT LOCAL
+                    </span>
+
+                    <h3>
+                        Fresh products. Local vendors. Stronger communities.
+                    </h3>
+
+                </div>
+
+
+                <a asp-controller="Home"
+                   asp-action="Vendors"
+                   class="ml-cta-btn">
+
+                    Explore Vendors
+
+                    <i class="fas fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

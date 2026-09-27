@@ -1,0 +1,567 @@
+﻿
+.ml-about-page {
+    background: #ffffff;
+    color: #172b2f;
+}
+
+
+.ml-about-hero {
+    background: linear-gradient(135deg, #0b3037, #134e5e);
+    padding: 80px 0;
+    color: #ffffff;
+}
+
+.ml-about-hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    align-items: center;
+    gap: 55px;
+}
+
+.ml-about-hero-content {
+    max-width: 760px;
+}
+
+.ml-about-label,
+.ml-section-label {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+}
+
+.ml-about-label {
+    color: #9edbb0;
+}
+
+.ml-about-hero h1 {
+    font-size: clamp(38px, 5vw, 64px);
+    line-height: 1.1;
+    font-weight: 800;
+    margin-bottom: 22px;
+}
+
+    .ml-about-hero h1 span,
+    .ml-about-page h2 span {
+        color: #72c58b;
+    }
+
+.ml-about-hero p {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #dcecef;
+    margin: 0;
+    max-width: 700px;
+}
+
+
+
+
+.ml-about-hero-image {
+    width: 100%;
+    height: 390px;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #edf6f0;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.20);
+}
+
+    .ml-about-hero-image img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+    }
+
+
+
+.ml-about-intro {
+    padding: 90px 0;
+}
+
+.ml-about-image {
+    width: 100%;
+    height: 430px;
+    border-radius: 24px;
+    overflow: hidden;
+    position: relative;
+    background: #edf6f0;
+    box-shadow: 0 15px 35px rgba(11, 48, 55, 0.10);
+}
+
+    .ml-about-image img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+    }
+
+
+ 
+
+    .ml-about-image::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient( to top, rgba(11, 48, 55, 0.55), transparent 55% );
+        pointer-events: none;
+    }
+
+
+
+
+.ml-about-image-badge {
+    position: absolute;
+    left: 22px;
+    bottom: 22px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(11, 48, 55, 0.18);
+}
+
+    .ml-about-image-badge i {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #edf6f0;
+        color: #4f9d69;
+    }
+
+    .ml-about-image-badge strong {
+        display: block;
+        color: #0b3037;
+        font-size: 14px;
+    }
+
+    .ml-about-image-badge span {
+        display: block;
+        color: #68797d;
+        font-size: 11px;
+        margin-top: 2px;
+    }
+
+
+.ml-section-label {
+    color: #4f9d69;
+}
+
+.ml-about-page h2 {
+    font-size: clamp(32px, 4vw, 46px);
+    line-height: 1.2;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+.ml-about-intro p,
+.ml-platform-section p {
+    color: #64777b;
+    line-height: 1.8;
+}
+
+
+
+
+.ml-about-features {
+    margin-top: 28px;
+}
+
+.ml-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.ml-feature-icon {
+    width: 45px;
+    height: 45px;
+    min-width: 45px;
+    border-radius: 12px;
+    background: #edf6f0;
+    color: #4f9d69;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ml-feature h5 {
+    font-weight: 700;
+    margin: 0 0 4px;
+}
+
+.ml-feature p {
+    margin: 0;
+    font-size: 14px;
+}
+
+
+
+
+.ml-how-section {
+    padding: 90px 0;
+    background: #f7faf8;
+}
+
+.ml-section-heading {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 45px;
+}
+
+    .ml-section-heading p {
+        color: #68797d;
+    }
+
+
+
+.ml-step-card {
+    height: 100%;
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    padding: 0 0 30px;
+    position: relative;
+    border: 1px solid #e1ece4;
+    transition: 0.3s ease;
+}
+
+    .ml-step-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 35px rgba(11, 48, 55, 0.10);
+    }
+
+
+
+
+.ml-step-image {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: #edf6f0;
+}
+
+    .ml-step-image img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        object-position: center;
+        transition: transform 0.4s ease;
+    }
+
+.ml-step-card:hover .ml-step-image img {
+    transform: scale(1.05);
+}
+
+
+
+.ml-step-number {
+    position: absolute;
+    top: 238px;
+    right: 25px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #b4c9bb;
+}
+
+.ml-step-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 15px;
+    background: #0b3037;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin: 25px 30px 20px;
+}
+
+.ml-step-card h4 {
+    font-weight: 750;
+    margin: 0 30px 12px;
+}
+
+.ml-step-card p {
+    color: #68797d;
+    line-height: 1.7;
+    margin: 0 30px;
+}
+
+
+
+
+.ml-platform-section {
+    padding: 90px 0;
+    background: #ffffff;
+}
+
+.ml-platform-card {
+    height: 100%;
+    padding: 25px;
+    border: 1px solid #e1ece4;
+    border-radius: 16px;
+    background: #ffffff;
+    transition: 0.3s ease;
+}
+
+    .ml-platform-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(11, 48, 55, 0.08);
+        border-color: #cfe4d5;
+    }
+
+    .ml-platform-card > i {
+        font-size: 23px;
+        color: #4f9d69;
+        margin-bottom: 16px;
+    }
+
+    .ml-platform-card h5 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .ml-platform-card p {
+        font-size: 14px;
+        margin: 0;
+    }
+
+
+
+
+.ml-about-cta {
+    padding: 0 0 90px;
+}
+
+.ml-cta-box {
+    background: linear-gradient(135deg, #0b3037, #134e5e);
+    border-radius: 24px;
+    padding: 50px;
+    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+}
+
+    .ml-cta-box h2 {
+        color: #ffffff;
+        margin-bottom: 12px;
+    }
+
+    .ml-cta-box p {
+        color: #dcecef;
+        margin: 0;
+    }
+
+    .ml-cta-box .ml-section-label {
+        color: #9edbb0;
+    }
+
+.ml-cta-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ml-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 22px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: 0.3s ease;
+}
+
+
+
+
+.ml-btn-light {
+    background: #ffffff;
+    color: #0b3037;
+}
+
+    .ml-btn-light:hover {
+        background: #edf6f0;
+        color: #0b3037;
+        transform: translateY(-2px);
+    }
+
+
+.ml-btn-outline {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+}
+
+    .ml-btn-outline:hover {
+        background: #4f9d69;
+        border-color: #4f9d69;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+
+
+@media (max-width: 991px) {
+
+    .ml-about-hero {
+        padding: 70px 0;
+    }
+
+    .ml-about-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 35px;
+    }
+
+    .ml-about-hero-content {
+        max-width: 100%;
+    }
+
+    .ml-about-hero-image {
+        height: 350px;
+    }
+
+    .ml-about-intro,
+    .ml-how-section,
+    .ml-platform-section {
+        padding: 70px 0;
+    }
+
+    .ml-about-image {
+        height: 360px;
+    }
+
+    .ml-step-image {
+        height: 200px;
+    }
+
+    .ml-step-number {
+        top: 218px;
+    }
+
+    .ml-cta-box {
+        padding: 40px 30px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+
+@media (max-width: 767px) {
+
+    .ml-about-hero {
+        padding: 55px 0;
+    }
+
+        .ml-about-hero p {
+            font-size: 16px;
+        }
+
+    .ml-about-hero-image {
+        height: 280px;
+        border-radius: 18px;
+    }
+
+    .ml-about-intro,
+    .ml-how-section,
+    .ml-platform-section {
+        padding: 55px 0;
+    }
+
+    .ml-about-image {
+        height: 300px;
+        border-radius: 18px;
+    }
+
+    .ml-about-image-badge {
+        left: 15px;
+        bottom: 15px;
+        right: 15px;
+    }
+
+    .ml-step-card {
+        border-radius: 16px;
+    }
+
+    .ml-step-image {
+        height: 230px;
+    }
+
+    .ml-step-number {
+        top: 248px;
+    }
+
+    .ml-step-icon {
+        margin-top: 25px;
+    }
+
+    .ml-cta-box {
+        padding: 35px 24px;
+    }
+
+        .ml-cta-box h2 {
+            font-size: 32px;
+        }
+
+    .ml-cta-buttons {
+        width: 100%;
+    }
+
+    .ml-btn {
+        width: 100%;
+    }
+}
+
+
+
+@media (max-width: 575px) {
+
+    .ml-about-hero h1 {
+        font-size: 38px;
+    }
+
+    .ml-about-hero-image {
+        height: 240px;
+    }
+
+    .ml-about-image {
+        height: 270px;
+    }
+
+    .ml-about-image-badge {
+        padding: 10px 12px;
+    }
+
+        .ml-about-image-badge i {
+            width: 36px;
+            height: 36px;
+        }
+
+    .ml-step-image {
+        height: 210px;
+    }
+
+    .ml-step-number {
+        top: 228px;
+    }
+
+    .ml-step-card,
+    .ml-platform-card {
+        border-radius: 14px;
+    }
+}

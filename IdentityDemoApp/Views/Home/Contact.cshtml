@@ -1,0 +1,518 @@
+﻿@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<link rel="stylesheet"
+      href="~/css/contact.css"
+      asp-append-version="true" />
+
+<div class="ml-contact-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="ml-contact-hero">
+
+        <div class="container">
+
+            <div class="ml-contact-hero-content">
+
+                <span class="ml-contact-label">
+                    GET IN TOUCH
+                </span>
+
+                <h1>
+                    We'd Love To
+                    <span>Hear From You</span>
+                </h1>
+
+                <p>
+                    Have a question about MarketLink, our vendors or
+                    marketplace experience? Get in touch with us and
+                    we'll be happy to help.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CONTACT MAIN
+         ===================================================== -->
+
+    <section class="ml-contact-section">
+
+        <div class="container">
+
+            <div class="ml-contact-grid">
+
+
+                <!-- =================================================
+                     CONTACT INFORMATION
+                     ================================================= -->
+
+                <div class="ml-contact-info">
+
+                    <span class="ml-section-label">
+                        CONTACT INFORMATION
+                    </span>
+
+                    <h2>
+                        Let's Start A
+                        <span>Conversation</span>
+                    </h2>
+
+                    <p class="ml-contact-intro">
+                        Whether you're a customer looking for products
+                        or a vendor interested in joining MarketLink,
+                        we're here to assist you.
+                    </p>
+
+
+                    <!-- ADDRESS -->
+
+                    <div class="ml-contact-info-card">
+
+                        <div class="ml-contact-icon">
+
+                            <i class="fas fa-location-dot"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                VISIT US
+                            </span>
+
+                            <h4>
+                                Karachi, Pakistan
+                            </h4>
+
+                            <p>
+                                Our marketplace community is proudly
+                                serving customers and vendors across
+                                Pakistan.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="ml-contact-info-card">
+
+                        <div class="ml-contact-icon">
+
+                            <i class="fas fa-envelope"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                EMAIL US
+                            </span>
+
+                            <h4>
+                                info@marketlink.com
+                            </h4>
+
+                            <p>
+                                Send us your questions and we'll get
+                                back to you.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PHONE -->
+
+                    <div class="ml-contact-info-card">
+
+                        <div class="ml-contact-icon">
+
+                            <i class="fas fa-phone"></i>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                CALL US
+                            </span>
+
+                            <h4>
+                                +92 300 0000000
+                            </h4>
+
+                            <p>
+                                We're available to help with your
+                                marketplace questions.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SOCIAL -->
+
+                    <div class="ml-contact-social">
+
+                        <span>
+                            FOLLOW MARKETLINK
+                        </span>
+
+                        <div class="ml-contact-social-links">
+
+                            <a href="#"
+                               aria-label="Facebook">
+
+                                <i class="fab fa-facebook-f"></i>
+
+                            </a>
+
+                            <a href="#"
+                               aria-label="Instagram">
+
+                                <i class="fab fa-instagram"></i>
+
+                            </a>
+
+                            <a href="#"
+                               aria-label="LinkedIn">
+
+                                <i class="fab fa-linkedin-in"></i>
+
+                            </a>
+
+                            <a href="#"
+                               aria-label="Twitter">
+
+                                <i class="fab fa-x-twitter"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     CONTACT FORM
+                     ================================================= -->
+
+                <div class="ml-contact-form-wrapper">
+
+                    <div class="ml-contact-form-header">
+
+                        <span class="ml-section-label">
+                            SEND A MESSAGE
+                        </span>
+
+                        <h2>
+                            How Can We
+                            <span>Help?</span>
+                        </h2>
+
+                        <p>
+                            Fill out the form below and share your
+                            question or message with us.
+                        </p>
+
+                    </div>
+
+
+                    <form class="ml-contact-form"
+                          method="post"
+                          action="#">
+
+                        <!-- NAME + EMAIL -->
+
+                        <div class="ml-contact-form-row">
+
+                            <div class="ml-contact-field">
+
+                                <label for="contactName">
+                                    Your Name
+                                </label>
+
+                                <div class="ml-contact-input">
+
+                                    <i class="fas fa-user"></i>
+
+                                    <input type="text"
+                                           id="contactName"
+                                           name="Name"
+                                           placeholder="Enter your name"
+                                           autocomplete="name" />
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-contact-field">
+
+                                <label for="contactEmail">
+                                    Email Address
+                                </label>
+
+                                <div class="ml-contact-input">
+
+                                    <i class="fas fa-envelope"></i>
+
+                                    <input type="email"
+                                           id="contactEmail"
+                                           name="Email"
+                                           placeholder="Enter your email"
+                                           autocomplete="email" />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- PHONE -->
+
+                        <div class="ml-contact-field">
+
+                            <label for="contactPhone">
+                                Phone Number
+                            </label>
+
+                            <div class="ml-contact-input">
+
+                                <i class="fas fa-phone"></i>
+
+                                <input type="tel"
+                                       id="contactPhone"
+                                       name="Phone"
+                                       placeholder="Enter your phone number"
+                                       autocomplete="tel" />
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SUBJECT -->
+
+                        <div class="ml-contact-field">
+
+                            <label for="contactSubject">
+                                Subject
+                            </label>
+
+                            <div class="ml-contact-input">
+
+                                <i class="fas fa-heading"></i>
+
+                                <input type="text"
+                                       id="contactSubject"
+                                       name="Subject"
+                                       placeholder="What would you like to ask?" />
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- MESSAGE -->
+
+                        <div class="ml-contact-field">
+
+                            <label for="contactMessage">
+                                Message
+                            </label>
+
+                            <div class="ml-contact-textarea">
+
+                                <i class="fas fa-message"></i>
+
+                                <textarea id="contactMessage"
+                                          name="Message"
+                                          rows="6"
+                                          placeholder="Write your message here..."></textarea>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- BUTTON -->
+
+                        <button type="submit"
+                                class="ml-contact-submit">
+
+                            Send Message
+
+                            <i class="fas fa-paper-plane"></i>
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         WHY CONTACT US
+         ===================================================== -->
+
+    <section class="ml-contact-help">
+
+        <div class="container">
+
+            <div class="ml-contact-help-heading">
+
+                <span class="ml-section-label">
+                    WE'RE HERE TO HELP
+                </span>
+
+                <h2>
+                    What Can We
+                    <span>Help You With?</span>
+                </h2>
+
+            </div>
+
+
+            <div class="ml-contact-help-grid">
+
+                <div class="ml-help-card">
+
+                    <div class="ml-help-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+
+                    <h3>
+                        Customer Support
+                    </h3>
+
+                    <p>
+                        Questions about products, orders, vendors
+                        or your MarketLink account?
+                    </p>
+
+                </div>
+
+
+                <div class="ml-help-card">
+
+                    <div class="ml-help-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+
+                    <h3>
+                        Vendor Support
+                    </h3>
+
+                    <p>
+                        Need information about becoming a vendor
+                        or managing your marketplace profile?
+                    </p>
+
+                </div>
+
+
+                <div class="ml-help-card">
+
+                    <div class="ml-help-icon">
+                        <i class="fas fa-circle-question"></i>
+                    </div>
+
+                    <h3>
+                        General Questions
+                    </h3>
+
+                    <p>
+                        Have a question about how MarketLink works?
+                        We're happy to provide information.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CTA
+         ===================================================== -->
+
+    <section class="ml-contact-cta">
+
+        <div class="container">
+
+            <div class="ml-contact-cta-box">
+
+                <div>
+
+                    <span class="ml-section-label">
+                        EXPLORE MARKETLINK
+                    </span>
+
+                    <h2>
+                        Ready To Discover
+                        <span>Local Products?</span>
+                    </h2>
+
+                    <p>
+                        Explore products and connect with local vendors
+                        through MarketLink.
+                    </p>
+
+                </div>
+
+                <div class="ml-contact-cta-buttons">
+
+                    <a asp-controller="Home"
+                       asp-action="Products"
+                       class="ml-contact-cta-primary">
+
+                        Browse Products
+
+                        <i class="fas fa-arrow-right"></i>
+
+                    </a>
+
+                    <a asp-controller="Home"
+                       asp-action="Vendors"
+                       class="ml-contact-cta-secondary">
+
+                        Explore Vendors
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

@@ -1,0 +1,287 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.FavouriteMarket>
+
+@{
+    ViewData["Title"] = "Saved Markets";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-saved-markets.css"
+      asp-append-version="true" />
+
+<div class="saved-markets-page">
+
+    <section class="saved-markets-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-icon">
+                <i class="fa-solid fa-bookmark"></i>
+            </div>
+
+            <div>
+                <span class="hero-label">
+                    CUSTOMER COLLECTION
+                </span>
+
+                <h1>Saved Markets</h1>
+
+                <p>
+                    Keep your favorite markets in one place
+                    and quickly explore them whenever you need.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="hero-decoration hero-decoration-one"></div>
+        <div class="hero-decoration hero-decoration-two"></div>
+
+    </section>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert-message success-alert">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>@TempData["SuccessMessage"]</span>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-message error-alert">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>@TempData["ErrorMessage"]</span>
+        </div>
+    }
+
+
+    <section class="saved-markets-toolbar">
+
+        <div class="toolbar-left">
+            <div class="section-icon">
+                <i class="fa-solid fa-location-dot"></i>
+            </div>
+
+            <div>
+                <h2>Your Saved Markets</h2>
+                <p>
+                    @Model.Count() market@(Model.Count() == 1 ? "" : "s") saved
+                </p>
+            </div>
+        </div>
+
+        <a asp-controller="Customer"
+           asp-action="BrowseMarkets"
+           class="browse-markets-btn">
+
+            <i class="fa-solid fa-compass"></i>
+
+            <span>Browse Markets</span>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+    </section>
+
+
+    @if (!Model.Any())
+    {
+        <section class="empty-saved-markets">
+
+            <div class="empty-icon">
+                <i class="fa-regular fa-bookmark"></i>
+            </div>
+
+            <h2>No Saved Markets Yet</h2>
+
+            <p>
+                You haven't saved any markets yet.
+                Browse available markets and save the ones
+                you want to visit again.
+            </p>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseMarkets"
+               class="empty-action">
+
+                <i class="fa-solid fa-store"></i>
+
+                Explore Markets
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </section>
+    }
+    else
+    {
+        <section class="saved-markets-grid">
+
+            @foreach (var item in Model)
+            {
+                var market = item.Market;
+
+                if (market == null)
+                {
+                    continue;
+                }
+
+                <article class="market-card">
+
+                    <div class="market-card-top">
+
+                        <div class="market-icon">
+                            <i class="fa-solid fa-store"></i>
+                        </div>
+
+                        <form asp-controller="Customer"
+                              asp-action="ToggleFavoriteMarket"
+                              method="post"
+                              class="remove-market-form">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="marketId"
+                                   value="@market.MarketId" />
+
+                            <button type="button"
+                                    class="remove-market-btn"
+                                    onclick="removeSavedMarket(this)"
+                                    title="Remove from saved markets">
+
+                                <i class="fa-solid fa-bookmark"></i>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+
+                    <div class="market-card-body">
+
+                        <span class="market-badge">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Active Market
+                        </span>
+
+                        <h3>@market.MarketName</h3>
+
+                        <div class="market-info">
+
+                            <div class="info-row">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>@market.Location</span>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(market.City))
+                            {
+                                <div class="info-row">
+                                    <i class="fa-solid fa-city"></i>
+                                    <span>@market.City</span>
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(market.OperatingDays))
+                            {
+                                <div class="info-row">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <span>@market.OperatingDays</span>
+                                </div>
+                            }
+
+                            @if (market.OpeningTime.HasValue &&
+                                                market.ClosingTime.HasValue)
+                            {
+                                <div class="info-row">
+                                    <i class="fa-solid fa-clock"></i>
+
+                                    <span>
+                                        @market.OpeningTime.Value.ToString(@"hh\:mm")
+                                        -
+                                        @market.ClosingTime.Value.ToString(@"hh\:mm")
+                                    </span>
+                                </div>
+                            }
+
+                        </div>
+
+
+                        @if (!string.IsNullOrWhiteSpace(market.Description))
+                        {
+                            <p class="market-description">
+                                @market.Description
+                            </p>
+                        }
+
+                    </div>
+
+
+                    <div class="market-card-footer">
+
+                        <a asp-controller="Customer"
+                           asp-action="BrowseMarkets"
+                           class="market-action">
+
+                            <span>Explore Market</span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                    </div>
+
+                </article>
+            }
+
+        </section>
+    }
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    function removeSavedMarket(button) {
+
+        const form = button.closest("form");
+
+        Swal.fire({
+            title: "Remove Saved Market?",
+            text: "This market will be removed from your saved markets.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Remove",
+            cancelButtonText: "Keep It",
+            reverseButtons: true
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                form.submit();
+            }
+
+        });
+    }
+
+    setTimeout(() => {
+
+        const alerts = document.querySelectorAll(".alert-message");
+
+        alerts.forEach(alert => {
+            alert.style.opacity = "0";
+            alert.style.transform = "translateY(-8px)";
+
+            setTimeout(() => {
+                alert.remove();
+            }, 350);
+        });
+
+    }, 3500);
+
+</script>

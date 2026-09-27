@@ -1,0 +1,367 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Product>
+
+@{
+    ViewData["Title"] = "My Products";
+    var products = Model?.ToList() ?? new List<IdentityDemoApp.Models.Product>();
+    var totalProducts = products.Count;
+    var approvedProducts = products.Count(p => p.ModerationStatus == "Approved");
+    var pendingProducts = products.Count(p => p.ModerationStatus == "Pending");
+    var rejectedProducts = products.Count(p => p.ModerationStatus == "Rejected");
+    var availableProducts = products.Count(p => p.IsAvailable);
+}
+
+<link rel="stylesheet" href="~/css/vendor-products.css" asp-append-version="true" />
+
+<div class="vendor-products-page">
+
+    <div class="products-header">
+        <div class="products-header-content">
+            <div class="products-title-area">
+                <div class="products-title-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+
+                <div>
+                    <span>Vendor Panel</span>
+                    <h1>My Products</h1>
+                    <p>Manage your products and keep your listings up to date.</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <a asp-controller="Vendor"
+                   asp-action="Dashboard"
+                   class="back-dashboard-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Dashboard
+                </a>
+
+                <a asp-controller="Vendor"
+                   asp-action="ProductCreate"
+                   class="add-product-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Product
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-summary">
+
+        <div class="summary-card">
+            <div class="summary-icon">
+                <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+            <div>
+                <span>Total Products</span>
+                <strong>@totalProducts</strong>
+            </div>
+        </div>
+
+        <div class="summary-card approved-summary">
+            <div class="summary-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div>
+                <span>Approved</span>
+                <strong>@approvedProducts</strong>
+            </div>
+        </div>
+
+        <div class="summary-card pending-summary">
+            <div class="summary-icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div>
+                <span>Pending</span>
+                <strong>@pendingProducts</strong>
+            </div>
+        </div>
+
+        <div class="summary-card available-summary">
+            <div class="summary-icon">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+            <div>
+                <span>Available</span>
+                <strong>@availableProducts</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="products-toolbar">
+
+        <div class="toolbar-heading">
+            <span>Product Management</span>
+            <h2>Your Listings</h2>
+        </div>
+
+        <div class="product-filters">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text"
+                       id="productSearch"
+                       placeholder="Search products..." />
+            </div>
+
+            <select id="statusFilter">
+                <option value="">All Status</option>
+                <option value="Approved">Approved</option>
+                <option value="Pending">Pending</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+
+            <select id="availabilityFilter">
+                <option value="">All Availability</option>
+                <option value="Available">Available</option>
+                <option value="Unavailable">Unavailable</option>
+            </select>
+        </div>
+
+    </div>
+
+    @if (products.Any())
+    {
+        <div class="products-grid" id="productsGrid">
+
+            @foreach (var product in products)
+            {
+                var statusClass = product.ModerationStatus?.ToLower() ?? "pending";
+                var availabilityText = product.IsAvailable ? "Available" : "Unavailable";
+                var availabilityClass = product.IsAvailable ? "available" : "unavailable";
+
+                <div class="product-card"
+                     data-name="@product.ProductName.ToLower()"
+                     data-category="@(product.Category?.CategoryName?.ToLower() ?? "")"
+                     data-status="@product.ModerationStatus"
+                     data-availability="@availabilityText">
+
+                    <div class="product-card-top">
+                        <div class="product-icon">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+
+                        <span class="moderation-badge @statusClass">
+                            @if (product.ModerationStatus == "Approved")
+                            {
+                                <i class="fa-solid fa-circle-check"></i>
+                            }
+                            else if (product.ModerationStatus == "Rejected")
+                            {
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-clock"></i>
+                            }
+
+                        @product.ModerationStatus
+                    </span>
+                </div>
+
+                <div class="product-card-body">
+
+                    <span class="product-category">
+                        @(product.Category?.CategoryName ?? "Uncategorized")
+                    </span>
+
+                    <h3>@product.ProductName</h3>
+
+                    <p class="product-description">
+                        @(string.IsNullOrWhiteSpace(product.Description)
+                                            ? "No description added."
+                                            : product.Description)
+                </p>
+
+                        <div class="product-price-row">
+                            <div>
+                                <span>Price</span>
+                                <strong>Rs. @product.Price.ToString("N2")</strong>
+                            </div>
+
+                            <div>
+                                <span>Unit</span>
+                                <strong>@product.Unit</strong>
+                            </div>
+                        </div>
+
+                        <div class="availability-row">
+                            <span class="availability-badge @availabilityClass">
+                                <i class="fa-solid fa-circle"></i>
+                                @availabilityText
+                            </span>
+
+                            <small>
+                                Added @product.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                            </small>
+                        </div>
+
+                    </div>
+
+                    <div class="product-card-actions">
+
+                        <a asp-controller="Vendor"
+                           asp-action="ProductDetails"
+                           asp-route-id="@product.ProductId"
+                           class="details-action">
+                            <i class="fa-solid fa-eye"></i>
+                            Details
+                        </a>
+
+                        <a asp-controller="Vendor"
+                           asp-action="ProductEdit"
+                           asp-route-id="@product.ProductId"
+                           class="edit-action">
+                            <i class="fa-solid fa-pen"></i>
+                            Edit
+                        </a>
+
+                        <form asp-controller="Vendor"
+                              asp-action="ProductDelete"
+                              asp-route-id="@product.ProductId"
+                              method="post"
+                              class="delete-form">
+                            @Html.AntiForgeryToken()
+
+                            <button type="button"
+                                    class="delete-action"
+                                    onclick="confirmDelete(this)">
+                                <i class="fa-solid fa-trash"></i>
+                                Delete
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+                }
+
+        </div>
+
+        <div id="noProductsFound" class="no-filter-result">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <h3>No matching products</h3>
+            <p>Try changing your search or filter.</p>
+        </div>
+    }
+    else
+    {
+        <div class="empty-products">
+            <div class="empty-products-icon">
+                <i class="fa-solid fa-box-open"></i>
+            </div>
+
+            <h2>No Products Yet</h2>
+
+            <p>
+                Start adding your products so customers can discover what you offer.
+            </p>
+
+            <a asp-controller="Vendor"
+               asp-action="ProductCreate"
+               class="empty-add-btn">
+                <i class="fa-solid fa-plus"></i>
+                Add Your First Product
+            </a>
+        </div>
+    }
+
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                text: "@TempData["Success"]",
+                confirmButtonColor: "#0B3037"
+            });
+        });
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                icon: "error",
+                title: "Unable to Continue",
+                text: "@TempData["Error"]",
+                confirmButtonColor: "#0B3037"
+            });
+        });
+    </script>
+}
+
+<script>
+    const searchInput = document.getElementById("productSearch");
+    const statusFilter = document.getElementById("statusFilter");
+    const availabilityFilter = document.getElementById("availabilityFilter");
+    const productCards = document.querySelectorAll(".product-card");
+    const noProductsFound = document.getElementById("noProductsFound");
+
+    function filterProducts() {
+        const search = (searchInput?.value || "").toLowerCase().trim();
+        const status = statusFilter?.value || "";
+        const availability = availabilityFilter?.value || "";
+
+        let visibleCount = 0;
+
+        productCards.forEach(card => {
+            const name = card.dataset.name || "";
+            const category = card.dataset.category || "";
+            const cardStatus = card.dataset.status || "";
+            const cardAvailability = card.dataset.availability || "";
+
+            const matchesSearch =
+                !search ||
+                name.includes(search) ||
+                category.includes(search);
+
+            const matchesStatus =
+                !status ||
+                cardStatus === status;
+
+            const matchesAvailability =
+                !availability ||
+                cardAvailability === availability;
+
+            if (matchesSearch && matchesStatus && matchesAvailability) {
+                card.style.display = "";
+                visibleCount++;
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        if (noProductsFound) {
+            noProductsFound.style.display =
+                visibleCount === 0 ? "block" : "none";
+        }
+    }
+
+    searchInput?.addEventListener("input", filterProducts);
+    statusFilter?.addEventListener("change", filterProducts);
+    availabilityFilter?.addEventListener("change", filterProducts);
+
+    function confirmDelete(button) {
+        Swal.fire({
+            title: "Delete Product?",
+            text: "This product will be permanently removed.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Delete",
+            cancelButtonText: "Cancel",
+            confirmButtonColor: "#c0392b",
+            cancelButtonColor: "#6c757d"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                button.closest("form").submit();
+            }
+        });
+    }
+</script>

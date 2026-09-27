@@ -1,0 +1,204 @@
+﻿@model IdentityDemoApp.Models.WeeklyStock
+
+@{
+    ViewData["Title"] = "Add Weekly Stock";
+    Layout = "_Layout";
+}
+<link rel="stylesheet" href="~/css/vendor-weekly-stock.css" />
+
+<div class="weekly-form-page">
+
+    <div class="weekly-form-header">
+        <div>
+            <a asp-action="WeeklyStock" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Weekly Stock
+            </a>
+
+            <span class="page-eyebrow">
+                <i class="fa-solid fa-plus"></i>
+                Inventory Management
+            </span>
+
+            <h1>Add Weekly Stock</h1>
+
+            <p>
+                Add the available quantity of a product for a specific week.
+            </p>
+        </div>
+    </div>
+
+    <div class="weekly-form-layout">
+
+        <div class="weekly-form-card">
+
+            <div class="form-card-header">
+                <div class="form-header-icon">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+
+                <div>
+                    <h2>Stock Information</h2>
+                    <p>Enter the weekly availability details below.</p>
+                </div>
+            </div>
+
+            <form asp-action="WeeklyStockCreate" method="post">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="validation-summary"></div>
+
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+                        <label asp-for="ProductId">
+                            Product
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-leaf"></i>
+
+                            <select asp-for="ProductId" class="form-control">
+                                <option value="">Select Product</option>
+
+                                @if (ViewBag.Products != null)
+                                {
+                                    foreach (var product in ViewBag.Products)
+                                    {
+                                        <option value="@product.ProductId">
+                                            @product.ProductName
+                                            @if (product.Category != null)
+                                            {
+                                                @: — @product.Category.CategoryName
+                                            }
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <span asp-validation-for="ProductId"
+                              class="field-validation"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="WeekStartDate">
+                            Week Start Date
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <input asp-for="WeekStartDate"
+                                   type="date"
+                                   class="form-control" />
+                        </div>
+
+                        <span asp-validation-for="WeekStartDate"
+                              class="field-validation"></span>
+
+                        <small>
+                            Select the starting date of the stock week.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="AvailableQuantity">
+                            Available Quantity
+                            <span>*</span>
+                        </label>
+
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-cubes"></i>
+
+                            <input asp-for="AvailableQuantity"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="form-control"
+                                   placeholder="Enter quantity" />
+                        </div>
+
+                        <span asp-validation-for="AvailableQuantity"
+                              class="field-validation"></span>
+
+                        <small>
+                            Enter the total quantity available for this week.
+                        </small>
+                    </div>
+
+                </div>
+
+                <div class="reserved-info">
+                    <div class="reserved-info-icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+
+                    <div>
+                        <strong>Reserved Quantity</strong>
+                        <p>
+                            New stock starts with 0 reserved quantity.
+                            Reserved quantity is managed automatically when orders are placed.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-action="WeeklyStock"
+                       class="cancel-btn">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="save-btn">
+                        <i class="fa-solid fa-check"></i>
+                        Add Weekly Stock
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+        <div class="weekly-side-card">
+
+            <div class="side-card-icon">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+
+            <h3>Stock Management</h3>
+
+            <p>
+                Keep your weekly availability updated so customers can see
+                accurate stock information before placing pre-orders.
+            </p>
+
+            <div class="side-rule"></div>
+
+            <div class="side-point">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Only approved products can be added.</span>
+            </div>
+
+            <div class="side-point">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Each product can have one record per week.</span>
+            </div>
+
+            <div class="side-point">
+                <i class="fa-solid fa-circle-check"></i>
+                <span>Reserved quantity is protected from manual changes.</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,615 @@
+﻿@model IdentityDemoApp.Models.Cart
+
+@{
+    ViewData["Title"] = "Checkout";
+
+    var cartItems = Model.CartItems?
+        .Where(x => x.Product != null)
+        .ToList()
+        ?? new List<IdentityDemoApp.Models.CartItem>();
+
+    var totalItems = cartItems.Sum(x => x.Quantity);
+    var subtotal = cartItems.Sum(x => x.TotalPrice);
+
+    var pickupSlots = ViewBag.PickupSlots
+        as List<IdentityDemoApp.Models.PickupSlot>
+        ?? new List<IdentityDemoApp.Models.PickupSlot>();
+}
+
+<link rel="stylesheet"
+      href="~/css/checkout.css"
+      asp-append-version="true" />
+
+<div class="ml-checkout-page">
+
+    <section class="ml-checkout-hero">
+        <div class="ml-checkout-glow ml-checkout-glow-one"></div>
+        <div class="ml-checkout-glow ml-checkout-glow-two"></div>
+
+        <div class="container">
+            <div class="ml-checkout-hero-content">
+
+                <div class="ml-checkout-badge">
+                    <span></span>
+                    MARKETLINK CHECKOUT
+                </div>
+
+                <h1>
+                    Complete Your <strong>Pre-Order</strong>
+                </h1>
+
+                <p>
+                    Review your products, choose a pickup slot,
+                    and confirm your order.
+                </p>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="ml-checkout-section">
+
+        <div class="container">
+
+            <div class="ml-checkout-progress">
+
+                <div class="ml-checkout-step ml-step-complete">
+                    <div class="ml-step-icon">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div>
+                        <span>STEP 01</span>
+                        <strong>Cart</strong>
+                    </div>
+                </div>
+
+                <div class="ml-progress-line active"></div>
+
+                <div class="ml-checkout-step ml-step-active">
+                    <div class="ml-step-icon">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <div>
+                        <span>STEP 02</span>
+                        <strong>Checkout</strong>
+                    </div>
+                </div>
+
+                <div class="ml-progress-line"></div>
+
+                <div class="ml-checkout-step">
+                    <div class="ml-step-icon">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                    </div>
+                    <div>
+                        <span>STEP 03</span>
+                        <strong>Order</strong>
+                    </div>
+                </div>
+
+            </div>
+
+            <form asp-controller="Customer"
+                  asp-action="Checkout"
+                  method="post"
+                  id="checkoutForm">
+
+                @Html.AntiForgeryToken()
+
+                <div class="ml-checkout-layout">
+
+                    <div class="ml-checkout-main">
+
+                        <div class="ml-checkout-card">
+
+                            <div class="ml-checkout-card-header">
+
+                                <div class="ml-checkout-card-icon">
+                                    <i class="fa-solid fa-truck-fast"></i>
+                                </div>
+
+                                <div>
+                                    <span>ORDER COLLECTION</span>
+                                    <h2>Choose Pickup Slot</h2>
+                                    <p>
+                                        Select an available time slot
+                                        for collecting your order.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            @if (pickupSlots.Any())
+                            {
+                                <div class="ml-pickup-grid">
+
+                                    @foreach (var slot in pickupSlots)
+                                    {
+                                        <label class="ml-pickup-option">
+
+                                            <input type="radio"
+                                                   name="pickupSlotId"
+                                                   value="@slot.PickupSlotId" />
+
+                                            <div class="ml-pickup-card">
+
+                                                <div class="ml-pickup-check">
+                                                    <i class="fa-solid fa-check"></i>
+                                                </div>
+
+                                                <div class="ml-pickup-icon">
+                                                    <i class="fa-solid fa-calendar-days"></i>
+                                                </div>
+
+                                                <div class="ml-pickup-info">
+
+                                                    <span class="ml-pickup-label">
+                                                        PICKUP DATE
+                                                    </span>
+
+                                                    <strong>
+                                                        @slot.PickupDate.ToString("dd MMM yyyy")
+                                                    </strong>
+
+                                                    <div class="ml-pickup-time">
+
+                                                        <i class="fa-regular fa-clock"></i>
+
+                                                        <span>
+                                                            @slot.StartTime
+                                                            -
+                                                            @slot.EndTime
+                                                        </span>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </label>
+                                    }
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="ml-no-pickup">
+
+                                    <div class="ml-no-pickup-icon">
+                                        <i class="fa-solid fa-calendar-xmark"></i>
+                                    </div>
+
+                                    <div>
+                                        <strong>No pickup slots available</strong>
+                                        <span>
+                                            You can still place your pre-order.
+                                        </span>
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                        <div class="ml-checkout-card">
+
+                            <div class="ml-checkout-card-header">
+
+                                <div class="ml-checkout-card-icon">
+                                    <i class="fa-solid fa-note-sticky"></i>
+                                </div>
+
+                                <div>
+                                    <span>ADDITIONAL INFORMATION</span>
+                                    <h2>Order Notes</h2>
+                                    <p>
+                                        Add any special instructions
+                                        for your order.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="ml-notes-wrapper">
+
+                                <div class="ml-notes-icon">
+                                    <i class="fa-solid fa-pen"></i>
+                                </div>
+
+                                <textarea name="notes"
+                                          id="notes"
+                                          maxlength="500"
+                                          rows="5"
+                                          class="ml-notes-input"
+                                          placeholder="Write any special instructions, pickup preferences or other details here..."></textarea>
+
+                                <div class="ml-notes-footer">
+                                    <span>
+                                        <i class="fa-solid fa-circle-info"></i>
+                                        Optional
+                                    </span>
+
+                                    <span>
+                                        <strong id="notesCount">0</strong>/500
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ml-checkout-card">
+
+                            <div class="ml-checkout-card-header">
+
+                                <div class="ml-checkout-card-icon">
+                                    <i class="fa-solid fa-basket-shopping"></i>
+                                </div>
+
+                                <div>
+                                    <span>YOUR SELECTION</span>
+                                    <h2>Order Items</h2>
+                                    <p>
+                                        Review the products before confirming.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="ml-checkout-items">
+
+                                @foreach (var item in cartItems)
+                                {
+                                    var product = item.Product;
+
+                                    <div class="ml-checkout-item">
+
+                                        <div class="ml-checkout-product-image">
+                                            <i class="fa-solid fa-leaf"></i>
+                                        </div>
+
+                                        <div class="ml-checkout-product-info">
+
+                                            <span>
+                                                @(product?.Category?.CategoryName ?? "General")
+                                            </span>
+
+                                            <h3>
+                                                @product?.ProductName
+                                            </h3>
+
+                                            <small>
+                                                @(product?.VendorProfile?.FarmName ?? "Local Vendor")
+                                            </small>
+
+                                        </div>
+
+                                        <div class="ml-checkout-item-qty">
+                                            <span>QTY</span>
+                                            <strong>@item.Quantity</strong>
+                                        </div>
+
+                                        <div class="ml-checkout-item-price">
+                                            <span>ITEM TOTAL</span>
+                                            <strong>
+                                                Rs. @item.TotalPrice.ToString("N2")
+                                            </strong>
+                                        </div>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <aside class="ml-checkout-sidebar">
+
+                        <div class="ml-order-summary">
+
+                            <div class="ml-summary-heading">
+
+                                <div>
+                                    <span>ORDER SUMMARY</span>
+                                    <h2>Your Pre-Order</h2>
+                                </div>
+
+                                <div class="ml-summary-bag">
+                                    <i class="fa-solid fa-bag-shopping"></i>
+                                </div>
+
+                            </div>
+
+                            <div class="ml-summary-items">
+
+                                <div class="ml-summary-row">
+                                    <span>
+                                        <i class="fa-solid fa-box"></i>
+                                        Total Items
+                                    </span>
+                                    <strong>@totalItems</strong>
+                                </div>
+
+                                <div class="ml-summary-row">
+                                    <span>
+                                        <i class="fa-solid fa-receipt"></i>
+                                        Subtotal
+                                    </span>
+                                    <strong>
+                                        Rs. @subtotal.ToString("N2")
+                                    </strong>
+                                </div>
+
+                                <div class="ml-summary-row">
+                                    <span>
+                                        <i class="fa-solid fa-truck"></i>
+                                        Delivery
+                                    </span>
+                                    <strong class="ml-summary-muted">
+                                        Pickup
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="ml-summary-total">
+
+                                <div>
+                                    <span>ORDER TOTAL</span>
+                                    <small>
+                                        Final amount based on selected items
+                                    </small>
+                                </div>
+
+                                <strong>
+                                    Rs. @subtotal.ToString("N2")
+                                </strong>
+
+                            </div>
+
+                            <button type="submit"
+                                    class="ml-place-order-btn"
+                                    id="placeOrderBtn">
+
+                                <span class="ml-place-order-text">
+                                    <i class="fas fa-basket-shopping"></i>
+                                    Place Pre-Order
+                                </span>
+
+                                <span class="ml-place-order-loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Processing...
+                                </span>
+
+                                <i class="fas fa-arrow-right"></i>
+
+                            </button>
+
+                            <a asp-controller="Customer"
+                               asp-action="Cart"
+                               class="ml-back-cart">
+
+                                <i class="fa-solid fa-arrow-left"></i>
+
+                                Back to Cart
+
+                            </a>
+
+                            <div class="ml-checkout-security">
+
+                                <div class="ml-security-icon">
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+
+                                <div>
+                                    <strong>Safe & Secure</strong>
+                                    <span>
+                                        Your order information is securely
+                                        processed.
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</div>
+
+<div class="ml-confirm-overlay"
+     id="orderConfirmModal">
+
+    <div class="ml-confirm-modal">
+
+        <button type="button"
+                class="ml-confirm-close"
+                onclick="closeOrderModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="ml-confirm-icon">
+            <i class="fa-solid fa-bag-shopping"></i>
+        </div>
+
+        <span class="ml-confirm-label">
+            FINAL CONFIRMATION
+        </span>
+
+        <h2>Place Your Pre-Order?</h2>
+
+        <p>
+            Please make sure your selected products and pickup
+            information are correct before placing the order.
+        </p>
+
+        <div class="ml-confirm-total">
+            <span>ORDER TOTAL</span>
+            <strong>
+                Rs. @subtotal.ToString("N2")
+            </strong>
+        </div>
+
+        <div class="ml-confirm-actions">
+
+            <button type="button"
+                    class="ml-confirm-cancel"
+                    onclick="closeOrderModal()">
+                Review Again
+            </button>
+
+            <button type="button"
+                    class="ml-confirm-submit"
+                    onclick="submitCheckout()">
+                <i class="fa-solid fa-check"></i>
+                Confirm Order
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const checkoutForm = document.getElementById("checkoutForm");
+        const placeOrderBtn = document.getElementById("placeOrderBtn");
+        const notesInput = document.getElementById("notes");
+        const notesCount = document.getElementById("notesCount");
+
+        if (notesInput && notesCount) {
+            notesInput.addEventListener("input", function () {
+                notesCount.textContent = this.value.length;
+            });
+        }
+
+        if (!checkoutForm) return;
+
+        checkoutForm.addEventListener("submit", async function (e) {
+
+            e.preventDefault();
+
+            const pickupSlots = document.querySelectorAll(
+                'input[name="pickupSlotId"]'
+            );
+
+            const selectedPickup = document.querySelector(
+                'input[name="pickupSlotId"]:checked'
+            );
+
+            if (pickupSlots.length > 0 && !selectedPickup) {
+
+                Swal.fire({
+                    icon: "warning",
+                    title: "Pickup Slot Required",
+                    text: "Please select a pickup slot before placing your pre-order.",
+                    confirmButtonText: "Okay",
+                    confirmButtonColor: "#0b3037"
+                });
+
+                return;
+            }
+
+            const confirmResult = await Swal.fire({
+                icon: "question",
+                title: "Confirm Pre-Order?",
+                text: "Are you sure you want to place this pre-order?",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Place Order",
+                cancelButtonText: "Review Again",
+                confirmButtonColor: "#0b3037",
+                cancelButtonColor: "#6c757d",
+                reverseButtons: true
+            });
+
+            if (!confirmResult.isConfirmed) {
+                return;
+            }
+
+            const originalButtonHtml = placeOrderBtn.innerHTML;
+
+            placeOrderBtn.disabled = true;
+
+            placeOrderBtn.innerHTML = `
+                <span class="ml-place-order-loading"
+                      style="display:inline-flex;">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Processing...
+                </span>
+            `;
+
+            try {
+
+                const formData = new FormData(checkoutForm);
+
+                const response = await fetch(checkoutForm.action, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+
+                    await Swal.fire({
+                        icon: "success",
+                        title: "Pre-Order Placed Successfully!",
+                        text: data.message,
+                        confirmButtonText: "View My Orders",
+                        confirmButtonColor: "#0b3037",
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+
+                    window.location.href = data.redirectUrl;
+
+                } else {
+
+                    Swal.fire({
+                        icon: "error",
+                        title: "Unable to Place Order",
+                        text: data.message || "Something went wrong. Please try again.",
+                        confirmButtonText: "Okay",
+                        confirmButtonColor: "#0b3037"
+                    });
+
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.innerHTML = originalButtonHtml;
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                Swal.fire({
+                    icon: "error",
+                    title: "Something Went Wrong",
+                    text: "We could not process your pre-order. Please try again.",
+                    confirmButtonText: "Okay",
+                    confirmButtonColor: "#0b3037"
+                });
+
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.innerHTML = originalButtonHtml;
+            }
+        });
+    });
+</script>

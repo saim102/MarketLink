@@ -1,0 +1,191 @@
+﻿
+@model IEnumerable<IdentityDemoApp.Models.VendorMarket>
+
+@{
+    ViewData["Title"] = "My Markets";
+    var activeMarkets = Model.Count(x => x.IsActive);
+    var inactiveMarkets = Model.Count(x => !x.IsActive);
+}
+
+<link rel="stylesheet" href="~/css/vendor-markets.css" asp-append-version="true" />
+
+<div class="vendor-markets-page">
+
+    <div class="markets-header">
+        <div class="markets-header-content">
+            <div class="markets-header-icon">
+                <i class="fa-solid fa-store"></i>
+            </div>
+
+            <div>
+                <span>Vendor Management</span>
+                <h1>My Markets</h1>
+                <p>View the markets assigned to your vendor profile.</p>
+            </div>
+        </div>
+
+        <a asp-controller="Vendor"
+           asp-action="Dashboard"
+           class="back-dashboard-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Dashboard
+        </a>
+    </div>
+
+
+    <div class="market-summary">
+
+        <div class="summary-card">
+            <div class="summary-icon total">
+                <i class="fa-solid fa-store"></i>
+            </div>
+
+            <div>
+                <span>Total Markets</span>
+                <strong>@Model.Count()</strong>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon active">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div>
+                <span>Active Markets</span>
+                <strong>@activeMarkets</strong>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon inactive">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+
+            <div>
+                <span>Inactive Markets</span>
+                <strong>@inactiveMarkets</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    @if (Model.Any())
+    {
+        <div class="markets-grid">
+
+            @foreach (var vendorMarket in Model)
+            {
+                var market = vendorMarket.Market;
+
+                if (market == null)
+                {
+                    continue;
+                }
+
+                <div class="market-card">
+
+                    <div class="market-card-top">
+
+                        <div class="market-icon">
+                            <i class="fa-solid fa-shop"></i>
+                        </div>
+
+                        <span class="market-status @(vendorMarket.IsActive ? "status-active" : "status-inactive")">
+                            <i class="fa-solid @(vendorMarket.IsActive ? "fa-circle-check" : "fa-circle-xmark")"></i>
+                            @(vendorMarket.IsActive ? "Active" : "Inactive")
+                        </span>
+
+                    </div>
+
+
+                    <div class="market-card-body">
+
+                        <h2>@market.MarketName</h2>
+
+                        @if (!string.IsNullOrWhiteSpace(market.Location))
+                        {
+                            <div class="market-info">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span>@market.Location</span>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(market.OperatingDays))
+                        {
+                            <div class="market-info">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                <span>@market.OperatingDays</span>
+                            </div>
+                        }
+
+                        @if (market.OpeningTime.HasValue && market.ClosingTime.HasValue)
+                        {
+                            <div class="market-info">
+                                <i class="fa-solid fa-clock"></i>
+                                <span>
+                                    @market.OpeningTime.Value.ToString(@"hh\:mm")
+                                    -
+                                    @market.ClosingTime.Value.ToString(@"hh\:mm")
+                                </span>
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <div class="market-card-footer">
+
+                        @if (!string.IsNullOrWhiteSpace(market.MapLink))
+                        {
+                            <a href="@market.MapLink"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="map-btn">
+                                <i class="fa-solid fa-location-arrow"></i>
+                                View Location
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="no-map">
+                                <i class="fa-solid fa-location-dot"></i>
+                                Location unavailable
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="empty-markets">
+
+            <div class="empty-icon">
+                <i class="fa-solid fa-store-slash"></i>
+            </div>
+
+            <h2>No Markets Assigned</h2>
+
+            <p>
+                You currently don't have any market assigned to your vendor profile.
+                Please contact the administrator for market assignment.
+            </p>
+
+            <a asp-controller="Vendor"
+               asp-action="Dashboard"
+               class="empty-back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+
+        </div>
+    }
+
+</div>
+

@@ -1,0 +1,203 @@
+﻿@model IdentityDemoApp.Models.Product
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<link rel="stylesheet" href="~/css/vendor-products.css" asp-append-version="true" />
+
+<div class="product-form-page">
+
+    <div class="form-page-header">
+        <div class="form-header-content">
+            <div class="form-title-area">
+                <div class="form-title-icon">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+
+                <div>
+                    <span>My Products</span>
+                    <h1>Add Product</h1>
+                    <p>Add a new product to your vendor listing.</p>
+                </div>
+            </div>
+
+            <a asp-controller="Vendor"
+               asp-action="Products"
+               class="back-products-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Products
+            </a>
+        </div>
+    </div>
+
+    <div class="product-form-card">
+
+        <div class="form-card-heading">
+            <div class="heading-icon">
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+
+            <div>
+                <span>Product Information</span>
+                <h2>Create New Listing</h2>
+            </div>
+        </div>
+
+        <form asp-controller="Vendor"
+              asp-action="ProductCreate"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-summary"></div>
+
+            <div class="form-grid">
+
+                <div class="form-group full-width">
+                    <label asp-for="ProductName">
+                        <i class="fa-solid fa-tag"></i>
+                        Product Name
+                    </label>
+
+                    <input asp-for="ProductName"
+                           class="form-control"
+                           placeholder="Enter product name" />
+
+                    <span asp-validation-for="ProductName"
+                          class="field-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CategoryId">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Category
+                    </label>
+
+                    <select asp-for="CategoryId"
+                            class="form-control">
+                        <option value="">Select Category</option>
+
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.CategoryId">
+                                @category.CategoryName
+                            </option>
+                        }
+                    </select>
+
+                    <span asp-validation-for="CategoryId"
+                          class="field-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Unit">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                        Unit
+                    </label>
+
+                    <input asp-for="Unit"
+                           class="form-control"
+                           placeholder="e.g. Kg, Dozen, Piece" />
+
+                    <span asp-validation-for="Unit"
+                          class="field-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Price">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        Price
+                    </label>
+
+                    <div class="price-input">
+                        <span>Rs.</span>
+
+                        <input asp-for="Price"
+                               class="form-control"
+                               type="number"
+                               min="0"
+                               step="0.01"
+                               placeholder="0.00" />
+                    </div>
+
+                    <span asp-validation-for="Price"
+                          class="field-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fa-solid fa-toggle-on"></i>
+                        Availability
+                    </label>
+
+                    <label class="switch-field">
+                        <input asp-for="IsAvailable"
+                               type="checkbox" />
+
+                        <span class="switch-slider"></span>
+
+                        <span class="switch-text">
+                            Product Available
+                        </span>
+                    </label>
+                </div>
+
+                <div class="form-group full-width">
+                    <label asp-for="Description">
+                        <i class="fa-solid fa-align-left"></i>
+                        Description
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control description-control"
+                              rows="6"
+                              placeholder="Describe your product..."></textarea>
+
+                    <span asp-validation-for="Description"
+                          class="field-error"></span>
+                </div>
+
+            </div>
+
+            <div class="moderation-notice">
+                <div class="notice-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <div>
+                    <strong>Admin Approval Required</strong>
+                    <p>
+                        Your new product will be submitted for admin approval before
+                        it becomes visible to customers.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-actions">
+
+                <a asp-controller="Vendor"
+                   asp-action="Products"
+                   class="cancel-form-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="save-product-btn">
+                    <i class="fa-solid fa-check"></i>
+                    Add Product
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

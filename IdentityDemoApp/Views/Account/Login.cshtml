@@ -1,0 +1,312 @@
+﻿
+@model IdentityDemoApp.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<link rel="stylesheet"
+      href="~/css/account-auth.css"
+      asp-append-version="true" />
+
+<div class="ml-auth-page">
+
+    <div class="ml-auth-wrapper">
+
+        <!-- =========================================
+             LEFT BRAND PANEL
+             ========================================= -->
+        <div class="ml-auth-brand">
+
+            <div class="ml-brand-content">
+
+                <div class="ml-brand-logo">
+                    <i class="fas fa-store"></i>
+                </div>
+
+                <h1>
+                    Market<span>Link</span>
+                </h1>
+
+                <p class="ml-brand-tagline">
+                    Connect with local farmers, discover fresh products
+                    and place convenient pickup orders from your local market.
+                </p>
+
+                <div class="ml-brand-features">
+
+                    <div class="ml-brand-feature">
+                        <i class="fas fa-leaf"></i>
+                        <span>Discover local farmers</span>
+                    </div>
+
+                    <div class="ml-brand-feature">
+                        <i class="fas fa-store"></i>
+                        <span>Explore local markets</span>
+                    </div>
+
+                    <div class="ml-brand-feature">
+                        <i class="fas fa-basket-shopping"></i>
+                        <span>Pre-order products for pickup</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+             RIGHT LOGIN PANEL
+             ========================================= -->
+        <div class="ml-auth-form-panel">
+
+            <div class="ml-auth-form-container">
+
+                <!-- MOBILE LOGO -->
+                <div class="ml-mobile-logo">
+
+                    <div class="ml-mobile-logo-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+
+                    <span>
+                        Market<span>Link</span>
+                    </span>
+
+                </div>
+
+
+                <!-- HEADER -->
+                <div class="ml-auth-heading">
+
+                    <span class="ml-small-label">
+                        ACCOUNT LOGIN
+                    </span>
+
+                    <h2>
+                        Welcome back
+                    </h2>
+
+                    <p>
+                        Sign in to continue to your MarketLink account.
+                    </p>
+
+                </div>
+
+
+                <!-- =========================================
+                     REGISTER SUCCESS MESSAGE
+                     ========================================= -->
+                @if (TempData["RegisterSuccess"] != null)
+                {
+                    <div class="ml-alert ml-alert-success">
+
+                        <i class="fas fa-circle-check"></i>
+
+                        <span>
+                            @TempData["RegisterSuccess"]
+                        </span>
+
+                    </div>
+                }
+
+
+                <!-- =========================================
+                     LOGIN ERROR MESSAGE
+                     ========================================= -->
+                @if (TempData["LoginError"] != null)
+                {
+                    <div class="ml-alert ml-alert-error">
+
+                        <i class="fas fa-circle-exclamation"></i>
+
+                        <span>
+                            @TempData["LoginError"]
+                        </span>
+
+                    </div>
+                }
+
+
+                <!-- LOGIN FORM -->
+                <form asp-controller="Account"
+                      asp-action="Login"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="ml-validation-summary">
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div class="ml-input-group">
+
+                        <label asp-for="Email">
+                            Email Address
+                        </label>
+
+                        <div class="ml-input-wrapper">
+
+                            <i class="fas fa-envelope"></i>
+
+                            <input asp-for="Email"
+                                   type="email"
+                                   placeholder="Enter your email address"
+                                   autocomplete="email" />
+
+                        </div>
+
+                        <span asp-validation-for="Email"
+                              class="ml-field-error">
+                        </span>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div class="ml-input-group">
+
+                        <div class="ml-label-row">
+
+                            <label asp-for="Password">
+                                Password
+                            </label>
+
+                            <a asp-controller="Account"
+                               asp-action="ForgotPassword">
+                                Forgot Password?
+                            </a>
+
+                        </div>
+
+                        <div class="ml-input-wrapper">
+
+                            <i class="fas fa-lock"></i>
+
+                            <input asp-for="Password"
+                                   type="password"
+                                   id="login-password"
+                                   placeholder="Enter your password"
+                                   autocomplete="current-password" />
+
+                            <button type="button"
+                                    class="ml-password-toggle"
+                                    onclick="togglePassword('login-password', this)">
+
+                                <i class="fas fa-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                        <span asp-validation-for="Password"
+                              class="ml-field-error">
+                        </span>
+
+                    </div>
+
+
+                    <!-- LOGIN BUTTON -->
+                    <button type="submit"
+                            class="ml-primary-btn">
+
+                        <span>
+                            Login In
+                        </span>
+
+                        <i class="fas fa-arrow-right"></i>
+
+                    </button>
+
+                </form>
+
+
+                <!-- DIVIDER -->
+                <div class="ml-divider">
+
+                    <span>OR</span>
+
+                </div>
+
+
+                <!-- GOOGLE -->
+                <a asp-controller="Account"
+                   asp-action="GoogleLogin"
+                   class="ml-google-btn">
+
+                    <i class="fab fa-google ml-google-icon"></i>
+
+                    <span>
+                        Continue with Google
+                    </span>
+
+                </a>
+
+
+                <!-- REGISTER -->
+                <div class="ml-bottom-text">
+
+                    <span>
+                        Don't have an account?
+                    </span>
+
+                    <a asp-controller="Account"
+                       asp-action="Register">
+
+                        Create Account
+                        <i class="fas fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        function togglePassword(inputId, button) {
+
+            const input =
+                document.getElementById(inputId);
+
+            const icon =
+                button.querySelector("i");
+
+            if (input.type === "password") {
+
+                input.type = "text";
+
+                icon.classList.remove("fa-eye");
+
+                icon.classList.add("fa-eye-slash");
+
+            } else {
+
+                input.type = "password";
+
+                icon.classList.remove("fa-eye-slash");
+
+                icon.classList.add("fa-eye");
+
+            }
+
+        }
+
+    </script>
+
+}

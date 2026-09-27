@@ -1,0 +1,337 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.VendorMarket>
+
+@{
+    ViewData["Title"] = "Vendor Market Assignments";
+}
+
+<link rel="stylesheet" href="~/css/admin-VendorMarkets.css" />
+
+<div class="vm-page">
+
+
+
+    <div class="vm-header">
+
+        <div>
+            <span class="vm-eyebrow">MARKET MANAGEMENT</span>
+
+            <h1>Vendor Market Assignments</h1>
+
+            <p>
+                Manage which vendors are assigned to which markets.
+            </p>
+        </div>
+
+
+        <div class="vm-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="pm-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+
+            </a>
+
+
+            <a asp-controller="Admin"
+               asp-action="AssignVendorMarket"
+               class="vm-add-btn">
+
+                <i class="fas fa-plus"></i>
+                Assign Vendor
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+
+    <div class="vm-stats">
+
+        <div class="vm-stat-card">
+
+            <div class="vm-stat-icon">
+                <i class="fas fa-link"></i>
+            </div>
+
+            <div>
+                <span>Total Assignments</span>
+                <strong>@ViewBag.TotalAssignments</strong>
+            </div>
+
+        </div>
+
+
+        <div class="vm-stat-card">
+
+            <div class="vm-stat-icon active">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <div>
+                <span>Active</span>
+                <strong>@ViewBag.ActiveAssignments</strong>
+            </div>
+
+        </div>
+
+
+        <div class="vm-stat-card">
+
+            <div class="vm-stat-icon inactive">
+                <i class="fas fa-pause-circle"></i>
+            </div>
+
+            <div>
+                <span>Inactive</span>
+                <strong>@ViewBag.InactiveAssignments</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="vm-table-card">
+
+        <div class="vm-table-header">
+
+            <div>
+                <h2>Assigned Vendors</h2>
+                <p>
+                    Vendors currently connected with markets.
+                </p>
+            </div>
+
+        </div>
+
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="vm-table-wrapper">
+
+                <table class="vm-table">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Vendor</th>
+                            <th>Market</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int count = 1;
+                        }
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td data-label="#">
+                                    @count
+                                </td>
+
+                                <td data-label="Vendor">
+
+                                    <div class="vm-vendor">
+
+                                        <div class="vm-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                @item.VendorProfile?.FarmName
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                                                item.VendorProfile?.City))
+                                            {
+                                                <small>
+                                                    @item.VendorProfile.City
+                                                </small>
+                                            }
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td data-label="Market">
+
+                                    <div class="vm-market-name">
+                                        <i class="fas fa-store"></i>
+
+                                        <strong>
+                                            @item.Market?.MarketName
+                                        </strong>
+                                    </div>
+
+                                </td>
+
+
+                                <td data-label="Location">
+
+                                    @item.Market?.Location
+
+                                </td>
+
+
+                                <td data-label="Status">
+
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="vm-status active">
+                                            <i class="fas fa-check"></i>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="vm-status inactive">
+                                            <i class="fas fa-pause"></i>
+                                            Inactive
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td data-label="Action">
+
+                                    <form asp-controller="Admin"
+                                          asp-action="RemoveVendorMarket"
+                                          method="post"
+                                          class="vm-delete-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.VendorMarketId" />
+
+                                        <button type="button"
+                                                class="vm-remove-btn"
+                                                onclick="confirmRemove(this)">
+
+                                            <i class="fas fa-unlink"></i>
+                                            Remove
+
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                            count++;
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="vm-empty">
+
+                <div class="vm-empty-icon">
+                    <i class="fas fa-store-slash"></i>
+                </div>
+
+                <h3>No Vendor Assignments Yet</h3>
+
+                <p>
+                    No vendors have been assigned to a market yet.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="AssignVendorMarket"
+                   class="vm-add-btn">
+
+                    <i class="fas fa-plus"></i>
+                    Assign First Vendor
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+
+        function confirmRemove(button) {
+
+            Swal.fire({
+                title: 'Remove Assignment?',
+                text: 'This vendor will no longer be assigned to this market.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Remove',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    button.closest('form').submit();
+
+                }
+
+            });
+
+        }
+
+
+        @if (TempData["Success"] != null)
+        {
+                <text>
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '@TempData["Success"]',
+                        confirmButtonText: 'OK'
+                    });
+
+                </text>
+        }
+
+
+        @if (TempData["Error"] != null)
+        {
+                <text>
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: '@TempData["Error"]',
+                        confirmButtonText: 'OK'
+                    });
+
+                </text>
+        }
+
+    </script>
+}

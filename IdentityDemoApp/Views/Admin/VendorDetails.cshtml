@@ -1,0 +1,205 @@
+﻿@model IdentityDemoApp.Models.VendorProfile
+
+@{
+    ViewData["Title"] = "Vendor Details";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="mb-4">
+        <a asp-controller="Admin"
+           asp-action="Vendors"
+           class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Back to Vendors
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white py-3">
+            <h4 class="mb-0 fw-bold">
+                Vendor Details
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <label class="text-muted">
+                        Vendor Name
+                    </label>
+
+                    <h5>
+                        @(Model.User?.FullName ?? "N/A")
+                    </h5>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="text-muted">
+                        Email
+                    </label>
+
+                    <h5>
+                        @(Model.User?.Email ?? "N/A")
+                    </h5>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="text-muted">
+                        Farm / Business Name
+                    </label>
+
+                    <h5>
+                        @Model.FarmName
+                    </h5>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="text-muted">
+                        City
+                    </label>
+
+                    <h5>
+                        @(string.IsNullOrWhiteSpace(Model.City)
+                                                ? "Not provided"
+                                                : Model.City)
+                    </h5>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="text-muted">
+                        Province
+                    </label>
+
+                    <h5>
+                        @(string.IsNullOrWhiteSpace(Model.Province)
+                                                ? "Not provided"
+                                                : Model.Province)
+                    </h5>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="text-muted">
+                        Registration Date
+                    </label>
+
+                    <h5>
+                        @Model.CreatedAt.ToLocalTime()
+                        .ToString("dd MMM yyyy")
+                    </h5>
+
+                </div>
+
+                <div class="col-12">
+
+                    <label class="text-muted">
+                        Address
+                    </label>
+
+                    <p class="mb-0">
+                        @Model.Address
+                    </p>
+
+                </div>
+
+                <div class="col-12">
+
+                    <label class="text-muted">
+                        Farm Description
+                    </label>
+
+                    <p class="mb-0">
+                        @(string.IsNullOrWhiteSpace(Model.FarmDescription)
+                                                ? "No description provided."
+                                                : Model.FarmDescription)
+                    </p>
+
+                </div>
+
+                <div class="col-12">
+
+                    <label class="text-muted">
+                        Status
+                    </label>
+
+                    <div class="mt-1">
+
+                        @if (Model.IsApproved)
+                        {
+                            <span class="badge bg-success px-3 py-2">
+                                Approved
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark px-3 py-2">
+                                Pending Approval
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                @if (!Model.IsApproved)
+                {
+                    <form asp-controller="Admin"
+                          asp-action="ApproveVendor"
+                          asp-route-id="@Model.VendorProfileId"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="btn btn-success">
+                            <i class="fas fa-check"></i>
+                            Approve Vendor
+                        </button>
+
+                    </form>
+                }
+                else
+                {
+                    <form asp-controller="Admin"
+                          asp-action="RejectVendor"
+                          asp-route-id="@Model.VendorProfileId"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="btn btn-danger">
+                            <i class="fas fa-times"></i>
+                            Reject Vendor
+                        </button>
+
+                    </form>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

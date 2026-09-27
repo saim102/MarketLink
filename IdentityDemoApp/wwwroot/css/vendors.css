@@ -1,0 +1,759 @@
+﻿/* =========================================================
+   MARKETLINK - VENDORS PAGE
+   ========================================================= */
+
+.ml-vendors-page {
+    min-height: 100vh;
+    background: #f7faf9;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.ml-vendors-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 90px 0 105px;
+    background: linear-gradient( 135deg, #0b3037, #134e5e );
+}
+
+    .ml-vendors-hero::before {
+        content: "";
+        position: absolute;
+        width: 430px;
+        height: 430px;
+        top: -230px;
+        right: -110px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .ml-vendors-hero::after {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        bottom: -190px;
+        left: -100px;
+        border-radius: 50%;
+        background: rgba(114, 197, 139, 0.08);
+    }
+
+.ml-vendors-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+}
+
+.ml-vendors-label {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: #72c58b;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.ml-vendors-hero h1 {
+    margin: 0 0 18px;
+    color: #ffffff;
+    font-size: clamp(38px, 5vw, 62px);
+    font-weight: 800;
+    line-height: 1.08;
+}
+
+    .ml-vendors-hero h1 span {
+        display: block;
+        color: #72c58b;
+    }
+
+.ml-vendors-hero p {
+    max-width: 650px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+
+/* =========================================================
+   MAIN SECTION
+   ========================================================= */
+
+.ml-vendors-section {
+    padding: 75px 0 85px;
+}
+
+.ml-vendors-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 35px;
+}
+
+.ml-section-label {
+    display: inline-block;
+    margin-bottom: 9px;
+    color: #4f9d69;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.ml-vendors-header h2 {
+    margin: 0 0 10px;
+    color: #0b3037;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+    .ml-vendors-header h2 span {
+        color: #4f9d69;
+    }
+
+.ml-vendors-header p {
+    max-width: 650px;
+    margin: 0;
+    color: #6b7c80;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   COUNT
+   ========================================================= */
+
+.ml-vendor-count {
+    flex-shrink: 0;
+    min-width: 145px;
+    padding: 18px 22px;
+    text-align: center;
+    background: #edf6f0;
+    border: 1px solid #d9e9df;
+    border-radius: 14px;
+}
+
+    .ml-vendor-count strong {
+        display: block;
+        color: #0b3037;
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .ml-vendor-count span {
+        display: block;
+        margin-top: 6px;
+        color: #5f777b;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.ml-vendors-search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 38px;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #e3ece9;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(11, 48, 55, 0.05);
+}
+
+.ml-vendor-search-box {
+    position: relative;
+    flex: 1;
+}
+
+    .ml-vendor-search-box i {
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6d8589;
+        font-size: 14px;
+    }
+
+    .ml-vendor-search-box input {
+        width: 100%;
+        height: 48px;
+        padding: 0 18px 0 45px;
+        color: #0b3037;
+        background: #f9fbfa;
+        border: 1px solid #dce8e5;
+        border-radius: 11px;
+        outline: none;
+        font-size: 14px;
+        transition: all 0.25s ease;
+    }
+
+        .ml-vendor-search-box input:focus {
+            background: #ffffff;
+            border-color: #72c58b;
+            box-shadow: 0 0 0 3px rgba(114, 197, 139, 0.12);
+        }
+
+.ml-vendor-search-btn,
+.ml-vendor-clear {
+    height: 48px;
+    padding: 0 22px;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.ml-vendor-search-btn {
+    border: none;
+    color: #ffffff;
+    background: #0b3037;
+    cursor: pointer;
+}
+
+    .ml-vendor-search-btn:hover {
+        background: #134e5e;
+        transform: translateY(-1px);
+    }
+
+.ml-vendor-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: #0b3037;
+    background: #edf6f0;
+}
+
+    .ml-vendor-clear:hover {
+        color: #0b3037;
+        background: #dcefe3;
+    }
+
+
+/* =========================================================
+   VENDOR GRID
+   ========================================================= */
+
+.ml-vendors-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+
+/* =========================================================
+   VENDOR CARD
+   ========================================================= */
+
+.ml-vendor-card {
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e3ece9;
+    border-radius: 18px;
+    box-shadow: 0 8px 28px rgba(11, 48, 55, 0.06);
+    transition: all 0.3s ease;
+}
+
+    .ml-vendor-card:hover {
+        transform: translateY(-7px);
+        border-color: #d2e6da;
+        box-shadow: 0 18px 40px rgba(11, 48, 55, 0.12);
+    }
+
+
+/* =========================================================
+   CARD TOP
+   ========================================================= */
+
+.ml-vendor-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px 23px;
+    background: linear-gradient( 135deg, #edf6f0, #e4f1e9 );
+    border-bottom: 1px solid #dceae1;
+}
+
+.ml-vendor-avatar {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: #0b3037;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(11, 48, 55, 0.15);
+}
+
+    .ml-vendor-avatar i {
+        font-size: 25px;
+    }
+
+.ml-vendor-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    color: #35784d;
+    background: #ffffff;
+    border: 1px solid #d5e8dc;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+    .ml-vendor-status i {
+        color: #4f9d69;
+        font-size: 6px;
+    }
+
+
+/* =========================================================
+   CARD CONTENT
+   ========================================================= */
+
+.ml-vendor-card-content {
+    padding: 24px 23px 21px;
+}
+
+.ml-vendor-small-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #4f9d69;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.ml-vendor-card-content h3 {
+    margin: 0 0 10px;
+    color: #0b3037;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.ml-vendor-contact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 13px;
+    color: #647b7f;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+    .ml-vendor-contact i {
+        color: #4f9d69;
+    }
+
+.ml-vendor-card-content > p {
+    min-height: 43px;
+    margin: 0 0 20px;
+    color: #6b7c80;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   LOCATION
+   ========================================================= */
+
+.ml-vendor-location {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 13px;
+    background: #f7faf8;
+    border: 1px solid #e8efeb;
+    border-radius: 12px;
+}
+
+.ml-vendor-location-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #4f9d69;
+    background: #edf6f0;
+    border-radius: 10px;
+}
+
+    .ml-vendor-location-icon i {
+        font-size: 14px;
+    }
+
+.ml-vendor-location div:last-child {
+    min-width: 0;
+}
+
+.ml-vendor-location span {
+    display: block;
+    margin-bottom: 3px;
+    color: #829497;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.ml-vendor-location strong {
+    display: block;
+    overflow: hidden;
+    color: #0b3037;
+    font-size: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   CARD FOOTER
+   ========================================================= */
+
+.ml-vendor-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #edf1f0;
+}
+
+    .ml-vendor-card-footer > span:first-child {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #657c80;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+        .ml-vendor-card-footer > span:first-child i {
+            color: #4f9d69;
+        }
+
+.ml-vendor-arrow {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    background: #0b3037;
+    border-radius: 50%;
+    transition: all 0.25s ease;
+}
+
+.ml-vendor-card:hover .ml-vendor-arrow {
+    background: #4f9d69;
+    transform: translateX(3px);
+}
+
+.ml-vendor-arrow i {
+    color: #ffffff;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.ml-vendors-empty {
+    padding: 70px 25px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #e3ece9;
+    border-radius: 18px;
+}
+
+.ml-vendors-empty-icon {
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: #4f9d69;
+    background: #edf6f0;
+    border-radius: 50%;
+}
+
+    .ml-vendors-empty-icon i {
+        font-size: 27px;
+    }
+
+.ml-vendors-empty h3 {
+    margin: 0 0 9px;
+    color: #0b3037;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.ml-vendors-empty p {
+    max-width: 500px;
+    margin: 0 auto 22px;
+    color: #6b7c80;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.ml-vendor-empty-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    color: #ffffff;
+    background: #0b3037;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+    .ml-vendor-empty-btn:hover {
+        color: #ffffff;
+        background: #134e5e;
+        transform: translateY(-2px);
+    }
+
+
+/* =========================================================
+   CTA
+   ========================================================= */
+
+.ml-vendors-cta {
+    padding: 0 0 80px;
+}
+
+.ml-vendors-cta-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 42px 48px;
+    background: linear-gradient( 135deg, #edf6f0, #f5faf7 );
+    border: 1px solid #dcebe1;
+    border-radius: 20px;
+}
+
+    .ml-vendors-cta-box h2 {
+        margin: 0 0 9px;
+        color: #0b3037;
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+        .ml-vendors-cta-box h2 span {
+            color: #4f9d69;
+        }
+
+    .ml-vendors-cta-box p {
+        margin: 0;
+        color: #687d81;
+        font-size: 14px;
+    }
+
+.ml-vendor-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 14px 23px;
+    color: #ffffff;
+    background: #0b3037;
+    border-radius: 11px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+    .ml-vendor-cta-btn:hover {
+        color: #ffffff;
+        background: #134e5e;
+        transform: translateY(-2px);
+    }
+
+
+/* =========================================================
+   LARGE TABLET
+   ========================================================= */
+
+@media (max-width: 1199px) {
+
+    .ml-vendors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    .ml-vendors-hero {
+        padding: 75px 0 90px;
+    }
+
+    .ml-vendors-section {
+        padding: 60px 0 70px;
+    }
+
+    .ml-vendors-header h2 {
+        font-size: 32px;
+    }
+
+    .ml-vendors-cta-box {
+        padding: 35px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .ml-vendors-hero {
+        padding: 60px 0 75px;
+    }
+
+        .ml-vendors-hero h1 {
+            font-size: 40px;
+        }
+
+        .ml-vendors-hero p {
+            font-size: 14px;
+        }
+
+    .ml-vendors-section {
+        padding: 50px 0 60px;
+    }
+
+    .ml-vendors-header {
+        display: block;
+        margin-bottom: 25px;
+    }
+
+        .ml-vendors-header h2 {
+            font-size: 29px;
+        }
+
+    .ml-vendor-count {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .ml-vendors-search {
+        flex-wrap: wrap;
+    }
+
+    .ml-vendor-search-box {
+        flex: 1 1 100%;
+    }
+
+    .ml-vendor-search-btn {
+        flex: 1;
+    }
+
+    .ml-vendor-clear {
+        flex: 1;
+    }
+
+    .ml-vendors-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .ml-vendor-card-top {
+        padding: 22px 20px;
+    }
+
+    .ml-vendor-card-content {
+        padding: 21px 20px;
+    }
+
+        .ml-vendor-card-content > p {
+            min-height: auto;
+        }
+
+    .ml-vendors-cta {
+        padding-bottom: 55px;
+    }
+
+    .ml-vendors-cta-box {
+        display: block;
+        padding: 30px 25px;
+    }
+
+        .ml-vendors-cta-box h2 {
+            font-size: 27px;
+        }
+
+    .ml-vendor-cta-btn {
+        margin-top: 22px;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .ml-vendors-hero {
+        padding: 50px 0 65px;
+    }
+
+        .ml-vendors-hero h1 {
+            font-size: 34px;
+        }
+
+    .ml-vendors-header h2 {
+        font-size: 26px;
+    }
+
+    .ml-vendors-search {
+        padding: 9px;
+    }
+
+    .ml-vendor-search-btn,
+    .ml-vendor-clear {
+        height: 44px;
+        padding: 0 15px;
+    }
+
+    .ml-vendor-avatar {
+        width: 58px;
+        height: 58px;
+    }
+
+    .ml-vendors-empty {
+        padding: 55px 20px;
+    }
+}

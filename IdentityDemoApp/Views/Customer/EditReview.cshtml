@@ -1,0 +1,152 @@
+﻿@model IdentityDemoApp.Models.Review
+
+@{
+    ViewData["Title"] = "Edit Review";
+
+    var productName = Model.Product?.ProductName ?? "Product";
+    var farmerName = Model.Product?.VendorProfile?.FarmName ?? "Local Farmer";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-Reviews.css"
+      asp-append-version="true" />
+
+<div class="review-form-page">
+
+    <div class="review-form-container">
+
+        <a asp-controller="Customer"
+           asp-action="Reviews"
+           class="back-review-link">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Reviews
+
+        </a>
+
+
+        <div class="review-form-card">
+
+            <div class="review-form-header">
+
+                <div class="review-product-icon">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+
+                <div>
+
+                    <span>Edit Your Review</span>
+
+                    <h1>@productName</h1>
+
+                    <p>
+                        <i class="fa-solid fa-store"></i>
+                        @farmerName
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form asp-controller="Customer"
+                  asp-action="EditReview"
+                  method="post"
+                  class="review-form">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       asp-for="ReviewId" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="validation-summary"></div>
+
+
+                <div class="rating-section">
+
+                    <label>
+                        Your Rating
+                    </label>
+
+                    <div class="rating-selector">
+
+                        @for (var star = 5; star >= 1; star--)
+                        {
+                            <input type="radio"
+                                   asp-for="Rating"
+                                   value="@star"
+                                   id="edit-star-@star" />
+
+                            <label for="edit-star-@star">
+                                <i class="fa-solid fa-star"></i>
+                            </label>
+                        }
+
+                    </div>
+
+                    <span asp-validation-for="Rating"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="comment-section">
+
+                    <label asp-for="Comment">
+                        Your Feedback
+                    </label>
+
+                    <textarea asp-for="Comment"
+                              rows="6"
+                              maxlength="1000"
+                              placeholder="Tell us about your experience..."></textarea>
+
+                    <div class="comment-helper">
+                        <span>
+                            <i class="fa-solid fa-pen"></i>
+                            Maximum 1000 characters
+                        </span>
+                    </div>
+
+                    <span asp-validation-for="Comment"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="review-form-actions">
+
+                    <a asp-controller="Customer"
+                       asp-action="Reviews"
+                       class="cancel-review-btn">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="save-review-btn">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Update Review
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

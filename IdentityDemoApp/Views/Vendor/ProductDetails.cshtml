@@ -1,0 +1,180 @@
+﻿@model IdentityDemoApp.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<link rel="stylesheet" href="~/css/vendor-products.css" asp-append-version="true" />
+
+<div class="product-details-page">
+
+    <div class="details-header">
+        <div class="details-header-content">
+
+            <div class="details-title-area">
+                <div class="details-title-icon">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+
+                <div>
+                    <span>My Products</span>
+                    <h1>Product Details</h1>
+                    <p>View complete information about your product.</p>
+                </div>
+            </div>
+
+            <div class="details-header-actions">
+                <a asp-controller="Vendor"
+                   asp-action="Dashboard"
+                   class="back-dashboard-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Dashboard
+                </a>
+
+                <a asp-controller="Vendor"
+                   asp-action="Products"
+                   class="back-products-btn">
+                    <i class="fa-solid fa-box"></i>
+                    All Products
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="details-card">
+
+        <div class="details-main">
+
+            <div class="large-product-icon">
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+
+            <div class="details-heading">
+
+                <span class="details-category">
+                    @(Model.Category?.CategoryName ?? "Uncategorized")
+                </span>
+
+                <h2>@Model.ProductName</h2>
+
+                <div class="details-badges">
+
+                    <span class="moderation-badge @Model.ModerationStatus.ToLower()">
+                        @if (Model.ModerationStatus == "Approved")
+                        {
+                            <i class="fa-solid fa-circle-check"></i>
+                        }
+                        else if (Model.ModerationStatus == "Rejected")
+                        {
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-clock"></i>
+                        }
+
+                        @Model.ModerationStatus
+                    </span>
+
+                    <span class="availability-badge @(Model.IsAvailable ? "available" : "unavailable")">
+                        <i class="fa-solid fa-circle"></i>
+                        @(Model.IsAvailable ? "Available" : "Unavailable")
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="details-divider"></div>
+
+        <div class="details-info-grid">
+
+            <div class="detail-info-box">
+                <span>
+                    <i class="fa-solid fa-money-bill-wave"></i>
+                    Price
+                </span>
+
+                <strong>Rs. @Model.Price.ToString("N2")</strong>
+            </div>
+
+            <div class="detail-info-box">
+                <span>
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    Unit
+                </span>
+
+                <strong>@Model.Unit</strong>
+            </div>
+
+            <div class="detail-info-box">
+                <span>
+                    <i class="fa-solid fa-calendar"></i>
+                    Created
+                </span>
+
+                <strong>@Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")</strong>
+            </div>
+
+            <div class="detail-info-box">
+                <span>
+                    <i class="fa-solid fa-warehouse"></i>
+                    Weekly Stock Entries
+                </span>
+
+                <strong>@Model.WeeklyStocks.Count</strong>
+            </div>
+
+        </div>
+
+        <div class="description-section">
+
+            <div class="description-heading">
+                <i class="fa-solid fa-align-left"></i>
+
+                <div>
+                    <span>Product Information</span>
+                    <h3>Description</h3>
+                </div>
+            </div>
+
+            <div class="description-box">
+                @if (string.IsNullOrWhiteSpace(Model.Description))
+                {
+                    <p class="muted-description">
+                        No description has been added for this product.
+                    </p>
+                }
+                else
+                {
+                    <p>@Model.Description</p>
+                }
+            </div>
+
+        </div>
+
+        <div class="details-actions">
+
+            <a asp-controller="Vendor"
+               asp-action="ProductEdit"
+               asp-route-id="@Model.ProductId"
+               class="details-edit-btn">
+                <i class="fa-solid fa-pen"></i>
+                Edit Product
+            </a>
+
+            <a asp-controller="Vendor"
+               asp-action="Products"
+               class="details-back-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Products
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

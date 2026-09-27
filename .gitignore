@@ -1,0 +1,17 @@
+# Visual Studio / IDE files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+# ASP.NET Core User Secrets & Environment variables
+*.pem
+*.key
+appsettings.Development.json

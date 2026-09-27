@@ -1,0 +1,436 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Category>
+
+@{
+    ViewData["Title"] = "Manage Categories";
+
+    var search = ViewBag.Search as string ?? "";
+    var status = ViewBag.Status as string ?? "All";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Categories.css"
+      asp-append-version="true" />
+
+<div class="category-page">
+
+  
+    <div class="category-header">
+
+        <div>
+            <div class="category-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>Admin</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Categories</span>
+            </div>
+
+            <h1>
+                Manage Categories
+            </h1>
+
+            <p>
+                Create and manage product categories.
+            </p>
+        </div>
+
+
+        <div class="category-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="pm-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+
+            </a>
+
+
+            <a asp-controller="Admin"
+               asp-action="CategoryCreate"
+               class="category-add-btn">
+
+                <i class="fas fa-plus"></i>
+                Add Category
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="category-stats">
+
+        <div class="category-stat-card">
+
+            <div class="category-stat-icon">
+                <i class="fas fa-layer-group"></i>
+            </div>
+
+            <div>
+                <span>Total Categories</span>
+                <strong>@ViewBag.TotalCategories</strong>
+            </div>
+
+        </div>
+
+
+        <div class="category-stat-card active">
+
+            <div class="category-stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <div>
+                <span>Active Categories</span>
+                <strong>@ViewBag.ActiveCategories</strong>
+            </div>
+
+        </div>
+
+
+        <div class="category-stat-card inactive">
+
+            <div class="category-stat-icon">
+                <i class="fas fa-pause-circle"></i>
+            </div>
+
+            <div>
+                <span>Inactive Categories</span>
+                <strong>@ViewBag.InactiveCategories</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+   
+    <div class="category-filter-card">
+
+        <form asp-controller="Admin"
+              asp-action="Categories"
+              method="get">
+
+            <div class="category-search">
+
+                <i class="fas fa-search"></i>
+
+                <input type="text"
+                       name="search"
+                       value="@search"
+                       placeholder="Search categories..." />
+
+            </div>
+
+
+            <div class="category-status">
+
+                <select name="status">
+
+                    <option value="All"
+                            selected="@(status == "All")">
+                        All Status
+                    </option>
+
+                    <option value="Active"
+                            selected="@(status == "Active")">
+                        Active
+                    </option>
+
+                    <option value="Inactive"
+                            selected="@(status == "Inactive")">
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button type="submit"
+                    class="category-filter-btn">
+
+                <i class="fas fa-filter"></i>
+                Filter
+
+            </button>
+
+
+            <a asp-controller="Admin"
+               asp-action="Categories"
+               class="category-reset-btn">
+
+                <i class="fas fa-rotate-left"></i>
+                Reset
+
+            </a>
+
+        </form>
+
+    </div>
+
+
+   
+    <div class="category-table-card">
+
+        <div class="category-table-header">
+
+            <div>
+                <h3>Categories</h3>
+
+                <span>
+                    @Model.Count() categories found
+                </span>
+            </div>
+
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="category-table-wrapper">
+
+                <table class="category-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>#</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Products</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int count = 1;
+                        }
+
+                        @foreach (var category in Model)
+                        {
+                            <tr>
+
+                                <td class="category-number">
+                                    @count
+                                </td>
+
+                                <td>
+
+                                    <div class="category-name-cell">
+
+                                        <div class="category-icon">
+                                            <i class="fas fa-tag"></i>
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                @category.CategoryName
+                                            </strong>
+
+                                            <small>
+                                                ID: @category.CategoryId
+                                            </small>
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (!string.IsNullOrWhiteSpace(category.Description))
+                                    {
+                                        <span class="category-description">
+                                            @category.Description
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="category-empty">
+                                            No description
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="product-count">
+                                        @(category.Products?.Count ?? 0)
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (category.IsActive)
+                                    {
+                                        <span class="category-status-badge active">
+                                            <i class="fas fa-circle"></i>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="category-status-badge inactive">
+                                            <i class="fas fa-circle"></i>
+                                            Inactive
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="category-actions">
+
+                                        <a asp-controller="Admin"
+                                           asp-action="CategoryEdit"
+                                           asp-route-id="@category.CategoryId"
+                                           class="category-action edit"
+                                           title="Edit Category">
+
+                                            <i class="fas fa-pen"></i>
+
+                                        </a>
+
+
+                                        <form asp-controller="Admin"
+                                              asp-action="CategoryDelete"
+                                              asp-route-id="@category.CategoryId"
+                                              method="post"
+                                              class="delete-category-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="category-action delete"
+                                                    title="Delete Category">
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            count++;
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="category-empty-state">
+
+                <div class="category-empty-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+
+                <h3>
+                    No Categories Found
+                </h3>
+
+                <p>
+                    No categories match your current search or filter.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="CategoryCreate"
+                   class="category-empty-btn">
+
+                    <i class="fas fa-plus"></i>
+                    Add First Category
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+        document.querySelectorAll('.delete-category-form')
+            .forEach(form => {
+
+                form.addEventListener('submit', function (e) {
+
+                    e.preventDefault();
+
+                    Swal.fire({
+                        title: 'Delete Category?',
+                        text: 'This category will be permanently deleted.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Delete',
+                        cancelButtonText: 'Cancel',
+                        reverseButtons: true
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+
+                    });
+
+                });
+
+            });
+
+
+        @if (TempData["Success"] != null)
+        {
+                <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '@TempData["Success"]',
+                        confirmButtonText: 'OK'
+                    });
+                </text>
+        }
+
+
+        @if (TempData["Error"] != null)
+        {
+                <text>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Unable to Complete',
+                        text: '@TempData["Error"]',
+                        confirmButtonText: 'OK'
+                    });
+                </text>
+        }
+
+    </script>
+}
