@@ -1,0 +1,355 @@
+﻿@model IdentityDemoApp.Models.CustomerProfile
+
+@{
+    ViewData["Title"] = "Customer Details";
+
+    var initial =
+        !string.IsNullOrWhiteSpace(Model.FullName)
+        ? Model.FullName.Substring(0, 1).ToUpper()
+        : "C";
+
+    var totalOrders = Model.Orders?.Count ?? 0;
+    var totalReviews = Model.Reviews?.Count ?? 0;
+    var totalFavouriteProducts = Model.FavouriteProducts?.Count ?? 0;
+    var totalFavouriteVendors = Model.FavouriteVendors?.Count ?? 0;
+}
+
+<link rel="stylesheet" href="~/css/admin-customer.css" />
+
+<div class="customer-details-page">
+
+
+    <a asp-action="ManageCustomers"
+       class="back-link">
+
+        <i class="bi bi-arrow-left"></i>
+        Back to Customers
+
+    </a>
+
+
+  
+    <div class="profile-card">
+
+        <div class="profile-left">
+
+            <div class="profile-avatar">
+                @initial
+            </div>
+
+            <div class="profile-heading">
+
+                <span class="profile-label">
+                    MARKETLINK CUSTOMER
+                </span>
+
+                <h1>
+                    @Model.FullName
+                </h1>
+
+                <p>
+                    @(Model.User?.Email ?? "Email not available")
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-status">
+
+            <span class="status active">
+
+                <i class="bi bi-check-circle-fill"></i>
+                Active
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    
+    <div class="customer-stats">
+
+        <div class="stat-box">
+
+            <div class="stat-icon">
+                <i class="bi bi-bag-check-fill"></i>
+            </div>
+
+            <div>
+                <strong>@totalOrders</strong>
+                <span>Orders</span>
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div class="stat-icon">
+                <i class="bi bi-star-fill"></i>
+            </div>
+
+            <div>
+                <strong>@totalReviews</strong>
+                <span>Reviews</span>
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div class="stat-icon">
+                <i class="bi bi-heart-fill"></i>
+            </div>
+
+            <div>
+                <strong>@totalFavouriteProducts</strong>
+                <span>Favourite Products</span>
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div class="stat-icon">
+                <i class="bi bi-shop"></i>
+            </div>
+
+            <div>
+                <strong>@totalFavouriteVendors</strong>
+                <span>Favourite Vendors</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+   
+    <div class="details-grid">
+
+
+      
+        <div class="info-card">
+
+            <div class="card-heading">
+
+                <div class="heading-icon">
+                    <i class="bi bi-person-vcard-fill"></i>
+                </div>
+
+                <div>
+
+                    <h3>Personal Information</h3>
+
+                    <p>
+                        Customer profile information
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-list">
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-person"></i>
+                        Full Name
+                    </span>
+
+                    <strong>
+                        @Model.FullName
+                    </strong>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-envelope"></i>
+                        Email Address
+                    </span>
+
+                    <strong>
+                        @(Model.User?.Email ?? "Not available")
+                    </strong>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-telephone"></i>
+                        Contact Number
+                    </span>
+
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.ContactNumber)
+                                                ? "Not provided"
+                                                : Model.ContactNumber)
+                    </strong>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-geo-alt"></i>
+                        Address
+                    </span>
+
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.Address)
+                                                ? "Not provided"
+                                                : Model.Address)
+                    </strong>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-building"></i>
+                        City
+                    </span>
+
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.City)
+                                                ? "Not provided"
+                                                : Model.City)
+                    </strong>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-calendar3"></i>
+                        Joined Date
+                    </span>
+
+                    <strong>
+                        @Model.CreatedAt.ToString("dd MMMM yyyy")
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    
+        <div class="info-card">
+
+            <div class="card-heading">
+
+                <div class="heading-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+
+                <div>
+
+                    <h3>Account Information</h3>
+
+                    <p>
+                        MarketLink account details
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-list">
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-person-badge"></i>
+                        Role
+                    </span>
+
+                    <span class="role-badge">
+                        Customer
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-check-circle"></i>
+                        Status
+                    </span>
+
+                    <span class="status-badge active">
+                        Active
+                    </span>
+
+                </div>
+
+
+                <div class="info-row">
+
+                    <span class="info-label">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Account ID
+                    </span>
+
+                    <strong class="small-id">
+                        @Model.UserId
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+  
+    <div class="system-card">
+
+        <div class="system-icon">
+            <i class="bi bi-info-circle-fill"></i>
+        </div>
+
+        <div>
+
+            <strong>
+                Customer Account
+            </strong>
+
+            <span>
+                This information is managed by the MarketLink administration system.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />

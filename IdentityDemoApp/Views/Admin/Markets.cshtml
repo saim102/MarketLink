@@ -1,0 +1,367 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Market>
+
+@{
+    ViewData["Title"] = "Manage Markets";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var search = ViewBag.Search as string ?? "";
+    var status = ViewBag.Status as string ?? "All";
+
+    int totalMarkets = ViewBag.TotalMarkets ?? 0;
+    int activeMarkets = ViewBag.ActiveMarkets ?? 0;
+    int inactiveMarkets = ViewBag.InactiveMarkets ?? 0;
+}
+
+<link rel="stylesheet" href="~/css/admin-Markets.css" />
+
+<div class="markets-page">
+
+
+    <div class="markets-header">
+
+        <div>
+            <span class="page-label">
+                <i class="fas fa-store"></i>
+                MARKET MANAGEMENT
+            </span>
+
+            <h1>Manage Markets</h1>
+
+            <p>
+                Add, update and manage markets available to your vendors.
+            </p>
+        </div>
+
+
+        <div class="markets-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="pm-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+
+            </a>
+
+
+            <a asp-controller="Admin"
+               asp-action="MarketCreate"
+               class="btn-add-market">
+
+                <i class="fas fa-plus"></i>
+                Add Market
+
+            </a>
+
+        </div>
+
+    </div>
+
+   
+    <div class="market-stats">
+
+        <div class="market-stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-store"></i>
+            </div>
+
+            <div>
+                <span>Total Markets</span>
+                <strong>@totalMarkets</strong>
+            </div>
+        </div>
+
+        <div class="market-stat-card active-card">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <div>
+                <span>Active Markets</span>
+                <strong>@activeMarkets</strong>
+            </div>
+        </div>
+
+        <div class="market-stat-card inactive-card">
+            <div class="stat-icon">
+                <i class="fas fa-ban"></i>
+            </div>
+
+            <div>
+                <span>Inactive Markets</span>
+                <strong>@inactiveMarkets</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="market-filter-card">
+
+        <form asp-controller="Admin"
+              asp-action="Markets"
+              method="get"
+              class="market-filter-form">
+
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+
+                <input type="text"
+                       name="search"
+                       value="@search"
+                       placeholder="Search market, location or city..." />
+            </div>
+
+            <div class="status-select">
+                <select name="status">
+                    <option value="All" selected="@(status == "All")">
+                        All Markets
+                    </option>
+
+                    <option value="Active" selected="@(status == "Active")">
+                        Active
+                    </option>
+
+                    <option value="Inactive" selected="@(status == "Inactive")">
+                        Inactive
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-filter">
+                <i class="fas fa-filter"></i>
+                Filter
+            </button>
+
+            <a asp-controller="Admin"
+               asp-action="Markets"
+               class="btn-clear">
+                Clear
+            </a>
+
+        </form>
+
+    </div>
+
+
+  
+    <div class="market-table-card">
+
+        <div class="table-heading">
+            <div>
+                <h3>Market List</h3>
+                <p>All registered markets</p>
+            </div>
+
+            <span class="market-count">
+                @Model.Count() Markets
+            </span>
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+
+                <table class="markets-table">
+
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Market</th>
+                            <th>Location</th>
+                            <th>City</th>
+                            <th>Status</th>
+                            <th class="action-column">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @{
+                            int count = 1;
+                        }
+
+                        @foreach (var market in Model)
+                        {
+                            <tr>
+
+                                <td class="number-cell">
+                                    @count
+                                </td>
+
+                                <td>
+                                    <div class="market-name">
+                                        <div class="market-avatar">
+                                            <i class="fas fa-store"></i>
+                                        </div>
+
+                                        <div>
+                                            <strong>@market.MarketName</strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(market.Description))
+                                            {
+                                                <small>
+                                                    @(market.Description.Length > 55
+                                                                                            ? market.Description.Substring(0, 55) + "..."
+                                                                                            : market.Description)
+                                    </small>
+                                                                        }
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="location-cell">
+                                    <i class="fas fa-location-dot"></i>
+                                    <span>@market.Location</span>
+                                </div>
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrWhiteSpace(market.City)
+                                                            ? "—"
+                                                            : market.City)
+                        </td>
+
+                                <td>
+                            @if (market.IsActive)
+                                    {
+                                        <span class="status-badge active">
+                                            <i class="fas fa-circle"></i>
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge inactive">
+                                            <i class="fas fa-circle"></i>
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="action-buttons">
+
+                                        <a asp-controller="Admin"
+                                           asp-action="MarketEdit"
+                                           asp-route-id="@market.MarketId"
+                                           class="action-btn edit"
+                                           title="Edit Market">
+                                            <i class="fas fa-pen"></i>
+                                        </a>
+
+                                        <button type="button"
+                                                class="action-btn delete"
+                                                title="Delete Market"
+                                                onclick="confirmDelete(@market.MarketId, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(market.MarketName))')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                            count++;
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="empty-market">
+
+                <div class="empty-icon">
+                    <i class="fas fa-store-slash"></i>
+                </div>
+
+                <h3>No Markets Found</h3>
+
+                <p>
+                    No markets match your current search or filter.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="MarketCreate"
+                   class="btn-add-market">
+                    <i class="fas fa-plus"></i>
+                    Add First Market
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<form id="deleteMarketForm"
+      asp-controller="Admin"
+      asp-action="MarketDelete"
+      method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="deleteMarketId" name="id" />
+</form>
+
+
+@section Scripts {
+
+    <script>
+        function confirmDelete(id, marketName) {
+
+            Swal.fire({
+                title: 'Delete Market?',
+                html: 'Are you sure you want to delete <strong>' +
+                      marketName +
+                      '</strong>?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    document.getElementById('deleteMarketId').value = id;
+
+                    document.getElementById('deleteMarketForm').submit();
+                }
+
+            });
+        }
+
+
+        @if (TempData["Success"] != null)
+        {
+                <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(TempData["Success"].ToString()))',
+                        confirmButtonColor: '#0B3037'
+                    });
+                </text>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+                <text>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Unable to Complete',
+                        text: '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(TempData["Error"].ToString()))',
+                        confirmButtonColor: '#0B3037'
+                    });
+                </text>
+        }
+    </script>
+}

@@ -1,0 +1,1009 @@
+﻿@using IdentityDemoApp.Models
+
+@{
+    ViewData["Title"] = "Home";
+
+    var products =
+        ViewBag.FeaturedProducts as List<Product>
+        ?? new List<Product>();
+
+    var categories =
+        ViewBag.FeaturedCategories as List<Category>
+        ?? new List<Category>();
+
+    var totalProducts = ViewBag.TotalProducts ?? 0;
+    var totalVendors = ViewBag.TotalVendors ?? 0;
+    var totalCategories = ViewBag.TotalCategories ?? 0;
+    var approvedReviews =
+    ViewBag.ApprovedReviews as List<Review>
+    ?? new List<Review>();
+
+    var categoryImages = new[]
+    {
+        "~/images/vegetables.webp",
+        "~/images/fruits.webp",
+        "~/images/grains.jpg",
+        "~/images/organic.jpg"
+    };
+
+    var categoryIcons = new[]
+    {
+        "fa-carrot",
+        "fa-apple-whole",
+        "fa-wheat-awn",
+        "fa-seedling",
+        "fa-basket-shopping",
+        "fa-leaf"
+    };
+}
+
+<link rel="stylesheet"
+      href="~/css/Home.css"
+      asp-append-version="true" />
+
+<div class="ml-home">
+
+    <section class="ml-hero">
+
+        <div class="ml-hero-image"></div>
+        <div class="ml-hero-overlay"></div>
+
+        <div class="ml-hero-circle ml-circle-one"></div>
+        <div class="ml-hero-circle ml-circle-two"></div>
+
+        <div class="ml-hero-leaf ml-leaf-one">
+            <i class="fa-solid fa-leaf"></i>
+        </div>
+
+        <div class="ml-hero-leaf ml-leaf-two">
+            <i class="fa-solid fa-seedling"></i>
+        </div>
+
+        <div class="container ml-hero-container">
+
+            <div class="ml-hero-content">
+
+                <div class="ml-hero-badge">
+                    <span></span>
+                    YOUR LOCAL MARKETPLACE
+                </div>
+
+                <h1>
+                    Fresh From
+                    <strong>Local Hands.</strong>
+                </h1>
+
+                <p>
+                    Discover fresh products, connect with trusted local
+                    vendors and bring quality products directly to your doorstep.
+                </p>
+
+                <form asp-controller="Home"
+                      asp-action="Products"
+                      method="get"
+                      class="ml-hero-search">
+
+                    <div class="ml-hero-search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <input type="text"
+                           name="search"
+                           placeholder="Search products, fruits, vegetables..." />
+
+                    <button type="submit">
+                        Search
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+
+                </form>
+
+                <div class="ml-hero-links">
+
+                    <a asp-controller="Home"
+                       asp-action="Products">
+
+                        <i class="fa-solid fa-basket-shopping"></i>
+                        Explore Products
+
+                    </a>
+
+                    <a asp-controller="Home"
+                       asp-action="Vendors">
+
+                        <i class="fa-solid fa-store"></i>
+                        Find Vendors
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="ml-hero-floating-card ml-floating-card-one">
+
+                <div class="ml-floating-icon">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+
+                <div>
+                    <strong>Fresh Products</strong>
+                    <span>From local vendors</span>
+                </div>
+
+            </div>
+
+
+            <div class="ml-hero-floating-card ml-floating-card-two">
+
+                <div class="ml-floating-mini-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+
+                <div>
+                    <strong>Local Marketplace</strong>
+                    <span>Near your community</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="ml-hero-bottom-wave"></div>
+
+    </section>
+
+
+    <section class="ml-stats-section">
+
+        <div class="container">
+
+            <div class="ml-stats-card">
+
+                <div class="ml-stat-item">
+
+                    <div class="ml-stat-icon">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+
+                    <div>
+                        <strong>@totalProducts+</strong>
+                        <span>Available Products</span>
+                    </div>
+
+                </div>
+
+
+                <div class="ml-stat-divider"></div>
+
+
+                <div class="ml-stat-item">
+
+                    <div class="ml-stat-icon">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+
+                    <div>
+                        <strong>@totalVendors+</strong>
+                        <span>Trusted Vendors</span>
+                    </div>
+
+                </div>
+
+
+                <div class="ml-stat-divider"></div>
+
+
+                <div class="ml-stat-item">
+
+                    <div class="ml-stat-icon">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+
+                    <div>
+                        <strong>@totalCategories+</strong>
+                        <span>Product Categories</span>
+                    </div>
+
+                </div>
+
+
+                <div class="ml-stat-divider"></div>
+
+
+                <div class="ml-stat-item">
+
+                    <div class="ml-stat-icon ml-stat-icon-gold">
+                        <i class="fa-solid fa-heart"></i>
+                    </div>
+
+                    <div>
+                        <strong>100%</strong>
+                        <span>Community Focused</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="ml-categories-section">
+
+        <div class="container">
+
+            <div class="ml-section-heading">
+
+                <div>
+
+                    <span class="ml-eyebrow">
+                        SHOP BY CATEGORY
+                    </span>
+
+                    <h2>
+                        Everything You Need,
+                        <span>All In One Place.</span>
+                    </h2>
+
+                </div>
+
+                <a asp-controller="Home"
+                   asp-action="Categories"
+                   class="ml-view-all">
+
+                    View All Categories
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+
+            @if (categories.Any())
+            {
+                <div class="ml-category-grid">
+
+                    @foreach (var category in categories.Select((item, index) => new { item, index }))
+                    {
+                        var image =
+                        categoryImages[category.index % categoryImages.Length];
+
+                        var icon =
+                        categoryIcons[category.index % categoryIcons.Length];
+
+                        <a asp-controller="Home"
+                           asp-action="Products"
+                           asp-route-categoryId="@category.item.CategoryId"
+                           class="ml-category-card">
+
+                            <div class="ml-category-image">
+
+                                <img src="@Url.Content(image)"
+                                     alt="@category.item.CategoryName" />
+
+                                <div class="ml-category-image-overlay"></div>
+
+                                <div class="ml-category-icon">
+                                    <i class="fa-solid @icon"></i>
+                                </div>
+
+                                <span class="ml-category-number">
+                                    @(category.index + 1).ToString("D2")
+                                </span>
+
+                            </div>
+
+
+                            <div class="ml-category-content">
+
+                                <div>
+
+                                    <span>
+                                        CATEGORY
+                                    </span>
+
+                                    <h3>
+                                        @category.item.CategoryName
+                                    </h3>
+
+                                </div>
+
+                                <div class="ml-category-arrow">
+                                    <i class="fa-solid fa-arrow-up-right"></i>
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(category.item.Description))
+                                {
+                                    <p>
+                                        @category.item.Description
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p>
+                                        Explore fresh and quality products.
+                                    </p>
+                                }
+
+                            </div>
+
+                        </a>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="ml-no-categories">
+
+                    <div>
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+
+                    <h3>
+                        Categories Coming Soon
+                    </h3>
+
+                    <p>
+                        New product categories will appear here.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+
+    <section class="ml-featured-section">
+
+        <div class="container">
+
+            <div class="ml-section-heading">
+
+                <div>
+
+                    <span class="ml-eyebrow">
+                        FRESH PICKS
+                    </span>
+
+                    <h2>
+                        Featured
+                        <span>Products.</span>
+                    </h2>
+
+                </div>
+
+                <a asp-controller="Home"
+                   asp-action="Products"
+                   class="ml-view-all">
+
+                    Explore All Products
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+
+            @if (products.Any())
+            {
+                <div class="ml-featured-grid">
+
+                    @foreach (var product in products)
+                    {
+                        <a asp-controller="Home"
+                           asp-action="ProductDetails"
+                           asp-route-id="@product.ProductId"
+                           class="ml-featured-card">
+
+                            <div class="ml-featured-image">
+
+                                <div class="ml-featured-image-bg">
+                                    <i class="fa-solid fa-leaf"></i>
+                                </div>
+
+                                <div class="ml-featured-image-overlay"></div>
+
+                                <span class="ml-featured-badge">
+                                    <span></span>
+                                    AVAILABLE
+                                </span>
+
+                                <div class="ml-featured-open">
+                                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-featured-content">
+
+                                <div class="ml-featured-category">
+
+                                    <i class="fa-solid fa-leaf"></i>
+
+                                    @(product.Category?.CategoryName ?? "General")
+
+                                </div>
+
+                                <h3>
+                                    @product.ProductName
+                                </h3>
+
+                                <p>
+                                    @(string.IsNullOrWhiteSpace(product.Description)
+                                                                ? "Fresh quality product from a trusted local vendor."
+                                                                : product.Description)
+                        </p>
+
+
+                                <div class="ml-featured-vendor">
+
+                                    <div class="ml-vendor-avatar">
+                                        <i class="fa-solid fa-store"></i>
+                                    </div>
+
+                                    <div>
+
+                                        <span>
+                                            SOLD BY
+                                        </span>
+
+                                        <strong>
+                                            @(product.VendorProfile?.FarmName ?? "Local Vendor")
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="ml-featured-bottom">
+
+                                    <div class="ml-featured-price">
+
+                                        <span>
+                                            PRICE
+                                        </span>
+
+                                        <strong>
+                                            Rs. @product.Price.ToString("N2")
+                                        </strong>
+
+                                        <small>
+                                            / @product.Unit
+                                        </small>
+
+                                    </div>
+
+                                    <div class="ml-featured-arrow">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </a>
+                                }
+
+                </div>
+            }
+            else
+            {
+                <div class="ml-no-products">
+
+                    <div class="ml-no-products-icon">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+
+                    <h3>
+                        No Products Available
+                    </h3>
+
+                    <p>
+                        Approved products from local vendors will appear here.
+                    </p>
+
+                    <a asp-controller="Home"
+                       asp-action="Products">
+
+                        Explore Products
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+    <section class="ml-reviews-section">
+
+        <div class="container">
+
+            <div class="ml-section-heading ml-reviews-heading">
+
+                <div>
+
+                    <span class="ml-eyebrow">
+                        CUSTOMER EXPERIENCES
+                    </span>
+
+                    <h2>
+                        What Our
+                        <span>Customers Say.</span>
+                    </h2>
+
+                    <p>
+                        Real experiences shared by customers who have purchased
+                        products through MarketLink.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            @if (approvedReviews.Any())
+            {
+                <div class="ml-reviews-grid">
+
+                    @foreach (var review in approvedReviews)
+                    {
+                        var customerName =
+                        review.CustomerProfile?.FullName ?? "MarketLink Customer";
+
+                        var productName =
+                        review.Product?.ProductName ?? "MarketLink Product";
+
+                        <article class="ml-review-card">
+
+                            <div class="ml-review-card-top">
+
+                                <div class="ml-review-avatar">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+
+                                <div class="ml-review-customer">
+
+                                    <h3>
+                                        @customerName
+                                    </h3>
+
+                                    <span>
+                                        Verified Customer
+                                    </span>
+
+                                </div>
+
+                                <div class="ml-review-quote">
+                                    <i class="fa-solid fa-quote-right"></i>
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-review-rating">
+
+                                @for (var star = 1; star <= 5; star++)
+                                {
+                                    if (star <= review.Rating)
+                                    {
+                                        <i class="fa-solid fa-star"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-regular fa-star"></i>
+                                    }
+                                }
+
+                                <span>
+                                    @review.Rating.0 / 5
+                                </span>
+
+                            </div>
+
+
+                            <div class="ml-review-comment">
+
+                                @if (!string.IsNullOrWhiteSpace(review.Comment))
+                                {
+                                    <p>
+                                        "@review.Comment"
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p>
+                                        Customer shared a rating for this product.
+                                    </p>
+                                }
+
+                            </div>
+
+
+                            <div class="ml-review-product">
+
+                                <div class="ml-review-product-icon">
+                                    <i class="fa-solid fa-basket-shopping"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        REVIEWED PRODUCT
+                                    </span>
+
+                                    <strong>
+                                        @productName
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ml-review-footer">
+
+                                <span>
+                                    <i class="fa-regular fa-calendar"></i>
+                                    @review.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                                </span>
+
+                                <span class="ml-review-approved">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    Approved Review
+                                </span>
+
+                            </div>
+
+                        </article>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="ml-no-reviews">
+
+                    <div class="ml-no-reviews-icon">
+                        <i class="fa-regular fa-comment-dots"></i>
+                    </div>
+
+                    <h3>
+                        Customer Reviews Coming Soon
+                    </h3>
+
+                    <p>
+                        Approved customer reviews will appear here as our
+                        MarketLink community grows.
+                    </p>
+
+                    <a asp-controller="Home"
+                       asp-action="Products"
+                       class="ml-reviews-explore-btn">
+
+                        Explore Products
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+
+    <section class="ml-how-section">
+
+        <div class="ml-how-decoration ml-how-decoration-one"></div>
+        <div class="ml-how-decoration ml-how-decoration-two"></div>
+
+        <div class="container">
+
+            <div class="ml-section-heading ml-centered-heading">
+
+                <div>
+
+                    <span class="ml-eyebrow">
+                        HOW MARKETLINK WORKS
+                    </span>
+
+                    <h2>
+                        Simple. Local.
+                        <span>Connected.</span>
+                    </h2>
+
+                    <p>
+                        MarketLink makes it easier for customers to discover
+                        local vendors and fresh products.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="ml-how-grid">
+
+                <div class="ml-how-card">
+
+                    <div class="ml-how-number">
+                        01
+                    </div>
+
+                    <div class="ml-how-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </div>
+
+                    <h3>
+                        Discover
+                    </h3>
+
+                    <p>
+                        Browse fresh products and discover trusted local
+                        vendors available on MarketLink.
+                    </p>
+
+                </div>
+
+
+                <div class="ml-how-line">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+
+
+                <div class="ml-how-card">
+
+                    <div class="ml-how-number">
+                        02
+                    </div>
+
+                    <div class="ml-how-icon">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                    </div>
+
+                    <h3>
+                        Choose
+                    </h3>
+
+                    <p>
+                        Explore products, compare options and choose what
+                        works best for your needs.
+                    </p>
+
+                </div>
+
+
+                <div class="ml-how-line">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+
+
+                <div class="ml-how-card">
+
+                    <div class="ml-how-number">
+                        03
+                    </div>
+
+                    <div class="ml-how-icon">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+
+                    <h3>
+                        Connect
+                    </h3>
+
+                    <p>
+                        Connect with local vendors and support businesses
+                        within your community.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="ml-why-section">
+
+        <div class="container">
+
+            <div class="ml-why-grid">
+
+                <div class="ml-why-content">
+
+                    <span class="ml-eyebrow">
+                        WHY MARKETLINK
+                    </span>
+
+                    <h2>
+                        Bringing Local
+                        <span>Communities Together.</span>
+                    </h2>
+
+                    <p>
+                        MarketLink creates a simple connection between customers
+                        and local vendors, making it easier to discover quality
+                        products while supporting the people behind them.
+                    </p>
+
+
+                    <div class="ml-benefit-list">
+
+                        <div class="ml-benefit">
+
+                            <div class="ml-benefit-icon">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+
+                            <div>
+                                <h4>
+                                    Trusted Local Vendors
+                                </h4>
+
+                                <p>
+                                    Discover products from registered vendors.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="ml-benefit">
+
+                            <div class="ml-benefit-icon">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+
+                            <div>
+                                <h4>
+                                    Fresh Quality Products
+                                </h4>
+
+                                <p>
+                                    Explore fresh products available locally.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="ml-benefit">
+
+                            <div class="ml-benefit-icon">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+
+                            <div>
+                                <h4>
+                                    Community Focused
+                                </h4>
+
+                                <p>
+                                    Help strengthen your local marketplace.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ml-why-visual">
+
+                    <div class="ml-why-main-image">
+
+                        <img src="~/images/organic.jpg"
+                             alt="Fresh organic products" />
+
+                    </div>
+
+
+                    <div class="ml-why-small-image">
+
+                        <img src="~/images/vegetables.webp"
+                             alt="Fresh vegetables" />
+
+                    </div>
+
+
+                    <div class="ml-why-floating">
+
+                        <div class="ml-why-floating-icon">
+                            <i class="fa-solid fa-heart"></i>
+                        </div>
+
+                        <div>
+                            <strong>Local First</strong>
+                            <span>Community focused</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="ml-why-circle">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="ml-cta-section">
+
+        <div class="ml-cta-glow ml-cta-glow-one"></div>
+        <div class="ml-cta-glow ml-cta-glow-two"></div>
+
+        <div class="container">
+
+            <div class="ml-cta-content">
+
+                <div class="ml-cta-icon">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+
+                <span class="ml-eyebrow ml-cta-eyebrow">
+                    JOIN MARKETLINK
+                </span>
+
+                <h2>
+                    Discover What's
+                    <span>Growing Around You.</span>
+                </h2>
+
+                <p>
+                    Explore local products, find trusted vendors and become
+                    part of a stronger marketplace.
+                </p>
+
+                <div class="ml-cta-buttons">
+
+                    <a asp-controller="Home"
+                       asp-action="Products"
+                       class="ml-primary-btn">
+
+                        Explore Products
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                    <a asp-controller="Account"
+                       asp-action="Register"
+                       class="ml-secondary-btn">
+
+                        Join MarketLink
+                        <i class="fa-solid fa-user-plus"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

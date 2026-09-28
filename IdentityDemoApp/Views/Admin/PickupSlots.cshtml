@@ -1,0 +1,601 @@
+﻿
+@model IEnumerable<IdentityDemoApp.Models.PickupSlot>
+
+@{
+    ViewData["Title"] = "Pickup Slots";
+
+    var search = ViewBag.Search as string ?? "";
+    var status = ViewBag.Status as string ?? "All";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-PickupSlots.css"
+      asp-append-version="true" />
+
+<div class="pickup-page">
+
+    <div class="pickup-header">
+
+        <div class="pickup-heading">
+
+            <div class="pickup-eyebrow">
+                <i class="fas fa-calendar-check"></i>
+                PICKUP SLOT MANAGEMENT
+            </div>
+
+            <h1>Manage Pickup Slots</h1>
+
+            <p>
+                Monitor vendor pickup schedules and manage slot availability.
+            </p>
+
+        </div>
+
+        <div class="pickup-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="pickup-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="pickup-stats">
+
+        <div class="pickup-stat-card">
+
+            <div class="pickup-stat-icon">
+                <i class="fas fa-calendar-days"></i>
+            </div>
+
+            <div>
+                <span>Total Slots</span>
+
+                <strong>
+                    @ViewBag.TotalPickupSlots
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="pickup-stat-card available">
+
+            <div class="pickup-stat-icon">
+                <i class="fas fa-circle-check"></i>
+            </div>
+
+            <div>
+                <span>Available</span>
+
+                <strong>
+                    @ViewBag.AvailablePickupSlots
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="pickup-stat-card unavailable">
+
+            <div class="pickup-stat-icon">
+                <i class="fas fa-circle-xmark"></i>
+            </div>
+
+            <div>
+                <span>Unavailable</span>
+
+                <strong>
+                    @ViewBag.UnavailablePickupSlots
+                </strong>
+            </div>
+
+        </div>
+
+        <div class="pickup-stat-card booked">
+
+            <div class="pickup-stat-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+
+            <div>
+                <span>Orders Using Slots</span>
+
+                <strong>
+                    @ViewBag.TotalBookedOrders
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="pickup-filter-card">
+
+        <form asp-controller="Admin"
+              asp-action="PickupSlots"
+              method="get"
+              class="pickup-filter-form">
+
+            <div class="pickup-search">
+
+                <i class="fas fa-search"></i>
+
+                <input type="text"
+                       name="search"
+                       value="@search"
+                       placeholder="Search vendor or city..." />
+
+            </div>
+
+            <select name="status"
+                    class="pickup-status-select">
+
+                @if (status == "All")
+                {
+                    <option value="All" selected>All Slots</option>
+                }
+                else
+                {
+                    <option value="All">All Slots</option>
+                }
+
+                @if (status == "Available")
+                {
+                    <option value="Available" selected>Available</option>
+                }
+                else
+                {
+                    <option value="Available">Available</option>
+                }
+
+                @if (status == "Unavailable")
+                {
+                    <option value="Unavailable" selected>Unavailable</option>
+                }
+                else
+                {
+                    <option value="Unavailable">Unavailable</option>
+                }
+
+            </select>
+
+            <button type="submit"
+                    class="pickup-filter-btn">
+
+                <i class="fas fa-filter"></i>
+
+                Filter
+
+            </button>
+
+            <a asp-controller="Admin"
+               asp-action="PickupSlots"
+               class="pickup-reset-btn">
+
+                <i class="fas fa-rotate-left"></i>
+
+                Reset
+
+            </a>
+
+        </form>
+
+    </div>
+
+    <div class="pickup-table-card">
+
+        <div class="pickup-table-header">
+
+            <div>
+
+                <h2>Pickup Schedule</h2>
+
+                <p>
+                    @Model.Count() pickup slot(s) found
+                </p>
+
+            </div>
+
+            <div class="pickup-record-label">
+
+                <i class="fas fa-calendar"></i>
+
+                Slot Records
+
+            </div>
+
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="pickup-table-wrapper">
+
+                <table class="pickup-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Vendor / Farm</th>
+
+                            <th>Pickup Date</th>
+
+                            <th>Time</th>
+
+                            <th>Capacity</th>
+
+                            <th>Booked</th>
+
+                            <th>Remaining</th>
+
+                            <th>Status</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var slot in Model)
+                        {
+                            var booked = slot.Orders?.Count ?? 0;
+
+                            var remaining =
+                            Math.Max(
+                            slot.MaxOrders - booked,
+                            0);
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="pickup-vendor">
+
+                                        <div class="pickup-vendor-icon">
+
+                                            <i class="fas fa-tractor"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @(slot.VendorProfile?.FarmName
+                                                                                        ?? "Unknown Vendor")
+                                                                                                        </strong>
+
+                                            <span>
+                                                @(slot.VendorProfile?.City
+                                                                                        ?? "City not available")
+                                    </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="pickup-date">
+
+                                        <strong>
+                                            @slot.PickupDate.ToString("dd MMM yyyy")
+                                        </strong>
+
+                                        <span>
+                                            @slot.PickupDate.ToString("dddd")
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <div class="pickup-time">
+
+                                        <i class="fas fa-clock"></i>
+
+                                        <span>
+                                            @slot.StartTime.ToString(@"hh\:mm")
+                                            -
+                                            @slot.EndTime.ToString(@"hh\:mm")
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="capacity-value">
+
+                                        <i class="fas fa-users"></i>
+
+                                        @slot.MaxOrders
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="booked-value">
+                                        @booked
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="remaining-value @(remaining == 0 ? "full" : "")">
+
+                                        @remaining
+
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                            @if (slot.IsAvailable)
+                                    {
+                                        <span class="pickup-status available">
+
+                                            <i class="fas fa-check-circle"></i>
+
+                                            Available
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="pickup-status unavailable">
+
+                                            <i class="fas fa-times-circle"></i>
+
+                                            Unavailable
+
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <div class="pickup-actions">
+
+                                        <a asp-controller="Admin"
+                                           asp-action="PickupSlotDetails"
+                                           asp-route-id="@slot.PickupSlotId"
+                                           class="pickup-action details"
+                                           title="View Details">
+
+                                            <i class="fas fa-eye"></i>
+
+                                        </a>
+
+                                        <form asp-controller="Admin"
+                                              asp-action="UpdatePickupSlotStatus"
+                                              method="post"
+                                              class="pickup-status-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@slot.PickupSlotId" />
+
+                                            <input type="hidden"
+                                                   name="isAvailable"
+                                                   value="@(!slot.IsAvailable)" />
+
+                                            <button type="submit"
+                                                    class="pickup-action status"
+                                                    title="@(slot.IsAvailable ? "Make Unavailable" : "Make Available")">
+
+                                                @if (slot.IsAvailable)
+                                                {
+                                                    <i class="fas fa-toggle-on"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-toggle-off"></i>
+                                                }
+
+                                            </button>
+
+                                        </form>
+
+                                        @if (booked == 0)
+                                        {
+                                            <button type="button"
+                                                    class="pickup-action delete"
+                                                    title="Remove Slot"
+                                                    onclick="deletePickupSlot(
+                                                                    @slot.PickupSlotId,
+                                                                    '@slot.PickupDate.ToString("dd MMM yyyy")'
+                                                                )">
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </button>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="pickup-empty">
+
+                <div class="pickup-empty-icon">
+
+                    <i class="fas fa-calendar-xmark"></i>
+
+                </div>
+
+                <h3>No Pickup Slots Found</h3>
+
+                <p>
+                    No pickup slots match your current search or filter.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="PickupSlots"
+                   class="pickup-empty-btn">
+
+                    <i class="fas fa-rotate-left"></i>
+
+                    View All Slots
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+<form id="deletePickupForm"
+      asp-controller="Admin"
+      asp-action="RemovePickupSlot"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           id="deletePickupId" />
+
+</form>
+
+@section Scripts {
+
+    <script>
+
+        function deletePickupSlot(id, pickupDate) {
+
+            Swal.fire({
+
+                title: "Remove Pickup Slot?",
+
+                html:
+                    "Are you sure you want to remove the pickup slot " +
+                    "<strong>" + pickupDate + "</strong>?" +
+                    "<br><small>This action cannot be undone.</small>",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonText:
+                    '<i class="fas fa-trash"></i> Yes, Remove',
+
+                cancelButtonText:
+                    "Cancel",
+
+                reverseButtons: true,
+
+                customClass: {
+
+                    confirmButton:
+                        "swal-danger-btn",
+
+                    cancelButton:
+                        "swal-cancel-btn"
+
+                }
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    document.getElementById(
+                        "deletePickupId"
+                    ).value = id;
+
+                    document.getElementById(
+                        "deletePickupForm"
+                    ).submit();
+
+                }
+
+            });
+
+        }
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                @if (TempData["Success"] != null)
+                {
+                        <text>
+
+                            Swal.fire({
+
+                                icon: "success",
+
+                                title: "Success",
+
+                                text: "@TempData["Success"]",
+
+                                confirmButtonColor:
+                                    "#0b3037",
+
+                                timer: 2200,
+
+                                timerProgressBar: true
+
+                            });
+
+                        </text>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                        <text>
+
+                            Swal.fire({
+
+                                icon: "error",
+
+                                title: "Something went wrong",
+
+                                text: "@TempData["Error"]",
+
+                                confirmButtonColor:
+                                    "#0b3037"
+
+                            });
+
+                        </text>
+                }
+
+            });
+
+    </script>
+}
+

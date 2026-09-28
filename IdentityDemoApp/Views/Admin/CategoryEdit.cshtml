@@ -1,0 +1,185 @@
+﻿@model IdentityDemoApp.Models.Category
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Categories.css"
+      asp-append-version="true" />
+
+<div class="category-form-page">
+
+    <div class="category-form-header">
+
+        <div>
+            <div class="category-breadcrumb">
+                <i class="fas fa-home"></i>
+                <span>Admin</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Categories</span>
+                <i class="fas fa-chevron-right"></i>
+                <span>Edit</span>
+            </div>
+
+            <h1>Edit Category</h1>
+
+            <p>
+                Update category information and status.
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="Categories"
+           class="category-back-btn">
+
+            <i class="fas fa-arrow-left"></i>
+            Back to Categories
+
+        </a>
+
+    </div>
+
+
+    <div class="category-form-card">
+
+        <div class="category-form-card-header">
+
+            <div class="category-form-icon">
+                <i class="fas fa-pen"></i>
+            </div>
+
+            <div>
+                <h3>Edit Category Information</h3>
+                <p>
+                    Update the selected category.
+                </p>
+            </div>
+
+        </div>
+
+
+        <form asp-controller="Admin"
+              asp-action="CategoryEdit"
+              asp-route-id="@Model.CategoryId"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   asp-for="CategoryId" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="category-validation">
+            </div>
+
+
+            <div class="category-form-group">
+
+                <label asp-for="CategoryName">
+                    Category Name
+                    <span>*</span>
+                </label>
+
+                <input asp-for="CategoryName"
+                       class="category-input"
+                       placeholder="e.g. Vegetables" />
+
+                <span asp-validation-for="CategoryName"
+                      class="category-field-error">
+                </span>
+
+            </div>
+
+
+            <div class="category-form-group">
+
+                <label asp-for="Description">
+                    Description
+                </label>
+
+                <textarea asp-for="Description"
+                          class="category-textarea"
+                          rows="5"
+                          placeholder="Enter a short description..."></textarea>
+
+                <span asp-validation-for="Description"
+                      class="category-field-error">
+                </span>
+
+            </div>
+
+
+            <div class="category-products-info">
+
+                <div class="category-products-icon">
+                    <i class="fas fa-box"></i>
+                </div>
+
+                <div>
+                    <strong>
+                        Linked Products
+                    </strong>
+
+                    <span>
+                        @(Model.Products?.Count ?? 0)
+                        product(s) currently linked to this category.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div class="category-toggle-box">
+
+                <div>
+                    <strong>Category Status</strong>
+
+                    <span>
+                        Inactive categories should not be used for new products.
+                    </span>
+                </div>
+
+                <label class="category-switch">
+
+                    <input asp-for="IsActive" />
+
+                    <span class="category-slider"></span>
+
+                </label>
+
+            </div>
+
+
+            <div class="category-form-actions">
+
+                <a asp-controller="Admin"
+                   asp-action="Categories"
+                   class="category-cancel-btn">
+
+                    Cancel
+
+                </a>
+
+                <button type="submit"
+                        class="category-save-btn">
+
+                    <i class="fas fa-save"></i>
+                    Update Category
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

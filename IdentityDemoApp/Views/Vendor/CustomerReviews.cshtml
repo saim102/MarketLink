@@ -1,0 +1,331 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Review>
+
+@{
+    ViewData["Title"] = "Customer Reviews";
+    Layout = "_Layout";
+
+    var reviewList = Model?.ToList() ?? new List<IdentityDemoApp.Models.Review>();
+    var totalReviews = reviewList.Count;
+    var fiveStarReviews = reviewList.Count(r => r.Rating == 5);
+    var fourStarReviews = reviewList.Count(r => r.Rating == 4);
+    var averageRating = totalReviews > 0
+        ? reviewList.Average(r => r.Rating)
+        : 0;
+}
+
+<link rel="stylesheet" href="~/css/vendor-reviews.css" />
+
+<div class="reviews-page">
+
+    <div class="reviews-header">
+        <div>
+            <span class="reviews-eyebrow">
+                <i class="fa-solid fa-star"></i>
+                Customer Feedback
+            </span>
+
+            <h1>Customer Reviews</h1>
+
+            <p>
+                View customer feedback and respond to reviews for your products.
+            </p>
+        </div>
+
+        <div class="reviews-header-actions">
+
+            <a asp-controller="Vendor"
+               asp-action="Dashboard"
+               class="reviews-dashboard-btn">
+                <i class="fa-solid fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="review-alert success">
+            <div class="alert-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div>
+                <strong>Success</strong>
+                <span>@TempData["Success"]</span>
+            </div>
+
+            <button type="button"
+                    onclick="this.parentElement.remove()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="review-alert error">
+            <div class="alert-icon">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+
+            <div>
+                <strong>Action Failed</strong>
+                <span>@TempData["Error"]</span>
+            </div>
+
+            <button type="button"
+                    onclick="this.parentElement.remove()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    }
+
+    <div class="review-stat-grid">
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+
+            <div>
+                <span>Total Reviews</span>
+                <strong>@totalReviews</strong>
+            </div>
+        </div>
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon">
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <div>
+                <span>Average Rating</span>
+                <strong>@averageRating.ToString("0.0") / 5</strong>
+            </div>
+        </div>
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon">
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <div>
+                <span>5 Star Reviews</span>
+                <strong>@fiveStarReviews</strong>
+            </div>
+        </div>
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon">
+                <i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+
+            <div>
+                <span>4 Star Reviews</span>
+                <strong>@fourStarReviews</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="reviews-card">
+
+        <div class="reviews-card-header">
+            <div>
+                <h2>Customer Feedback</h2>
+                <p>Reviews received for your products</p>
+            </div>
+
+            <span class="review-count">
+                @totalReviews Reviews
+            </span>
+        </div>
+
+        @if (reviewList.Any())
+        {
+            <div class="reviews-list">
+
+                @foreach (var review in reviewList)
+                {
+                    var vendorResponse = review.ReviewResponses?
+                    .OrderByDescending(x => x.CreatedAt)
+                    .FirstOrDefault();
+
+                    <div class="review-item">
+
+                        <div class="review-top">
+
+                            <div class="customer-section">
+
+                                <div class="customer-avatar">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Customer #@review.CustomerProfileId
+                                    </strong>
+
+                                    <span>
+                                        Customer
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="review-date">
+                                <i class="fa-regular fa-calendar"></i>
+                                @review.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                            </div>
+
+                        </div>
+
+                        <div class="product-section">
+
+                            <div class="product-icon">
+                                <i class="fa-solid fa-leaf"></i>
+                            </div>
+
+                            <div>
+                                <span>Product</span>
+
+                                <strong>
+                                    @review.Product?.ProductName
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="rating-section">
+
+                            <div class="stars">
+
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= review.Rating)
+                                    {
+                                        <i class="fa-solid fa-star active"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-regular fa-star"></i>
+                                    }
+                                }
+
+                            </div>
+
+                            <strong>
+                                @review.Rating / 5
+                            </strong>
+
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(review.Comment))
+                        {
+                            <div class="customer-comment">
+
+                                <span class="comment-label">
+                                    Customer Review
+                                </span>
+
+                                <p>
+                                    @review.Comment
+                                </p>
+
+                            </div>
+                        }
+
+                        @if (vendorResponse != null)
+                        {
+                            <div class="vendor-response">
+
+                                <div class="response-header">
+
+                                    <div>
+                                        <i class="fa-solid fa-reply"></i>
+                                        <strong>Your Response</strong>
+                                    </div>
+
+                                    <span>
+                                        @vendorResponse.CreatedAt
+                                        .ToLocalTime()
+                                        .ToString("dd MMM yyyy")
+                                    </span>
+
+                                </div>
+
+                                <p>
+                                    @vendorResponse.Response
+                                </p>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="response-form-container">
+
+                                <div class="response-title">
+                                    <i class="fa-solid fa-reply"></i>
+                                    <span>Respond to Customer</span>
+                                </div>
+
+                                <form asp-action="AddReviewResponse"
+                                      method="post"
+                                      class="response-form">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="reviewId"
+                                           value="@review.ReviewId" />
+
+                                    <textarea name="response"
+                                  maxlength="1000"
+                                  rows="3"
+                                  placeholder="Write a professional response to your customer..."
+                                  required></textarea>
+
+                                    <button type="submit"
+                                            class="response-btn">
+                                        <i class="fa-solid fa-paper-plane"></i>
+                                        Send Response
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="reviews-empty">
+
+                <div class="empty-icon">
+                    <i class="fa-regular fa-star"></i>
+                </div>
+
+                <h3>No Customer Reviews Yet</h3>
+
+                <p>
+                    You don't have any approved customer reviews for your products yet.
+                </p>
+
+                <a asp-controller="Vendor"
+                   asp-action="Dashboard"
+                   class="empty-dashboard-btn">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Back to Dashboard
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>

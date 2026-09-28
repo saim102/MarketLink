@@ -1,0 +1,553 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.VendorProfile>
+
+@{
+    ViewData["Title"] = "Browse Vendors";
+
+    var search = ViewBag.Search as string ?? "";
+    var selectedCity = ViewBag.City as string ?? "";
+    var cities = ViewBag.Cities as IEnumerable<string> ?? Enumerable.Empty<string>();
+
+    var farmers = Model?.ToList() ?? new List<IdentityDemoApp.Models.VendorProfile>();
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-BrowseVendor.css"
+      asp-append-version="true" />
+
+<div class="customer-farmers-page">
+
+    <section class="farmers-hero">
+
+        <div class="hero-content">
+
+            <div class="hero-badge">
+                <i class="bi bi-flower1"></i>
+                <span>Discover Local Farmers</span>
+            </div>
+
+            <h1>Browse Farmers</h1>
+
+            <p>
+                Explore approved local farmers, discover their farms,
+                and find fresh products available through MarketLink.
+            </p>
+
+            <a asp-controller="Customer"
+               asp-action="Dashboard"
+               class="back-dashboard-btn">
+                <i class="bi bi-arrow-left"></i>
+                Back to Dashboard
+            </a>
+
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-circle circle-one"></div>
+            <div class="hero-circle circle-two"></div>
+
+            <div class="hero-farmer-icon">
+                <i class="bi bi-person-standing"></i>
+            </div>
+
+            <div class="floating-leaf leaf-one">
+                <i class="bi bi-leaf-fill"></i>
+            </div>
+
+            <div class="floating-leaf leaf-two">
+                <i class="bi bi-flower1"></i>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="farmer-filter-card">
+
+        <form asp-controller="Customer"
+              asp-action="BrowseFarmers"
+              method="get"
+              class="farmer-filter-form">
+
+            <div class="filter-field search-field">
+
+                <label for="search">
+                    <i class="bi bi-search"></i>
+                    Search Farmer
+                </label>
+
+                <div class="input-box">
+
+                    <i class="bi bi-search"></i>
+
+                    <input type="text"
+                           id="search"
+                           name="search"
+                           value="@search"
+                           placeholder="Search by farm name, city or location..." />
+
+                    @if (!string.IsNullOrWhiteSpace(search))
+                    {
+                        <button type="button"
+                                class="clear-input"
+                                onclick="clearSearch()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="filter-field">
+
+                <label for="city">
+                    <i class="bi bi-geo-alt"></i>
+                    City
+                </label>
+
+                <div class="input-box select-box">
+
+                    <i class="bi bi-buildings"></i>
+
+                    <select id="city"
+                            name="city">
+
+                        <option value="">All Cities</option>
+
+                        @foreach (var city in cities)
+                        {
+                            if (city == selectedCity)
+                            {
+                                <option value="@city" selected>@city</option>
+                            }
+                            else
+                            {
+                                <option value="@city">@city</option>
+                            }
+                        }
+
+                    </select>
+
+                    <i class="bi bi-chevron-down select-arrow"></i>
+
+                </div>
+
+            </div>
+
+            <div class="filter-actions">
+
+                <button type="submit"
+                        class="search-btn">
+                    <i class="bi bi-search"></i>
+                    Search Farmers
+                </button>
+
+                <a asp-controller="Customer"
+                   asp-action="BrowseFarmers"
+                   class="reset-btn">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Reset
+                </a>
+
+            </div>
+
+        </form>
+
+    </section>
+
+    <section class="farmers-summary">
+
+        <div class="summary-left">
+
+            <div class="summary-icon">
+                <i class="bi bi-people-fill"></i>
+            </div>
+
+            <div>
+                <span class="summary-label">Available Farmers</span>
+                <h2>@farmers.Count</h2>
+            </div>
+
+        </div>
+
+        <div class="summary-right">
+
+            @if (!string.IsNullOrWhiteSpace(search) || !string.IsNullOrWhiteSpace(selectedCity))
+            {
+                <span class="filter-status">
+                    <i class="bi bi-funnel-fill"></i>
+                    Filtered Results
+                </span>
+            }
+            else
+            {
+                <span class="filter-status active">
+                    <i class="bi bi-check-circle-fill"></i>
+                    All Approved Farmers
+                </span>
+            }
+
+        </div>
+
+    </section>
+
+    @if (farmers.Any())
+    {
+        <section class="farmers-grid">
+
+            @foreach (var farmer in farmers)
+            {
+                var modalId = $"farmerModal_{farmer.VendorProfileId}";
+
+                <article class="farmer-card">
+
+                    <div class="farmer-card-top">
+
+                        <div class="farmer-avatar">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <span class="approved-badge">
+                            <i class="bi bi-patch-check-fill"></i>
+                            Approved
+                        </span>
+
+                    </div>
+
+                    <div class="farmer-card-body">
+
+                        <h3>@farmer.FarmName</h3>
+
+                        <div class="farmer-location">
+
+                            <i class="bi bi-geo-alt-fill"></i>
+
+                            <span>
+                                @if (!string.IsNullOrWhiteSpace(farmer.City))
+                                {
+                                    @farmer.City
+                                }
+                                else
+                                {
+                                    @farmer.Address
+                                }
+                            </span>
+
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(farmer.Province))
+                        {
+                            <div class="farmer-province">
+                                <i class="bi bi-map"></i>
+                                @farmer.Province
+                            </div>
+                        }
+
+                        <p class="farmer-description">
+                            @if (!string.IsNullOrWhiteSpace(farmer.FarmDescription))
+                            {
+                                @farmer.FarmDescription
+                            }
+                            else
+                            {
+                                <span>
+                                    Local farmer offering products through MarketLink.
+                                </span>
+                            }
+                        </p>
+
+                        <div class="farmer-info-row">
+
+                            <div class="farmer-info-item">
+
+                                <div class="info-icon">
+                                    <i class="bi bi-geo-alt"></i>
+                                </div>
+
+                                <div>
+                                    <small>Location</small>
+                                    <strong>
+                                        @(string.IsNullOrWhiteSpace(farmer.City) ? "Available" : farmer.City)
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="farmer-info-item">
+
+                                <div class="info-icon">
+                                    <i class="bi bi-calendar-check"></i>
+                                </div>
+
+                                <div>
+                                    <small>Member Since</small>
+                                    <strong>@farmer.CreatedAt.ToString("MMM yyyy")</strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="farmer-card-footer">
+
+                        <button type="button"
+                                class="view-farmer-btn"
+                                data-bs-toggle="modal"
+                                data-bs-target="#@modalId">
+
+                            <span>
+                                <i class="bi bi-eye"></i>
+                                View Details
+                            </span>
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </button>
+
+                        <form asp-controller="Customer"
+                              asp-action="ToggleFavoriteVendor"
+                              method="post"
+                              class="favorite-form">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="vendorProfileId"
+                                   value="@farmer.VendorProfileId" />
+
+                            <button type="submit"
+                                    class="favorite-farmer-btn">
+
+                                <i class="bi bi-heart-fill"></i>
+                                Add to Favorite
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </article>
+            }
+
+        </section>
+    }
+    else
+    {
+        <section class="empty-farmers">
+
+            <div class="empty-icon">
+                <i class="bi bi-person-x"></i>
+            </div>
+
+            <span class="empty-badge">
+                No Farmers Found
+            </span>
+
+            <h2>No matching farmers available</h2>
+
+            <p>
+                We couldn't find any approved farmer matching your current
+                search or city filter. Try another search or clear the filters.
+            </p>
+
+            <a asp-controller="Customer"
+               asp-action="BrowseFarmers"
+               class="empty-reset-btn">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                View All Farmers
+            </a>
+
+        </section>
+    }
+
+</div>
+
+@if (farmers.Any())
+{
+    foreach (var farmer in farmers)
+    {
+        var modalId = $"farmerModal_{farmer.VendorProfileId}";
+
+        <div class="modal fade farmer-modal"
+             id="@modalId"
+             tabindex="-1"
+             aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <div class="modal-title-area">
+
+                            <div class="modal-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+
+                            <div>
+                                <span>Approved Farmer</span>
+                                <h3>@farmer.FarmName</h3>
+                            </div>
+
+                        </div>
+
+                        <button type="button"
+                                class="modal-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="modal-status">
+                            <i class="bi bi-patch-check-fill"></i>
+                            Verified & Approved Farmer
+                        </div>
+
+                        <div class="modal-details-grid">
+
+                            <div class="modal-detail-item">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-shop"></i>
+                                </div>
+
+                                <div>
+                                    <span>Farm Name</span>
+                                    <strong>@farmer.FarmName</strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail-item">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-geo-alt"></i>
+                                </div>
+
+                                <div>
+                                    <span>Address</span>
+                                    <strong>@farmer.Address</strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail-item">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-buildings"></i>
+                                </div>
+
+                                <div>
+                                    <span>City</span>
+                                    <strong>
+                                        @(string.IsNullOrWhiteSpace(farmer.City) ? "Not specified" : farmer.City)
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail-item">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-map"></i>
+                                </div>
+
+                                <div>
+                                    <span>Province</span>
+                                    <strong>
+                                        @(string.IsNullOrWhiteSpace(farmer.Province) ? "Not specified" : farmer.Province)
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail-item">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-calendar3"></i>
+                                </div>
+
+                                <div>
+                                    <span>Joined</span>
+                                    <strong>@farmer.CreatedAt.ToString("dd MMMM yyyy")</strong>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-detail-item">
+
+                                <div class="modal-detail-icon">
+                                    <i class="bi bi-shield-check"></i>
+                                </div>
+
+                                <div>
+                                    <span>Status</span>
+                                    <strong>Approved</strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="farm-description-box">
+
+                            <div class="description-heading">
+                                <i class="bi bi-info-circle"></i>
+                                About This Farm
+                            </div>
+
+                            <p>
+                                @if (!string.IsNullOrWhiteSpace(farmer.FarmDescription))
+                                {
+                                    @farmer.FarmDescription
+                                }
+                                else
+                                {
+                                    <span>
+                                        No farm description has been provided yet.
+                                    </span>
+                                }
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="modal-back-btn"
+                                data-bs-dismiss="modal">
+                            <i class="bi bi-arrow-left"></i>
+                            Close
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+}
+
+@section Scripts {
+    <script>
+        function clearSearch() {
+            const input = document.getElementById("search");
+
+            if (input) {
+                input.value = "";
+                input.focus();
+            }
+        }
+    </script>
+}

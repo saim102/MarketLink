@@ -1,0 +1,479 @@
+﻿@model IdentityDemoApp.Models.Cart
+
+@{
+    ViewData["Title"] = "My Cart";
+
+    var cartItems = Model.CartItems?
+        .Where(x => x.Product != null)
+        .ToList()
+        ?? new List<IdentityDemoApp.Models.CartItem>();
+
+    var totalItems = cartItems.Sum(x => x.Quantity);
+
+    var subtotal = cartItems.Sum(x => x.TotalPrice);
+}
+
+<link rel="stylesheet"
+      href="~/css/cart.css"
+      asp-append-version="true" />
+
+<div class="ml-cart-page">
+
+    <section class="ml-cart-hero">
+        <div class="ml-cart-hero-glow ml-cart-glow-one"></div>
+        <div class="ml-cart-hero-glow ml-cart-glow-two"></div>
+
+        <div class="container">
+            <div class="ml-cart-hero-content">
+
+                <div class="ml-cart-badge">
+                    <span></span>
+                    MARKETLINK SHOPPING CART
+                </div>
+
+                <h1>
+                    Your <strong>Shopping Cart</strong>
+                </h1>
+
+                <p>
+                    Review your selected products before continuing
+                    to checkout.
+                </p>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="ml-cart-section">
+
+
+
+        <div class="container">
+
+            <div class="ml-cart-navigation">
+
+                <a asp-controller="Customer"
+                   asp-action="Dashboard"
+                   class="ml-cart-back-btn">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    <span>Back to Dashboard</span>
+
+                </a>
+
+            </div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="ml-cart-alert ml-cart-success">
+                    <div class="ml-alert-icon">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+
+                    <span>@TempData["Success"]</span>
+
+                    <button type="button"
+                            onclick="this.parentElement.remove()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="ml-cart-alert ml-cart-error">
+                    <div class="ml-alert-icon">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    </div>
+
+                    <span>@TempData["Error"]</span>
+
+                    <button type="button"
+                            onclick="this.parentElement.remove()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            }
+
+            @if (cartItems.Any())
+            {
+                <div class="ml-cart-heading">
+
+                    <div>
+                        <span class="ml-cart-mini-label">
+                            YOUR SELECTION
+                        </span>
+
+                        <h2>Shopping Cart</h2>
+
+                        <p>
+                            You have
+                            <strong>@totalItems</strong>
+                            item(s) in your cart.
+                        </p>
+                    </div>
+
+                    <form asp-controller="Customer"
+                          asp-action="ClearCart"
+                          method="post"
+                          class="ml-clear-cart-form"
+                          onsubmit="return confirmClearCart();">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="ml-clear-cart-btn">
+
+                            <i class="fa-regular fa-trash-can"></i>
+
+                            Clear Cart
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <div class="ml-cart-layout">
+
+                    <div class="ml-cart-items">
+
+                        @foreach (var item in cartItems)
+                        {
+                            var product = item.Product;
+
+                            <article class="ml-cart-item">
+
+                                <div class="ml-cart-product-image">
+
+                                    <div class="ml-cart-image-placeholder">
+                                        <i class="fa-solid fa-leaf"></i>
+                                    </div>
+
+                                    <span class="ml-cart-stock">
+                                        <i class="fa-solid fa-circle"></i>
+                                        Available
+                                    </span>
+
+                                </div>
+
+                                <div class="ml-cart-product-info">
+
+                                    <div class="ml-cart-product-top">
+
+                                        <span class="ml-cart-category">
+                                            <i class="fa-solid fa-layer-group"></i>
+                                            @(product?.Category?.CategoryName ?? "General")
+                                        </span>
+
+                                        <span class="ml-cart-product-id">
+                                            #@product?.ProductId.ToString("D3")
+                                        </span>
+
+                                    </div>
+
+                                    <h3>
+                                        @product?.ProductName
+                                    </h3>
+
+                                    <div class="ml-cart-vendor">
+
+                                        <span class="ml-cart-vendor-icon">
+                                            <i class="fa-solid fa-store"></i>
+                                        </span>
+
+                                        <span>
+                                            <small>SOLD BY</small>
+                                            <strong>
+                                                @(product?.VendorProfile?.FarmName ?? "Local Vendor")
+                                            </strong>
+                                        </span>
+
+                                    </div>
+
+                                    <div class="ml-cart-price-mobile">
+
+                                        <small>UNIT PRICE</small>
+
+                                        <strong>
+                                            Rs. @item.UnitPrice.ToString("N2")
+                                        </strong>
+
+                                        <span>
+                                            / @(product?.Unit ?? "unit")
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                                <div class="ml-cart-unit-price">
+
+                                    <span>UNIT PRICE</span>
+
+                                    <strong>
+                                        Rs. @item.UnitPrice.ToString("N2")
+                                    </strong>
+
+                                    <small>
+                                        / @(product?.Unit ?? "unit")
+                                    </small>
+
+                                </div>
+
+                                <div class="ml-cart-quantity-section">
+
+                                    <span>QUANTITY</span>
+
+                                    <form asp-controller="Customer"
+                                          asp-action="UpdateCart"
+                                          method="post"
+                                          class="ml-quantity-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="cartItemId"
+                                               value="@item.CartItemId" />
+
+                                        <button type="button"
+                                                class="ml-qty-btn"
+                                                onclick="changeQuantity(this, -1)">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </button>
+
+                                        <input type="number"
+                                               name="quantity"
+                                               value="@item.Quantity"
+                                               min="1"
+                                               step="1"
+                                               class="ml-qty-input"
+                                               onchange="this.form.submit()" />
+
+                                        <button type="button"
+                                                class="ml-qty-btn"
+                                                onclick="changeQuantity(this, 1)">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                                <div class="ml-cart-item-total">
+
+                                    <span>ITEM TOTAL</span>
+
+                                    <strong>
+                                        Rs. @item.TotalPrice.ToString("N2")
+                                    </strong>
+
+                                </div>
+
+                                <form asp-controller="Customer"
+                                      asp-action="RemoveFromCart"
+                                      method="post"
+                                      class="ml-remove-form"
+                                      onsubmit="return confirmRemove();">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="cartItemId"
+                                           value="@item.CartItemId" />
+
+                                    <button type="submit"
+                                            class="ml-remove-btn"
+                                            title="Remove from cart">
+
+                                        <i class="fa-regular fa-trash-can"></i>
+
+                                    </button>
+
+                                </form>
+
+                            </article>
+                        }
+
+                    </div>
+
+                    <aside class="ml-cart-summary">
+
+                        <div class="ml-summary-top">
+
+                            <span class="ml-summary-label">
+                                ORDER SUMMARY
+                            </span>
+
+                            <div class="ml-summary-icon">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                            </div>
+
+                        </div>
+
+                        <h3>
+                            Cart Summary
+                        </h3>
+
+                        <div class="ml-summary-divider"></div>
+
+                        <div class="ml-summary-row">
+
+                            <span>
+                                <i class="fa-solid fa-box"></i>
+                                Total Items
+                            </span>
+
+                            <strong>
+                                @totalItems
+                            </strong>
+
+                        </div>
+
+                        <div class="ml-summary-row">
+
+                            <span>
+                                <i class="fa-solid fa-receipt"></i>
+                                Subtotal
+                            </span>
+
+                            <strong>
+                                Rs. @subtotal.ToString("N2")
+                            </strong>
+
+                        </div>
+
+                        <div class="ml-summary-row">
+
+                            <span>
+                                <i class="fa-solid fa-truck-fast"></i>
+                                Delivery
+                            </span>
+
+                            <strong class="ml-free">
+                                To be calculated
+                            </strong>
+
+                        </div>
+
+                        <div class="ml-summary-total">
+
+                            <div>
+                                <span>ESTIMATED TOTAL</span>
+                                <small>Before final checkout confirmation</small>
+                            </div>
+
+                            <strong>
+                                Rs. @subtotal.ToString("N2")
+                            </strong>
+
+                        </div>
+                        <a href="@Url.Action("Checkout", "Customer")"
+                           class="ml-checkout-btn">
+
+                            <span>
+                                Proceed to Checkout
+                            </span>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+                        <a asp-controller="Home"
+                           asp-action="Products"
+                           class="ml-continue-btn">
+
+                            <i class="fa-solid fa-arrow-left"></i>
+
+                            Continue Shopping
+
+                        </a>
+
+                        <div class="ml-secure-note">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            <div>
+                                <strong>Secure Checkout</strong>
+                                <span>Your order information is protected.</span>
+                            </div>
+
+                        </div>
+
+                    </aside>
+
+                </div>
+            }
+            else
+            {
+                <div class="ml-empty-cart">
+
+                    <div class="ml-empty-orbit ml-orbit-one"></div>
+                    <div class="ml-empty-orbit ml-orbit-two"></div>
+
+                    <div class="ml-empty-cart-icon">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+
+                    <span class="ml-empty-cart-label">
+                        YOUR CART IS EMPTY
+                    </span>
+
+                    <h2>
+                        Nothing in your cart yet
+                    </h2>
+
+                    <p>
+                        Discover fresh products from trusted local
+                        farmers and vendors and add your favourites
+                        to your cart.
+                    </p>
+
+                    <a asp-controller="Home"
+                       asp-action="Products"
+                       class="ml-empty-shop-btn">
+
+                        <i class="fa-solid fa-store"></i>
+
+                        Explore Products
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+</div>
+
+<script>
+    function changeQuantity(button, amount) {
+        const form = button.closest("form");
+        const input = form.querySelector(".ml-qty-input");
+
+        let value = parseFloat(input.value) || 1;
+
+        value += amount;
+
+        if (value < 1) {
+            value = 1;
+        }
+
+        input.value = value;
+
+        form.submit();
+    }
+
+    function confirmRemove() {
+        return confirm("Are you sure you want to remove this product from your cart?");
+    }
+
+    function confirmClearCart() {
+        return confirm("Are you sure you want to clear your entire cart?");
+    }
+</script>

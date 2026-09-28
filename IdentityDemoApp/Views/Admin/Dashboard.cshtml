@@ -1,0 +1,873 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-dashboard.css"
+      asp-append-version="true" />
+
+<div class="ml-admin-page">
+
+    <div class="ml-admin-layout">
+
+        <aside class="ml-admin-sidebar">
+
+            <div class="ml-admin-sidebar-logo">
+
+                <div class="ml-admin-logo-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+
+                <div>
+                    <strong>Market<span>Link</span></strong>
+                    <small>ADMIN PANEL</small>
+                </div>
+
+            </div>
+
+            <nav class="ml-admin-nav">
+
+                <div class="ml-admin-nav-title">
+                    MAIN
+                </div>
+
+                <a asp-controller="Admin"
+                   asp-action="Dashboard"
+                   class="ml-admin-nav-item active">
+
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+
+                </a>
+
+                <div class="ml-admin-nav-title">
+                    MANAGEMENT
+                </div>
+
+                <a asp-controller="Admin"
+                   asp-action="Vendors"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-store"></i>
+                    <span>Vendors</span>
+
+                    @if (ViewBag.PendingVendors != null &&
+                                        ViewBag.PendingVendors > 0)
+                    {
+                        <b class="ml-nav-badge">
+                            @ViewBag.PendingVendors
+                        </b>
+                    }
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="ManageCustomers"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+
+                    @if (ViewBag.PendingCustomers != null &&
+                                        ViewBag.PendingCustomers > 0)
+                    {
+                        <b class="ml-nav-badge">
+                            @ViewBag.PendingCustomers
+                        </b>
+                    }
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="ProductModeration"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-box-open"></i>
+                    <span>Product Moderation</span>
+
+                    @if (ViewBag.PendingProducts != null &&
+                                        ViewBag.PendingProducts > 0)
+                    {
+                        <b class="ml-nav-badge">
+                            @ViewBag.PendingProducts
+                        </b>
+                    }
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="Categories"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-tags"></i>
+                    <span>Categories</span>
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="Markets"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-store"></i>
+                    <span>Manage Markets</span>
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="VendorMarkets"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-link"></i>
+                    <span>Vendor Markets</span>
+
+                </a>
+
+                <div class="ml-admin-nav-title">
+                    ORDERS
+                </div>
+
+                <a asp-controller="Admin"
+                   asp-action="Orders"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="PickupSlots"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Pickup Slots</span>
+
+                </a>
+
+                <div class="ml-admin-nav-title">
+                    ENGAGEMENT
+                </div>
+
+                <a asp-controller="Admin"
+                   asp-action="ReviewModeration"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-star"></i>
+                    <span>Review Moderation</span>
+
+                    @if (ViewBag.PendingReviews != null &&
+                                        ViewBag.PendingReviews > 0)
+                    {
+                        <b class="ml-nav-badge">
+                            @ViewBag.PendingReviews
+                        </b>
+                    }
+
+                </a>
+
+                <a asp-controller="Admin"
+                   asp-action="Notifications"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Notifications / Announcements</span>
+
+                </a>
+
+                <div class="ml-admin-nav-title">
+                    REPORTS
+                </div>
+
+                <a asp-controller="Admin"
+                   asp-action="Reports"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reports & Analytics</span>
+
+                </a>
+
+            </nav>
+
+            <div class="ml-admin-sidebar-bottom">
+
+                <a href="#"
+                   class="ml-admin-nav-item">
+
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+
+                </a>
+
+                <form asp-controller="Account"
+                      asp-action="Logout"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit"
+                            class="ml-admin-logout">
+
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </aside>
+
+        <main class="ml-admin-main">
+
+            <div class="ml-admin-mobile-bar">
+
+                <div class="ml-admin-mobile-brand">
+
+                    <div class="ml-admin-logo-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+
+                    <strong>
+                        Market<span>Link</span>
+                    </strong>
+
+                </div>
+
+                <button type="button"
+                        class="ml-admin-menu-btn"
+                        id="adminMenuBtn">
+
+                    <i class="fas fa-bars"></i>
+
+                </button>
+
+            </div>
+
+            <section class="ml-admin-header">
+
+                <div class="ml-admin-container">
+
+                    <div class="ml-admin-header-content">
+
+                        <div>
+
+                            <span class="ml-admin-eyebrow">
+                                <i class="fas fa-shield-alt"></i>
+                                MARKETLINK ADMIN
+                            </span>
+
+                            <h1>
+                                Admin <span>Dashboard</span>
+                            </h1>
+
+                            <p>
+                                Manage vendors, customers, products,
+                                markets and orders from one place.
+                            </p>
+
+                        </div>
+
+                        <div class="ml-admin-date">
+
+                            <i class="fas fa-calendar-alt"></i>
+
+                            @DateTime.Now.ToString("dd MMM yyyy")
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="ml-admin-stats">
+
+                <div class="ml-admin-container">
+
+                    <div class="ml-admin-stats-grid">
+
+                        <div class="ml-admin-stat-card">
+
+                            <div class="ml-admin-stat-icon green">
+                                <i class="fas fa-store"></i>
+                            </div>
+
+                            <div>
+
+                                <span>Total Vendors</span>
+
+                                <strong>
+                                    @ViewBag.TotalVendors
+                                </strong>
+
+                                <small>
+                                    Registered vendors
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ml-admin-stat-card">
+
+                            <div class="ml-admin-stat-icon gold">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+
+                            <div>
+
+                                <span>Pending Approval</span>
+
+                                <strong>
+                                    @ViewBag.PendingVendors
+                                </strong>
+
+                                <small>
+                                    Waiting for approval
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ml-admin-stat-card">
+
+                            <div class="ml-admin-stat-icon blue">
+                                <i class="fas fa-users"></i>
+                            </div>
+
+                            <div>
+
+                                <span>Total Customers</span>
+
+                                <strong>
+                                    @ViewBag.TotalCustomers
+                                </strong>
+
+                                <small>
+                                    Registered customers
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ml-admin-stat-card">
+
+                            <div class="ml-admin-stat-icon green">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+
+                            <div>
+
+                                <span>Total Products</span>
+
+                                <strong>
+                                    @ViewBag.TotalProducts
+                                </strong>
+
+                                <small>
+                                    Products listed
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ml-admin-stat-card">
+
+                            <div class="ml-admin-stat-icon blue">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+
+                            <div>
+
+                                <span>Total Orders</span>
+
+                                <strong>
+                                    @ViewBag.TotalOrders
+                                </strong>
+
+                                <small>
+                                    Marketplace orders
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ml-admin-stat-card">
+
+                            <div class="ml-admin-stat-icon gold">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+
+                            <div>
+
+                                <span>Total Markets</span>
+
+                                <strong>
+                                    @ViewBag.TotalMarkets
+                                </strong>
+
+                                <small>
+                                    Registered markets
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <section class="ml-admin-content">
+
+                <div class="ml-admin-container">
+
+                    <div class="ml-admin-columns">
+
+                        <div class="ml-admin-panel">
+
+                            <div class="ml-admin-panel-header">
+
+                                <div>
+
+                                    <span class="ml-admin-panel-label">
+                                        ADMIN TOOLS
+                                    </span>
+
+                                    <h2>
+                                        Quick Actions
+                                    </h2>
+
+                                    <p>
+                                        Frequently used admin functions
+                                    </p>
+
+                                </div>
+
+                                <div class="ml-admin-panel-icon">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+
+                            </div>
+
+                            <div class="ml-admin-actions">
+
+                                <a asp-controller="Admin"
+                                   asp-action="Vendors"
+                                   class="ml-admin-action">
+
+                                    <div class="ml-action-icon green">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+
+                                    <div class="ml-action-content">
+
+                                        <strong>
+                                            Review Vendors
+                                        </strong>
+
+                                        <span>
+                                            @ViewBag.PendingVendors pending approval
+                                        </span>
+
+                                    </div>
+
+                                    <i class="fas fa-arrow-right"></i>
+
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="ProductModeration"
+                                   class="ml-admin-action">
+
+                                    <div class="ml-action-icon blue">
+                                        <i class="fas fa-box"></i>
+                                    </div>
+
+                                    <div class="ml-action-content">
+
+                                        <strong>
+                                            Manage Products
+                                        </strong>
+
+                                        <span>
+                                            @ViewBag.PendingProducts pending moderation
+                                        </span>
+
+                                    </div>
+
+                                    <i class="fas fa-arrow-right"></i>
+
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="ManageCustomers"
+                                   class="ml-admin-action">
+
+                                    <div class="ml-action-icon green">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+
+                                    <div class="ml-action-content">
+
+                                        <strong>
+                                            Review Customers
+                                        </strong>
+
+                                        <span>
+                                            @ViewBag.PendingCustomers pending approval
+                                        </span>
+
+                                    </div>
+
+                                    <i class="fas fa-arrow-right"></i>
+
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="ReviewModeration"
+                                   class="ml-admin-action">
+
+                                    <div class="ml-action-icon gold">
+                                        <i class="fas fa-star"></i>
+                                    </div>
+
+                                    <div class="ml-action-content">
+
+                                        <strong>
+                                            Review Moderation
+                                        </strong>
+
+                                        <span>
+                                            @ViewBag.PendingReviews pending reviews
+                                        </span>
+
+                                    </div>
+
+                                    <i class="fas fa-arrow-right"></i>
+
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="Orders"
+                                   class="ml-admin-action">
+
+                                    <div class="ml-action-icon gold">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </div>
+
+                                    <div class="ml-action-content">
+
+                                        <strong>
+                                            View Orders
+                                        </strong>
+
+                                        <span>
+                                            Monitor marketplace orders
+                                        </span>
+
+                                    </div>
+
+                                    <i class="fas fa-arrow-right"></i>
+
+                                </a>
+
+                                <a asp-controller="Admin"
+                                   asp-action="Markets"
+                                   class="ml-admin-action">
+
+                                    <div class="ml-action-icon green">
+                                        <i class="fas fa-store-alt"></i>
+                                    </div>
+
+                                    <div class="ml-action-content">
+
+                                        <strong>
+                                            Manage Markets
+                                        </strong>
+
+                                        <span>
+                                            Manage market locations
+                                        </span>
+
+                                    </div>
+
+                                    <i class="fas fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ml-admin-panel">
+
+                            <div class="ml-admin-panel-header">
+
+                                <div>
+
+                                    <span class="ml-admin-panel-label">
+                                        VENDOR ACTIVITY
+                                    </span>
+
+                                    <h2>
+                                        Recent Vendors
+                                    </h2>
+
+                                    <p>
+                                        Latest vendor registrations
+                                    </p>
+
+                                </div>
+
+                                <a asp-controller="Admin"
+                                   asp-action="Vendors"
+                                   class="ml-view-all">
+
+                                    View All
+                                    <i class="fas fa-arrow-right"></i>
+
+                                </a>
+
+                            </div>
+
+                            <div class="ml-recent-vendors">
+
+                                @if (ViewBag.RecentVendors != null &&
+                                                                ViewBag.RecentVendors.Count > 0)
+                                {
+                                    foreach (var vendor in ViewBag.RecentVendors)
+                                    {
+                                        <div class="ml-vendor-row">
+
+                                            <div class="ml-vendor-avatar">
+                                                <i class="fas fa-store"></i>
+                                            </div>
+
+                                            <div class="ml-vendor-info">
+
+                                                <strong>
+                                                    @vendor.FarmName
+                                                </strong>
+
+                                                <span>
+                                                    @(vendor.User?.Email ?? "No email")
+                                                </span>
+
+                                            </div>
+
+                                            <div class="ml-vendor-status">
+
+                                                @if (vendor.IsApproved)
+                                                {
+                                                    <span class="ml-status approved">
+                                                        Approved
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="ml-status pending">
+                                                        Pending
+                                                    </span>
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="ml-empty-state">
+
+                                        <div class="ml-empty-icon">
+                                            <i class="fas fa-store-slash"></i>
+                                        </div>
+
+                                        <h3>
+                                            No Vendors Yet
+                                        </h3>
+
+                                        <p>
+                                            Vendor registrations will appear here.
+                                        </p>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="ml-admin-panel ml-overview-panel">
+
+                        <div class="ml-admin-panel-header">
+
+                            <div>
+
+                                <span class="ml-admin-panel-label">
+                                    PLATFORM
+                                </span>
+
+                                <h2>
+                                    Platform Overview
+                                </h2>
+
+                                <p>
+                                    Current MarketLink platform statistics
+                                </p>
+
+                            </div>
+
+                            <div class="ml-admin-panel-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="ml-overview-grid">
+
+                            <div class="ml-overview-item">
+
+                                <div class="ml-overview-icon green">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Approved Vendors
+                                    </span>
+
+                                    <strong>
+                                        @ViewBag.ApprovedVendors
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <div class="ml-overview-item">
+
+                                <div class="ml-overview-icon gold">
+                                    <i class="fas fa-user-clock"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Pending Vendors
+                                    </span>
+
+                                    <strong>
+                                        @ViewBag.PendingVendors
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <div class="ml-overview-item">
+
+                                <div class="ml-overview-icon blue">
+                                    <i class="fas fa-layer-group"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Categories
+                                    </span>
+
+                                    <strong>
+                                        @ViewBag.TotalCategories
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                            <div class="ml-overview-item">
+
+                                <div class="ml-overview-icon green">
+                                    <i class="fas fa-box-open"></i>
+                                </div>
+
+                                <div>
+
+                                    <span>
+                                        Products
+                                    </span>
+
+                                    <strong>
+                                        @ViewBag.TotalProducts
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const menuButton =
+            document.getElementById("adminMenuBtn");
+
+        const sidebar =
+            document.querySelector(".ml-admin-sidebar");
+
+        if (!menuButton || !sidebar) {
+            return;
+        }
+
+        menuButton.addEventListener("click", function () {
+
+            sidebar.classList.toggle("mobile-open");
+
+            const icon =
+                menuButton.querySelector("i");
+
+            if (sidebar.classList.contains("mobile-open")) {
+
+                icon.classList.remove("fa-bars");
+                icon.classList.add("fa-times");
+
+            }
+            else {
+
+                icon.classList.remove("fa-times");
+                icon.classList.add("fa-bars");
+
+            }
+
+        });
+
+    });
+
+</script>

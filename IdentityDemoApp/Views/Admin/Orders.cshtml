@@ -1,0 +1,868 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Manage Orders";
+
+    var search = ViewBag.Search as string ?? "";
+    var status = ViewBag.Status as string ?? "All";
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Orders.css"
+      asp-append-version="true" />
+
+<div class="orders-page">
+
+    <div class="orders-header">
+
+        <div class="orders-heading">
+
+            <div class="orders-eyebrow">
+                <i class="fas fa-shield-check"></i>
+                ORDER APPROVAL MANAGEMENT
+            </div>
+
+            <h1>Manage Orders</h1>
+
+            <p>
+                Review vendor-approved orders and give final approval to customers.
+            </p>
+
+        </div>
+
+        <div class="orders-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="orders-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="orders-stats">
+
+        <div class="order-stat-card total">
+
+            <div class="order-stat-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+
+            <div>
+                <span>Total Orders</span>
+                <strong>@ViewBag.TotalOrders</strong>
+            </div>
+
+        </div>
+
+
+        <div class="order-stat-card pending">
+
+            <div class="order-stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+
+            <div>
+                <span>Pending</span>
+                <strong>@ViewBag.PendingOrders</strong>
+            </div>
+
+        </div>
+
+
+        <div class="order-stat-card confirmed">
+
+            <div class="order-stat-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+
+            <div>
+                <span>Vendor Approved</span>
+                <strong>@ViewBag.VendorApprovedOrders</strong>
+            </div>
+
+        </div>
+
+
+        <div class="order-stat-card completed">
+
+            <div class="order-stat-icon">
+                <i class="fas fa-circle-check"></i>
+            </div>
+
+            <div>
+                <span>Final Approved</span>
+                <strong>@ViewBag.ApprovedOrders</strong>
+            </div>
+
+        </div>
+
+
+        <div class="order-stat-card cancelled">
+
+            <div class="order-stat-icon">
+                <i class="fas fa-circle-xmark"></i>
+            </div>
+
+            <div>
+                <span>Rejected</span>
+
+                <strong>
+                    @(ViewBag.VendorRejectedOrders +
+                      ViewBag.AdminRejectedOrders)
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="orders-filter-card">
+
+        <form asp-controller="Admin"
+              asp-action="Orders"
+              method="get"
+              class="orders-filter-form">
+
+            <div class="orders-search-box">
+
+                <i class="fas fa-search"></i>
+
+                <input type="text"
+                       name="search"
+                       value="@search"
+                       placeholder="Search order, customer or vendor..." />
+
+            </div>
+
+
+            <div class="orders-status-filter">
+
+                <select name="status">
+
+                    <option value="All"
+                            selected="@(status == "All")">
+                        All Statuses
+                    </option>
+
+                    <option value="Pending"
+                            selected="@(status == "Pending")">
+                        Pending
+                    </option>
+
+                    <option value="VendorApproved"
+                            selected="@(status == "VendorApproved")">
+                        Vendor Approved
+                    </option>
+
+                    <option value="Approved"
+                            selected="@(status == "Approved")">
+                        Final Approved
+                    </option>
+
+                    <option value="VendorRejected"
+                            selected="@(status == "VendorRejected")">
+                        Rejected by Vendor
+                    </option>
+
+                    <option value="AdminRejected"
+                            selected="@(status == "AdminRejected")">
+                        Rejected by Admin
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button type="submit"
+                    class="orders-filter-btn">
+
+                <i class="fas fa-filter"></i>
+                Filter
+
+            </button>
+
+
+            <a asp-controller="Admin"
+               asp-action="Orders"
+               class="orders-reset-btn">
+
+                <i class="fas fa-rotate-left"></i>
+                Reset
+
+            </a>
+
+        </form>
+
+    </div>
+
+
+    <div class="orders-table-card">
+
+        <div class="orders-table-header">
+
+            <div>
+
+                <h2>Order Records</h2>
+
+                <p>
+                    @Model.Count() order(s) found
+                </p>
+
+            </div>
+
+            <div class="orders-table-label">
+
+                <i class="fas fa-list-check"></i>
+
+                Approval Records
+
+            </div>
+
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="orders-table-wrapper">
+
+                <table class="orders-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Order</th>
+
+                            <th>Customer</th>
+
+                            <th>Vendor</th>
+
+                            <th>Pickup</th>
+
+                            <th>Items</th>
+
+                            <th>Total</th>
+
+                            <th>Status</th>
+
+                            <th>Date</th>
+
+                            <th>Actions</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var order in Model)
+                        {
+                            var statusClass = order.Status switch
+                            {
+                                "Pending" => "pending",
+                                "VendorApproved" => "vendor-approved",
+                                "VendorRejected" => "cancelled",
+                                "Approved" => "approved",
+                                "AdminRejected" => "cancelled",
+                                _ => "pending"
+                            };
+
+                            var statusText = order.Status switch
+                            {
+                                "Pending" => "Pending",
+                                "VendorApproved" => "Vendor Approved",
+                                "VendorRejected" => "Rejected by Vendor",
+                                "Approved" => "Approved",
+                                "AdminRejected" => "Rejected by Admin",
+                                _ => order.Status
+                            };
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="order-number-cell">
+
+                                        <div class="order-small-icon">
+                                            <i class="fas fa-receipt"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @order.OrderNumber
+                                            </strong>
+
+                                            <span>
+                                                #@order.OrderId
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="customer-cell">
+
+                                        <div class="customer-avatar">
+
+                                            <i class="fas fa-user"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @(order.CustomerProfile?.FullName
+                                                    ?? "Unknown Customer")
+                                            </strong>
+
+                                            <span>
+                                                Customer
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (order.PickupSlot?.VendorProfile != null)
+                                    {
+                                        <div class="vendor-cell">
+
+                                            <i class="fas fa-tractor"></i>
+
+                                            <span>
+                                                @order.PickupSlot
+                                                    .VendorProfile
+                                                    .FarmName
+                                            </span>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="not-available">
+                                            Not assigned
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (order.PickupSlot != null)
+                                    {
+                                        <div class="pickup-cell">
+
+                                            <strong>
+                                                @order.PickupSlot.PickupDate.ToString("dd MMM yyyy")
+                                            </strong>
+
+                                            <span>
+                                                @order.PickupSlot.StartTime.ToString("hh\\:mm")
+                                                -
+                                                @order.PickupSlot.EndTime.ToString("hh\\:mm")
+                                            </span>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="not-available">
+                                            No slot
+                                        </span>
+                                    }
+
+                            </td>
+
+
+                                <td>
+
+                                    <span class="items-count">
+
+                                        <i class="fas fa-box"></i>
+
+                                        @order.OrderItems.Count
+
+                                        @(order.OrderItems.Count == 1
+                                            ? "Item"
+                                            : "Items")
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong class="order-total">
+                                        Rs. @order.TotalAmount.ToString("N2")
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="order-status @statusClass">
+
+                                        @if (order.Status == "Pending")
+                                        {
+                                            <i class="fas fa-clock"></i>
+                                        }
+                                        else if (order.Status == "VendorApproved")
+                                        {
+                                            <i class="fas fa-user-check"></i>
+                                        }
+                                        else if (order.Status == "Approved")
+                                        {
+                                            <i class="fas fa-circle-check"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-circle-xmark"></i>
+                                        }
+
+                                        @statusText
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    <div class="date-info">
+                                        <strong>
+                                            @order.OrderDate.ToLocalTime().ToString("dd MMM yyyy")
+                                        </strong>
+
+                                        <span>
+                                            @order.OrderDate.ToLocalTime().ToString("hh:mm tt")
+                                        </span>
+                                    </div>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="order-actions">
+
+                                        <a asp-controller="Admin"
+                                           asp-action="OrderDetails"
+                                           asp-route-id="@order.OrderId"
+                                           class="order-action details"
+                                           title="View Details">
+
+                                            <i class="fas fa-eye"></i>
+
+                                        </a>
+
+
+                                        @if (order.Status == "VendorApproved")
+                                        {
+                                            <button type="button"
+                                                    class="order-action approve"
+                                                    title="Final Approve"
+                                                    onclick="approveOrder(
+                                                        @order.OrderId,
+                                                        '@order.OrderNumber'
+                                                    )">
+
+                                                <i class="fas fa-check"></i>
+
+                                            </button>
+
+
+                                            <button type="button"
+                                                    class="order-action reject"
+                                                    title="Reject Order"
+                                                    onclick="rejectOrder(
+                                                        @order.OrderId,
+                                                        '@order.OrderNumber'
+                                                    )">
+
+                                                <i class="fas fa-xmark"></i>
+
+                                            </button>
+                                        }
+
+
+                                        @if (order.Status == "Approved")
+                                        {
+                                            <span class="final-approved-label"
+                                                  title="Final Approved">
+
+                                                <i class="fas fa-circle-check"></i>
+
+                                            </span>
+                                        }
+
+
+                                        @if (order.Status == "VendorRejected")
+                                        {
+                                            <span class="rejected-label"
+                                                  title="Rejected by Vendor">
+
+                                                <i class="fas fa-ban"></i>
+
+                                            </span>
+                                        }
+
+
+                                        @if (order.Status == "AdminRejected")
+                                        {
+                                            <span class="rejected-label"
+                                                  title="Rejected by Admin">
+
+                                                <i class="fas fa-ban"></i>
+
+                                            </span>
+                                        }
+
+
+                                        @if (order.Status != "Approved")
+                                        {
+                                            <button type="button"
+                                                    class="order-action delete"
+                                                    title="Remove Order"
+                                                    onclick="deleteOrder(
+                                                        @order.OrderId,
+                                                        '@order.OrderNumber'
+                                                    )">
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </button>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="orders-empty">
+
+                <div class="orders-empty-icon">
+
+                    <i class="fas fa-clipboard-check"></i>
+
+                </div>
+
+                <h3>No Orders Found</h3>
+
+                <p>
+                    There are no orders matching your current search or filter.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="Orders"
+                   class="orders-empty-btn">
+
+                    <i class="fas fa-rotate-left"></i>
+
+                    View All Orders
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<form id="approveOrderForm"
+      asp-controller="Admin"
+      asp-action="UpdateOrderStatus"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           id="approveOrderId" />
+
+    <input type="hidden"
+           name="status"
+           value="Approved" />
+
+</form>
+
+
+<form id="rejectOrderForm"
+      asp-controller="Admin"
+      asp-action="UpdateOrderStatus"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           id="rejectOrderId" />
+
+    <input type="hidden"
+           name="status"
+           value="AdminRejected" />
+
+</form>
+
+
+<form id="deleteOrderForm"
+      asp-controller="Admin"
+      asp-action="RemoveOrder"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           id="deleteOrderId" />
+
+</form>
+
+
+@section Scripts {
+
+    <script>
+
+        function approveOrder(id, orderNumber) {
+
+            Swal.fire({
+
+                icon: "question",
+
+                title: "Final Approval?",
+
+                html:
+                    "Are you sure you want to finally approve " +
+                    "<strong>" + orderNumber + "</strong>?" +
+                    "<br><small>The customer will see this order as <strong>Approved</strong>.</small>",
+
+                showCancelButton: true,
+
+                confirmButtonText:
+                    '<i class="fas fa-check"></i> Yes, Approve',
+
+                cancelButtonText:
+                    "Cancel",
+
+                reverseButtons: true,
+
+                confirmButtonColor:
+                    "#4f9d69",
+
+                cancelButtonColor:
+                    "#6c757d"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    document.getElementById(
+                        "approveOrderId"
+                    ).value = id;
+
+                    document.getElementById(
+                        "approveOrderForm"
+                    ).submit();
+
+                }
+
+            });
+
+        }
+
+
+        function rejectOrder(id, orderNumber) {
+
+            Swal.fire({
+
+                icon: "warning",
+
+                title: "Reject Order?",
+
+                html:
+                    "Are you sure you want to reject " +
+                    "<strong>" + orderNumber + "</strong>?" +
+                    "<br><small>The customer will see this order as <strong>Rejected by Admin</strong>.</small>",
+
+                showCancelButton: true,
+
+                confirmButtonText:
+                    '<i class="fas fa-xmark"></i> Yes, Reject',
+
+                cancelButtonText:
+                    "Cancel",
+
+                reverseButtons: true,
+
+                confirmButtonColor:
+                    "#dc3545",
+
+                cancelButtonColor:
+                    "#6c757d"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    document.getElementById(
+                        "rejectOrderId"
+                    ).value = id;
+
+                    document.getElementById(
+                        "rejectOrderForm"
+                    ).submit();
+
+                }
+
+            });
+
+        }
+
+
+        function deleteOrder(id, orderNumber) {
+
+            Swal.fire({
+
+                title: "Remove Order?",
+
+                html:
+                    "Are you sure you want to remove " +
+                    "<strong>" + orderNumber + "</strong>?" +
+                    "<br><small>This action cannot be undone.</small>",
+
+                icon: "warning",
+
+                showCancelButton: true,
+
+                confirmButtonText:
+                    '<i class="fas fa-trash"></i> Yes, Remove',
+
+                cancelButtonText:
+                    "Cancel",
+
+                reverseButtons: true,
+
+                confirmButtonColor:
+                    "#dc3545",
+
+                cancelButtonColor:
+                    "#6c757d"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    document.getElementById(
+                        "deleteOrderId"
+                    ).value = id;
+
+                    document.getElementById(
+                        "deleteOrderForm"
+                    ).submit();
+
+                }
+
+            });
+
+        }
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                @if (TempData["Success"] != null)
+                {
+                    <text>
+
+                        Swal.fire({
+
+                            icon: "success",
+
+                            title: "Success",
+
+                            text: @Html.Raw(
+                                System.Text.Json.JsonSerializer.Serialize(
+                                    TempData["Success"]?.ToString()
+                                )
+                            ),
+
+                            confirmButtonColor:
+                                "#0b3037",
+
+                            timer: 2500,
+
+                            timerProgressBar: true
+
+                        });
+
+                    </text>
+                }
+
+
+                @if (TempData["Error"] != null)
+                {
+                    <text>
+
+                        Swal.fire({
+
+                            icon: "error",
+
+                            title: "Something went wrong",
+
+                            text: @Html.Raw(
+                                System.Text.Json.JsonSerializer.Serialize(
+                                    TempData["Error"]?.ToString()
+                                )
+                            ),
+
+                            confirmButtonColor:
+                                "#0b3037"
+
+                        });
+
+                    </text>
+                }
+
+            });
+
+    </script>
+}

@@ -1,0 +1,487 @@
+﻿@model IdentityDemoApp.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+
+
+var categoryName =
+    Model.Category?.CategoryName ?? "General";
+
+    var vendorName =
+        Model.VendorProfile?.FarmName ?? "Local Vendor";
+
+
+}
+
+<link rel="stylesheet"
+      href="~/css/product-details.css"
+      asp-append-version="true" />
+
+<div class="ml-product-details-page">
+
+    ```
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="ml-product-details-hero">
+
+        <div class="container">
+
+            <a asp-controller="Home"
+               asp-action="Products"
+               class="ml-product-back">
+
+                <i class="fas fa-arrow-left"></i>
+
+                Back to Products
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DETAILS
+         ===================================================== -->
+
+    <section class="ml-product-details-section">
+
+        <div class="container">
+
+            <div class="ml-product-details-wrapper">
+
+                <div class="ml-product-details-card">
+
+                    <div class="row g-0">
+
+
+                        <!-- =================================================
+                             PRODUCT IMAGE
+                             ================================================= -->
+
+                        <div class="col-lg-6">
+
+                            <div class="ml-product-details-image">
+
+                                <div class="ml-product-details-placeholder">
+
+                                    <i class="fas fa-leaf"></i>
+
+                                </div>
+
+
+                                <!-- AVAILABLE BADGE -->
+
+                                <span class="ml-product-details-available">
+
+                                    <i class="fas fa-circle"></i>
+
+                                    Available
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================================
+                             PRODUCT INFORMATION
+                             ================================================= -->
+
+                        <div class="col-lg-6">
+
+                            <div class="ml-product-details-content">
+
+
+                                <!-- CATEGORY -->
+
+                                <span class="ml-product-details-category">
+
+                                    @categoryName
+
+                                </span>
+
+
+                                <!-- PRODUCT NAME -->
+
+                                <h1>
+                                    @Model.ProductName
+                                </h1>
+
+
+                                <!-- DESCRIPTION -->
+                                @if (!string.IsNullOrWhiteSpace(Model.Description))
+                                {
+                                    <p class="ml-product-details-description">
+                                        @Model.Description
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="ml-product-details-description">
+                                        Quality product available from
+                                        our registered local vendor.
+                                    </p>
+                                }
+
+
+                                <!-- PRICE -->
+
+                                <div class="ml-product-details-price-box">
+
+                                    <span class="ml-product-details-price">
+
+                                        @Model.Price.ToString("N2")
+
+                                    </span>
+
+                                    <span class="ml-product-details-unit">
+
+                                        / @Model.Unit
+
+                                    </span>
+
+                                </div>
+
+
+                                <!-- PRODUCT INFORMATION -->
+
+                                <div class="ml-product-info-grid">
+
+
+                                    <!-- CATEGORY -->
+
+                                    <div class="ml-product-info-item">
+
+                                        <div class="ml-product-info-icon">
+
+                                            <i class="fas fa-layer-group"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <small>
+                                                Category
+                                            </small>
+
+                                            <strong>
+                                                @categoryName
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- UNIT -->
+
+                                    <div class="ml-product-info-item">
+
+                                        <div class="ml-product-info-icon">
+
+                                            <i class="fas fa-scale-balanced"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <small>
+                                                Selling Unit
+                                            </small>
+
+                                            <strong>
+                                                @Model.Unit
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- AVAILABILITY -->
+
+                                    <div class="ml-product-info-item">
+
+                                        <div class="ml-product-info-icon">
+
+                                            <i class="fas fa-circle-check"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <small>
+                                                Status
+                                            </small>
+
+                                            <strong>
+                                                Available
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- PRODUCT -->
+
+                                    <div class="ml-product-info-item">
+
+                                        <div class="ml-product-info-icon">
+
+                                            <i class="fas fa-box"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <small>
+                                                Product
+                                            </small>
+
+                                            <strong>
+                                                @Model.ProductName
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- =================================================
+                                     VENDOR
+                                     ================================================= -->
+
+                                <div class="ml-product-vendor-box">
+
+                                    <div class="ml-product-vendor-icon">
+
+                                        <i class="fas fa-store"></i>
+
+                                    </div>
+
+                                    <div class="ml-product-vendor-info">
+
+                                        <small>
+                                            Sold By
+                                        </small>
+
+                                        <strong>
+                                            @vendorName
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="ml-product-details-actions">
+
+                                    <!-- ADD TO CART -->
+                                    <form asp-controller="Customer"
+                                          asp-action="AddToCart"
+                                          method="post"
+                                          class="ml-product-cart-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@Model.ProductId" />
+
+                                        <div class="ml-product-quantity">
+
+                                            <label for="productQuantity">
+                                                Quantity
+                                            </label>
+
+                                            <div class="ml-quantity-control">
+
+                                                <button type="button"
+                                                        class="ml-quantity-btn"
+                                                        onclick="decreaseQuantity()">
+
+                                                    <i class="fas fa-minus"></i>
+
+                                                </button>
+
+                                                <input type="number"
+                                                       id="productQuantity"
+                                                       name="quantity"
+                                                       value="1"
+                                                       min="1"
+                                                       step="1"
+                                                       class="ml-quantity-input" />
+
+                                                <button type="button"
+                                                        class="ml-quantity-btn"
+                                                        onclick="increaseQuantity()">
+
+                                                    <i class="fas fa-plus"></i>
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                        <button type="submit"
+                                                class="ml-product-cart-btn">
+
+                                            <i class="fas fa-cart-shopping"></i>
+
+                                            Add to Cart
+
+                                        </button>
+
+                                    </form>
+
+
+                                    <!-- FAVOURITE -->
+                                    <form asp-controller="Customer"
+                                          asp-action="ToggleFavoriteProduct"
+                                          method="post"
+                                          class="ml-product-favourite-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="productId"
+                                               value="@Model.ProductId" />
+
+                                        <button type="submit"
+                                                class="ml-product-favourite-btn"
+                                                title="Add to favourites">
+
+                                            <i class="fas fa-heart"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     EXTRA INFORMATION
+                     ================================================= -->
+
+                <div class="ml-product-details-extra">
+
+                    <div class="row g-4">
+
+
+                        <!-- ABOUT PRODUCT -->
+
+                        <div class="col-md-6">
+
+                            <div class="ml-product-extra-card">
+
+                                <h3>
+
+                                    <i class="fas fa-circle-info"></i>
+
+                                    About This Product
+
+                                </h3>
+
+                                <p>
+
+                                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                                    {
+                                        @Model.Description
+                                    }
+                                    else
+                                    {
+                                        <text>
+                                            This product is available through
+                                            MarketLink from a registered local
+                                            vendor.
+                                        </text>
+                                    }
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- VENDOR -->
+
+                        <div class="col-md-6">
+
+                            <div class="ml-product-extra-card">
+
+                                <h3>
+
+                                    <i class="fas fa-store"></i>
+
+                                    Vendor Information
+
+                                </h3>
+
+                                <p>
+
+                                    This product is offered by
+                                    <strong>@vendorName</strong>
+                                    through the MarketLink marketplace.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+   
+
+</div>
+
+<script>
+    function increaseQuantity() {
+        const input = document.getElementById("productQuantity");
+
+        let quantity = parseFloat(input.value) || 1;
+
+        quantity += 1;
+
+        input.value = quantity;
+    }
+
+    function decreaseQuantity() {
+        const input = document.getElementById("productQuantity");
+
+        let quantity = parseFloat(input.value) || 1;
+
+        if (quantity > 1) {
+            quantity -= 1;
+        }
+
+        input.value = quantity;
+    }
+</script>

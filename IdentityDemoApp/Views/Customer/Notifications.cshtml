@@ -1,0 +1,328 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+
+    var notifications = Model?.ToList()
+                         ?? new List<IdentityDemoApp.Models.Notification>();
+
+    var unreadCount = notifications.Count(n => !n.IsRead);
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-Notifications.css"
+      asp-append-version="true" />
+
+<div class="notifications-page">
+
+    <div class="notifications-container">
+        <div class="notifications-navigation">
+
+            <a asp-controller="Customer"
+               asp-action="Dashboard"
+               class="notifications-back-btn">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+        </div>
+
+        <section class="notifications-hero">
+
+            <div class="notifications-hero-glow"></div>
+
+            <div class="notifications-hero-content">
+
+                <div class="notifications-hero-icon">
+                    <i class="fa-solid fa-bell"></i>
+
+                    @if (unreadCount > 0)
+                    {
+                        <span>@unreadCount</span>
+                    }
+                </div>
+
+                <div>
+
+                    <span class="notifications-eyebrow">
+                        MARKETLINK UPDATES
+                    </span>
+
+                    <h1>
+                        Your
+                        <span>Notifications</span>
+                    </h1>
+
+                    <p>
+                        Stay updated with your orders, reviews and
+                        important MarketLink announcements.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="notifications-toolbar">
+
+            <div class="notification-summary">
+
+                <div class="summary-icon">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+
+                <div>
+
+                    <strong>
+                        @notifications.Count
+                        @(notifications.Count == 1
+                                                ? "Notification"
+                                                : "Notifications")
+                    </strong>
+
+                    <span>
+                        @unreadCount unread
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            @if (unreadCount > 0)
+            {
+                <form asp-controller="Customer"
+                      asp-action="MarkAllNotificationsAsRead"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit"
+                            class="mark-all-btn">
+
+                        <i class="fa-solid fa-check-double"></i>
+                        Mark All as Read
+
+                    </button>
+
+                </form>
+            }
+
+        </section>
+
+
+        @if (notifications.Any())
+        {
+            <section class="notifications-list">
+
+                @foreach (var notification in notifications)
+                {
+                    var type = notification.NotificationType?.ToLower() ?? "";
+
+                    var icon = "fa-bell";
+                    var typeClass = "general";
+
+                    if (type.Contains("order"))
+                    {
+                        icon = "fa-cart-shopping";
+                        typeClass = "order";
+                    }
+                    else if (type.Contains("review"))
+                    {
+                        icon = "fa-star";
+                        typeClass = "review";
+                    }
+                    else if (type.Contains("announcement"))
+                    {
+                        icon = "fa-bullhorn";
+                        typeClass = "announcement";
+                    }
+                    else if (type.Contains("market"))
+                    {
+                        icon = "fa-store";
+                        typeClass = "market";
+                    }
+
+                <article class="notification-card @(notification.IsRead ? "read" : "unread")">
+
+                    <div class="notification-icon @typeClass">
+                        <i class="fa-solid @icon"></i>
+                    </div>
+
+
+                    <div class="notification-content">
+
+                        <div class="notification-top">
+
+                            <div>
+
+                                <span class="notification-type">
+                                    @(!string.IsNullOrWhiteSpace(notification.NotificationType)
+                                                                    ? notification.NotificationType
+                                                                    : "Update")
+                            </span>
+
+                                    <h2>
+                                        @notification.Title
+                                    </h2>
+
+                                </div>
+
+                        @if (!notification.IsRead)
+                                {
+                                    <span class="unread-badge">
+                                        NEW
+                                    </span>
+                                }
+
+                            </div>
+
+
+                            <p>
+                                @notification.Message
+                            </p>
+
+
+                            <div class="notification-footer">
+
+                                <span>
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    @notification.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                                </span>
+
+                                <div class="notification-actions">
+
+                                    @if (!notification.IsRead)
+                                    {
+                                        <form asp-controller="Customer"
+                                              asp-action="MarkNotificationAsRead"
+                                              method="post">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@notification.NotificationId" />
+
+                                            <button type="submit"
+                                                    class="notification-read-btn">
+
+                                                <i class="fa-solid fa-check"></i>
+                                                Mark Read
+
+                                            </button>
+
+                                        </form>
+                                    }
+
+                                    <form asp-controller="Customer"
+                                          asp-action="DeleteNotification"
+                                          method="post"
+                                          class="delete-notification-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@notification.NotificationId" />
+
+                                        <button type="submit"
+                                                class="notification-delete-btn"
+                                                title="Delete notification">
+
+                                            <i class="fa-solid fa-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </article>
+                }
+
+            </section>
+        }
+        else
+        {
+            <section class="notifications-empty">
+
+                <div class="empty-notification-icon">
+                    <i class="fa-regular fa-bell-slash"></i>
+                </div>
+
+                <span>
+                    ALL CAUGHT UP
+                </span>
+
+                <h2>
+                    No Notifications Yet
+                </h2>
+
+                <p>
+                    When there is an update about your orders, reviews or
+                    MarketLink announcements, it will appear here.
+                </p>
+
+                <a asp-controller="Customer"
+                   asp-action="Products"
+                   class="empty-notification-btn">
+
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    Explore Products
+
+                </a>
+
+            </section>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document
+                .querySelectorAll(".delete-notification-form")
+                .forEach(function (form) {
+
+                    form.addEventListener("submit", function (event) {
+
+                        event.preventDefault();
+
+                        Swal.fire({
+                            title: "Delete notification?",
+                            text: "This notification will be permanently removed.",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Delete",
+                            cancelButtonText: "Cancel",
+                            reverseButtons: true
+                        }).then(function (result) {
+
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+
+                        });
+
+                    });
+
+                });
+
+        });
+    </script>
+
+}

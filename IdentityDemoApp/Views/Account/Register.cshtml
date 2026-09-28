@@ -1,0 +1,170 @@
+﻿@{
+    ViewData["Title"] = "Create Account";
+}
+
+<link rel="stylesheet"
+      href="~/css/account-auth.css"
+      asp-append-version="true" />
+
+<div class="ml-register-page">
+
+    <div class="ml-register-container">
+
+        <!-- HEADER -->
+        <div class="ml-register-header">
+
+            <div class="ml-register-icon">
+                <i class="fas fa-store"></i>
+            </div>
+
+            <span class="ml-small-label">
+                JOIN MARKETLINK
+            </span>
+
+            <h1>How would you like to join?</h1>
+
+            <p>
+                Choose the account type that best matches how
+                you want to use MarketLink.
+            </p>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+        <div class="ml-role-grid">
+
+            <!-- FARMER -->
+            <div class="ml-role-card ml-farmer-card">
+
+                <div class="ml-role-icon">
+
+                    <i class="fas fa-tractor"></i>
+
+                </div>
+
+                <div class="ml-role-content">
+
+                    <span class="ml-role-label">
+                        FOR VENDOR
+                    </span>
+
+                    <h2>I'm a Vendor</h2>
+
+                    <p>
+                        Create your farmer account, manage your
+                        products and receive pre-orders from local
+                        customers.
+                    </p>
+
+                    <div class="ml-role-points">
+
+                        <span>
+                            <i class="fas fa-check"></i>
+                            Manage your products
+                        </span>
+
+                        <span>
+                            <i class="fas fa-check"></i>
+                            Manage weekly stock
+                        </span>
+
+                        <span>
+                            <i class="fas fa-check"></i>
+                            Manage customer orders
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <a asp-controller="Account"
+                   asp-action="VendorRegister"
+                   class="ml-role-btn ml-farmer-btn">
+
+                    Register as Vendor
+
+                    <i class="fas fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+
+            <!-- CUSTOMER -->
+            <div class="ml-role-card ml-customer-card">
+
+                <div class="ml-role-icon">
+
+                    <i class="fas fa-user"></i>
+
+                </div>
+
+                <div class="ml-role-content">
+
+                    <span class="ml-role-label">
+                        FOR CUSTOMERS
+                    </span>
+
+                    <h2>I'm a Customer</h2>
+
+                    <p>
+                        Discover local farmers, explore fresh
+                        products and place orders for pickup.
+                    </p>
+
+                    <div class="ml-role-points">
+
+                        <span>
+                            <i class="fas fa-check"></i>
+                            Discover local markets
+                        </span>
+
+                        <span>
+                            <i class="fas fa-check"></i>
+                            Browse fresh products
+                        </span>
+
+                        <span>
+                            <i class="fas fa-check"></i>
+                            Pre-order for pickup
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <a asp-controller="Account"
+                   asp-action="CustomerRegister"
+                   class="ml-role-btn ml-customer-btn">
+
+                    Register as Customer
+
+                    <i class="fas fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- LOGIN -->
+        <div class="ml-register-login">
+
+            <span>Already have an account?</span>
+
+            <a asp-controller="Account"
+               asp-action="Login">
+
+                Sign in
+
+                <i class="fas fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

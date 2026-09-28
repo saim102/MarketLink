@@ -1,0 +1,545 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications & Announcements";
+
+    var search = ViewBag.Search as string ?? "";
+    var type = ViewBag.Type as string ?? "All";
+
+    int totalNotifications = ViewBag.TotalNotifications ?? 0;
+    int unreadNotifications = ViewBag.UnreadNotifications ?? 0;
+    int readNotifications = ViewBag.ReadNotifications ?? 0;
+    int announcements = ViewBag.Announcements ?? 0;
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Notifications.css"
+      asp-append-version="true" />
+
+<div class="notification-page">
+
+    <!-- HEADER -->
+    <div class="notification-header">
+
+        <div class="notification-heading">
+
+            <div class="notification-icon-box">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+
+            <div>
+                <h1>Notifications & Announcements</h1>
+
+                <p>
+                    Create and manage announcements for farmers and customers.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="notification-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="notification-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="NotificationCreate"
+               class="notification-create-btn">
+
+                <i class="fas fa-plus"></i>
+                <span>Create Announcement</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATS -->
+    <div class="notification-stats">
+
+        <div class="notification-stat-card">
+
+            <div class="notification-stat-icon total">
+                <i class="fas fa-bell"></i>
+            </div>
+
+            <div>
+                <span>Total Notifications</span>
+                <strong>@totalNotifications</strong>
+            </div>
+
+        </div>
+
+
+        <div class="notification-stat-card">
+
+            <div class="notification-stat-icon unread">
+                <i class="fas fa-envelope"></i>
+            </div>
+
+            <div>
+                <span>Unread</span>
+                <strong>@unreadNotifications</strong>
+            </div>
+
+        </div>
+
+
+        <div class="notification-stat-card">
+
+            <div class="notification-stat-icon read">
+                <i class="fas fa-envelope-open"></i>
+            </div>
+
+            <div>
+                <span>Read</span>
+                <strong>@readNotifications</strong>
+            </div>
+
+        </div>
+
+
+        <div class="notification-stat-card">
+
+            <div class="notification-stat-icon announcement">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+
+            <div>
+                <span>Announcements</span>
+                <strong>@announcements</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTER AREA -->
+    <div class="notification-filter-card">
+
+        <form asp-controller="Admin"
+              asp-action="Notifications"
+              method="get">
+
+            <div class="notification-filter-grid">
+
+                <div class="notification-search">
+
+                    <label>Search</label>
+
+                    <div class="notification-input-wrap">
+
+                        <i class="fas fa-search"></i>
+
+                        <input type="text"
+                               name="search"
+                               value="@search"
+                               placeholder="Search title, message or user..." />
+
+                    </div>
+
+                </div>
+
+
+                <div>
+
+                    <label>Notification Type</label>
+
+                    <select name="type">
+
+                        <option value="All"
+                                selected="@(type == "All")">
+                            All Types
+                        </option>
+
+                        <option value="Announcement"
+                                selected="@(type == "Announcement")">
+                            Announcement
+                        </option>
+
+                        <option value="General"
+                                selected="@(type == "General")">
+                            General
+                        </option>
+
+                        <option value="Order"
+                                selected="@(type == "Order")">
+                            Order
+                        </option>
+
+                        <option value="System"
+                                selected="@(type == "System")">
+                            System
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="notification-filter-actions">
+
+                    <button type="submit"
+                            class="notification-filter-btn">
+
+                        <i class="fas fa-filter"></i>
+                        Filter
+
+                    </button>
+
+                    <a asp-controller="Admin"
+                       asp-action="Notifications"
+                       class="notification-reset-btn">
+
+                        <i class="fas fa-rotate-left"></i>
+                        Reset
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- TABLE CARD -->
+    <div class="notification-table-card">
+
+        <div class="notification-table-header">
+
+            <div>
+
+                <h2>Notification Records</h2>
+
+                <p>
+                    Manage published notifications and announcements.
+                </p>
+
+            </div>
+
+            <span class="notification-count">
+                @Model.Count() Records
+            </span>
+
+        </div>
+
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="notification-table-wrapper">
+
+                <table class="notification-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Notification</th>
+                            <th>Recipient</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th class="notification-actions-column">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <!-- Notification -->
+                                <td>
+
+                                    <div class="notification-title-cell">
+
+                                        <div class="notification-small-icon">
+                                            <i class="fas fa-bell"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @item.Title
+                                            </strong>
+
+                                            <span>
+                                                @(item.Message.Length > 75
+                                                                                        ? item.Message.Substring(0, 75) + "..."
+                                                                                        : item.Message)
+                                    </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Recipient -->
+                                <td>
+
+                            @if (item.User != null)
+                                    {
+                                        <div class="notification-user">
+
+                                            <div class="notification-avatar">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+
+                                            <div>
+
+                                                <strong>
+                                                    @item.User.FullName
+                                                </strong>
+
+                                                <span>
+                                                    @item.User.UserType
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="notification-muted">
+                                            User unavailable
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Type -->
+                                <td>
+
+                                    <span class="notification-type-badge">
+
+                                        @if (item.NotificationType == "Announcement")
+                                        {
+                                            <i class="fas fa-bullhorn"></i>
+                                        }
+                                        else if (item.NotificationType == "Order")
+                                        {
+                                            <i class="fas fa-shopping-bag"></i>
+                                        }
+                                        else if (item.NotificationType == "System")
+                                        {
+                                            <i class="fas fa-cog"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-info-circle"></i>
+                                        }
+
+                                        @item.NotificationType
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- Status -->
+                                <td>
+
+                                    @if (item.IsRead)
+                                    {
+                                        <span class="notification-status read">
+                                            <i class="fas fa-check-circle"></i>
+                                            Read
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="notification-status unread">
+                                            <i class="fas fa-circle"></i>
+                                            Unread
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- Date -->
+                                <td>
+
+                                    <div class="notification-date">
+
+                                        <strong>
+                                            @item.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                                        </strong>
+
+                                        <span>
+                                            @item.CreatedAt.ToLocalTime().ToString("hh:mm tt")
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- Actions -->
+                                <td>
+
+                                    <div class="notification-actions">
+
+                                        <a asp-controller="Admin"
+                                           asp-action="NotificationDetails"
+                                           asp-route-id="@item.NotificationId"
+                                           class="notification-action details"
+                                           title="View Details">
+
+                                            <i class="fas fa-eye"></i>
+
+                                        </a>
+
+
+                                        <button type="button"
+                                                class="notification-action delete"
+                                                title="Delete"
+                                                onclick="deleteNotification(@item.NotificationId, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(item.Title))')">
+
+                                            <i class="fas fa-trash"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="notification-empty">
+
+                <div class="notification-empty-icon">
+                    <i class="fas fa-bell-slash"></i>
+                </div>
+
+                <h3>No Notifications Found</h3>
+
+                <p>
+                    There are no notifications matching your current search or filter.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="NotificationCreate"
+                   class="notification-empty-btn">
+
+                    <i class="fas fa-plus"></i>
+                    Create Announcement
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+<!-- DELETE FORM -->
+<form id="deleteNotificationForm"
+      asp-controller="Admin"
+      asp-action="RemoveNotification"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           id="deleteNotificationId"
+           name="id" />
+
+</form>
+
+
+<!-- SWEETALERT -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    function deleteNotification(id, title) {
+
+        Swal.fire({
+            title: 'Delete Notification?',
+            html: 'Are you sure you want to delete <strong>' + title + '</strong>?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#0B3037',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                document.getElementById(
+                    'deleteNotificationId'
+                ).value = id;
+
+                document.getElementById(
+                    'deleteNotificationForm'
+                ).submit();
+
+            }
+
+        });
+
+    }
+
+
+    @if (TempData["Success"] != null)
+    {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '@Html.Raw(TempData["Success"])',
+                    confirmButtonColor: '#0B3037'
+                });
+            </text>
+    }
+
+
+    @if (TempData["Error"] != null)
+    {
+            <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '@Html.Raw(TempData["Error"])',
+                    confirmButtonColor: '#0B3037'
+                });
+            </text>
+    }
+
+</script>

@@ -1,0 +1,457 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Review>
+
+@{
+    ViewData["Title"] = "Reviews & Ratings";
+
+    var reviews = Model?.ToList()
+                  ?? new List<IdentityDemoApp.Models.Review>();
+
+    var reviewedProductIds = ViewBag.ReviewedProductIds as HashSet<int>
+                             ?? new HashSet<int>();
+
+    var purchasedProductIds = ViewBag.PurchasedProductIds as List<int>
+                              ?? new List<int>();
+
+    var approvedReviews = reviews.Count(r => r.IsApproved);
+    var pendingReviews = reviews.Count(r => !r.IsApproved);
+    var averageRating = reviews.Any()
+        ? reviews.Average(r => r.Rating)
+        : 0;
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-Reviews.css"
+      asp-append-version="true" />
+
+<div class="reviews-page">
+
+    <section class="reviews-hero">
+
+        <div class="hero-orb hero-orb-one"></div>
+        <div class="hero-orb hero-orb-two"></div>
+
+        <div class="reviews-container hero-inner">
+
+            <div class="hero-copy">
+
+                <span class="hero-badge">
+                    <i class="fa-solid fa-star"></i>
+                    Your Feedback Matters
+                </span>
+
+                <h1>
+                    Reviews &
+                    <span>Ratings</span>
+                </h1>
+
+                <p>
+                    Share your experience with products you have ordered
+                    and help other customers make informed choices.
+                </p>
+
+                <div class="hero-mini-stats">
+
+                    <div class="hero-mini-stat">
+                        <i class="fa-solid fa-message"></i>
+                        <div>
+                            <strong>@reviews.Count</strong>
+                            <span>Total Reviews</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-mini-stat">
+                        <i class="fa-solid fa-star"></i>
+                        <div>
+                            <strong>@averageRating.ToString("0.0")</strong>
+                            <span>Average Rating</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-mini-stat">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div>
+                            <strong>@approvedReviews</strong>
+                            <span>Approved</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="hero-visual">
+
+                <div class="rating-ring ring-one"></div>
+                <div class="rating-ring ring-two"></div>
+
+                <div class="rating-core">
+                    <i class="fa-solid fa-star"></i>
+                    <strong>5</strong>
+                    <span>Stars</span>
+                </div>
+
+                <div class="floating-review floating-review-one">
+                    <i class="fa-solid fa-heart"></i>
+                    <span>Honest Feedback</span>
+                </div>
+
+                <div class="floating-review floating-review-two">
+                    <i class="fa-solid fa-thumbs-up"></i>
+                    <span>Help Others</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <main class="reviews-container reviews-main">
+
+        <div class="reviews-navigation">
+
+            <a asp-controller="Customer"
+               asp-action="Dashboard"
+               class="reviews-back-btn">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+        </div>
+
+        <section class="review-summary">
+
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+
+                <div>
+                    <span>Average Rating</span>
+                    <strong>@averageRating.ToString("0.0") / 5</strong>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+
+                <div>
+                    <span>Total Reviews</span>
+                    <strong>@reviews.Count</strong>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+
+                <div>
+                    <span>Pending Approval</span>
+                    <strong>@pendingReviews</strong>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section class="reviews-heading">
+
+            <div>
+                <span class="section-label">
+                    Customer Feedback
+                </span>
+
+                <h2>My Reviews</h2>
+
+                <p>
+                    Manage the ratings and feedback you have submitted.
+                </p>
+            </div>
+
+            <a asp-controller="Customer"
+               asp-action="Products"
+               class="browse-products-btn">
+
+                <i class="fa-solid fa-basket-shopping"></i>
+
+                Browse Products
+
+            </a>
+
+        </section>
+
+
+        @if (reviews.Any())
+        {
+            <section class="reviews-grid">
+
+                @foreach (var review in reviews)
+                {
+                    <article class="review-card">
+
+                        <div class="review-card-top">
+
+                            <div class="product-avatar">
+                                <i class="fa-solid fa-basket-shopping"></i>
+                            </div>
+
+                            <div class="product-info">
+
+                                <span>Product</span>
+
+                                <h3>
+                                    @(review.Product?.ProductName
+                                                                ?? "Product")
+                                                                         </h3>
+
+                                <small>
+                                    <i class="fa-solid fa-store"></i>
+                                    @(review.Product?.VendorProfile?.FarmName
+                                                                ?? "Local Farmer")
+                        </small>
+
+                            </div>
+
+                    @if (review.IsApproved)
+                            {
+                                <span class="review-status approved">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                    Approved
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="review-status pending">
+                                    <i class="fa-solid fa-clock"></i>
+                                    Pending
+                                </span>
+                            }
+
+                        </div>
+
+
+                        <div class="review-rating">
+
+                            <div class="stars">
+
+                                @for (var star = 1; star <= 5; star++)
+                                {
+                                    if (star <= review.Rating)
+                                    {
+                                        <i class="fa-solid fa-star filled"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-regular fa-star"></i>
+                                    }
+                                }
+
+                        </div>
+
+                        <strong>
+                            @review.Rating / 5
+                        </strong>
+
+                    </div>
+
+
+                    <div class="review-comment">
+
+                        <i class="fa-solid fa-quote-left"></i>
+
+                        <p>
+                            @(string.IsNullOrWhiteSpace(review.Comment)
+                                                    ? "No comment added."
+                                                    : review.Comment)
+                    </p>
+
+                        </div>
+
+
+                        <div class="review-date">
+
+                            <span>
+                                <i class="fa-regular fa-calendar"></i>
+                                @review.CreatedAt.ToLocalTime()
+                                .ToString("dd MMM yyyy")
+                            </span>
+
+                        </div>
+
+
+                @if (review.ReviewResponses.Any())
+                        {
+                            <div class="review-response">
+
+                                <div class="response-heading">
+                                    <i class="fa-solid fa-reply"></i>
+
+                                    <div>
+                                        <strong>Response</strong>
+                                        <span>
+                                            From MarketLink Team
+                                        </span>
+                                    </div>
+                                </div>
+
+                                @foreach (var response in review.ReviewResponses
+                                                    .OrderByDescending(r => r.CreatedAt))
+                                {
+                                    <p>
+                                        @response.Response
+                                    </p>
+                                }
+
+                            </div>
+                        }
+
+
+                        <div class="review-actions">
+
+                            <a asp-controller="Customer"
+                               asp-action="EditReview"
+                               asp-route-id="@review.ReviewId"
+                               class="edit-review-btn">
+
+                                <i class="fa-solid fa-pen"></i>
+
+                                Edit
+
+                            </a>
+
+
+                            <form asp-controller="Customer"
+                                  asp-action="DeleteReview"
+                                  method="post"
+                                  class="delete-review-form">
+
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@review.ReviewId" />
+
+                                <button type="submit"
+                                        class="delete-review-btn">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                    Delete
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </article>
+                }
+
+            </section>
+        }
+        else
+        {
+            <section class="empty-reviews">
+
+                <div class="empty-review-icon">
+                    <i class="fa-regular fa-star"></i>
+                </div>
+
+                <span class="empty-label">
+                    No Reviews Yet
+                </span>
+
+                <h2>
+                    Your feedback starts here
+                </h2>
+
+                <p>
+                    Order a product and share your experience with
+                    other MarketLink customers.
+                </p>
+
+                <a asp-controller="Customer"
+                   asp-action="Products"
+                   class="empty-review-btn">
+
+                    <i class="fa-solid fa-basket-shopping"></i>
+
+                    Explore Products
+
+                </a>
+
+            </section>
+        }
+
+    </main>
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document.querySelectorAll(".delete-review-form")
+                .forEach(function (form) {
+
+                    form.addEventListener("submit", function (event) {
+
+                        event.preventDefault();
+
+                        Swal.fire({
+                            title: "Delete Review?",
+                            text: "This review will be permanently removed.",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, Delete",
+                            cancelButtonText: "Cancel",
+                            reverseButtons: true
+                        }).then(function (result) {
+
+                            if (result.isConfirmed) {
+                                form.submit();
+                            }
+
+                        });
+
+                    });
+
+                });
+
+            @if (TempData["Success"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            icon: "success",
+                            title: "Success",
+                            text: "@Html.Raw(TempData["Success"])",
+                            timer: 2500,
+                            showConfirmButton: false
+                        });
+                    </text>
+            }
+
+            @if (TempData["Error"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            icon: "error",
+                            title: "Unable to Continue",
+                            text: "@Html.Raw(TempData["Error"])"
+                        });
+                    </text>
+            }
+
+        });
+    </script>
+
+}

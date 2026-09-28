@@ -1,0 +1,846 @@
+﻿@model IdentityDemoApp.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+
+    var statusClass = Model.Status switch
+    {
+        "Pending" => "pending",
+        "VendorApproved" => "vendor-approved",
+        "VendorRejected" => "cancelled",
+        "Approved" => "approved",
+        "AdminRejected" => "cancelled",
+        _ => "pending"
+    };
+
+    var statusText = Model.Status switch
+    {
+        "Pending" => "Pending",
+        "VendorApproved" => "Vendor Approved",
+        "VendorRejected" => "Rejected by Vendor",
+        "Approved" => "Approved",
+        "AdminRejected" => "Rejected by Admin",
+        _ => Model.Status ?? "Pending"
+    };
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-Orders.css"
+      asp-append-version="true" />
+
+<div class="order-details-page">
+
+    <div class="order-details-header">
+
+        <div>
+
+            <div class="orders-eyebrow">
+                <i class="fas fa-receipt"></i>
+                ORDER DETAILS
+            </div>
+
+            <h1>
+                @Model.OrderNumber
+            </h1>
+
+            <p>
+                Complete information about this customer order.
+            </p>
+
+        </div>
+
+        <div class="order-details-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="orders-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+
+            </a>
+
+            <a asp-controller="Admin"
+               asp-action="Orders"
+               class="order-list-btn">
+
+                <i class="fas fa-list"></i>
+                Order List
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="order-summary-card">
+
+        <div class="order-summary-main">
+
+            <div class="large-order-icon">
+                <i class="fas fa-shopping-bag"></i>
+            </div>
+
+            <div>
+
+                <span class="summary-label">
+                    ORDER NUMBER
+                </span>
+
+                <h2>
+                    @Model.OrderNumber
+                </h2>
+
+                <span class="summary-date">
+                    Placed on
+                    @Model.OrderDate.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="order-summary-right">
+
+            <span class="order-status @statusClass">
+
+                @if (Model.Status == "Pending")
+                {
+                    <i class="fas fa-clock"></i>
+                }
+                else if (Model.Status == "VendorApproved")
+                {
+                    <i class="fas fa-user-check"></i>
+                }
+                else if (Model.Status == "Approved")
+                {
+                    <i class="fas fa-circle-check"></i>
+                }
+                else
+                {
+                    <i class="fas fa-circle-xmark"></i>
+                }
+
+                @statusText
+
+            </span>
+
+
+            <strong class="details-total">
+                Rs. @Model.TotalAmount.ToString("N2")
+            </strong>
+
+            <span class="total-label">
+                Order Total
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="order-information-grid">
+
+
+        <div class="order-info-card">
+
+            <div class="info-card-heading">
+
+                <div class="info-card-icon customer">
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <div>
+
+                    <h3>
+                        Customer Information
+                    </h3>
+
+                    <p>
+                        Customer who placed this order
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-details">
+
+                <div class="info-row">
+
+                    <span>
+                        Name
+                    </span>
+
+                    <strong>
+                        @(Model.CustomerProfile?.FullName
+                                                ?? "Unknown Customer")
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="order-info-card">
+
+            <div class="info-card-heading">
+
+                <div class="info-card-icon pickup">
+                    <i class="fas fa-location-dot"></i>
+                </div>
+
+                <div>
+
+                    <h3>
+                        Pickup Information
+                    </h3>
+
+                    <p>
+                        Selected pickup arrangement
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            @if (Model.PickupSlot != null)
+            {
+                <div class="info-details">
+
+                    <div class="info-row">
+
+                        <span>
+                            Vendor / Farm
+                        </span>
+
+                        <strong>
+                            @(Model.PickupSlot.VendorProfile?.FarmName
+                                                    ?? "Unknown Vendor")
+                    </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Pickup Date
+                        </span>
+
+                        <strong>
+                            @Model.PickupSlot.PickupDate.ToString("dd MMM yyyy")
+                        </strong>
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Pickup Time
+                        </span>
+
+                        <strong>
+
+                            @Model.PickupSlot.StartTime
+                            -
+                            @Model.PickupSlot.EndTime
+
+                        </strong>
+
+                    </div>
+
+                </div>
+                        }
+            else
+            {
+                <div class="no-info">
+
+                    <i class="fas fa-calendar-xmark"></i>
+
+                    <span>
+                        No pickup slot assigned.
+                    </span>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <div class="order-items-card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+
+                    <i class="fas fa-box-open"></i>
+
+                    Ordered Products
+
+                </h2>
+
+                <p>
+                    Products included in this order.
+                </p>
+
+            </div>
+
+            <span class="items-total-badge">
+
+                @Model.OrderItems.Count
+
+                @(Model.OrderItems.Count == 1
+                                ? "Item"
+                                : "Items")
+
+            </span>
+
+        </div>
+
+
+        @if (Model.OrderItems.Any())
+        {
+            <div class="order-items-wrapper">
+
+                <table class="order-items-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Product
+                            </th>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Unit Price
+                            </th>
+
+                            <th>
+                                Total
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="product-info-cell">
+
+                                        <div class="product-icon">
+                                            <i class="fas fa-leaf"></i>
+                                        </div>
+
+                                        <strong>
+                                            @(item.Product?.ProductName
+                                                                                ?? "Unknown Product")
+                                                                                                 </strong>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="category-badge">
+
+                                        @(item.Product?.Category?.CategoryName
+                                                                        ?? "Uncategorized")
+
+                            </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong>
+                                        @item.Quantity.ToString("N2")
+                                    </strong>
+
+                            @if (item.Product != null)
+                                    {
+                                        <span class="unit-text">
+                                            @item.Product.Unit
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    Rs.
+                                    @item.UnitPrice.ToString("N2")
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong class="item-total">
+
+                                        Rs.
+                                        @item.TotalPrice.ToString("N2")
+
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="no-items">
+
+                <i class="fas fa-box-open"></i>
+
+                <h3>
+                    No Order Items
+                </h3>
+
+                <p>
+                    No products are associated with this order.
+                </p>
+
+            </div>
+        }
+
+    </div>
+
+
+    <div class="order-bottom-grid">
+
+
+        <div class="order-notes-card">
+
+            <div class="section-heading small">
+
+                <div>
+
+                    <h2>
+
+                        <i class="fas fa-note-sticky"></i>
+
+                        Order Notes
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(Model.Notes))
+            {
+                <p class="order-notes-text">
+                    @Model.Notes
+                </p>
+            }
+            else
+            {
+                <div class="no-notes">
+
+                    <i class="fas fa-file-circle-xmark"></i>
+
+                    <span>
+                        No notes were added to this order.
+                    </span>
+
+                </div>
+            }
+
+        </div>
+
+
+        <div class="admin-order-actions-card">
+
+            <div class="section-heading small">
+
+                <div>
+
+                    <h2>
+
+                        <i class="fas fa-sliders"></i>
+
+                        Order Actions
+
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            @if (Model.Status == "VendorApproved")
+            {
+                <button type="button"
+                        class="details-update-btn"
+                        onclick="approveOrder(
+                                @Model.OrderId,
+                                '@Model.OrderNumber'
+                            )">
+
+                    <i class="fas fa-check"></i>
+
+                    Final Approve
+
+                </button>
+
+
+                <button type="button"
+                        class="details-delete-btn"
+                        onclick="rejectOrder(
+                                @Model.OrderId,
+                                '@Model.OrderNumber'
+                            )">
+
+                    <i class="fas fa-xmark"></i>
+
+                    Reject Order
+
+                </button>
+            }
+            else if (Model.Status == "Approved")
+            {
+                <div class="final-approved-message">
+
+                    <i class="fas fa-circle-check"></i>
+
+                    <div>
+
+                        <strong>
+                            Order Approved
+                        </strong>
+
+                        <span>
+                            This order has received final admin approval.
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == "Pending")
+            {
+                <div class="waiting-vendor-message">
+
+                    <i class="fas fa-clock"></i>
+
+                    <div>
+
+                        <strong>
+                            Waiting for Vendor
+                        </strong>
+
+                        <span>
+                            Vendor must approve this order before admin can take action.
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == "VendorRejected")
+            {
+                <div class="rejected-order-message">
+
+                    <i class="fas fa-circle-xmark"></i>
+
+                    <div>
+
+                        <strong>
+                            Rejected by Vendor
+                        </strong>
+
+                        <span>
+                            This order was rejected by the vendor.
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+            else if (Model.Status == "AdminRejected")
+            {
+                <div class="rejected-order-message">
+
+                    <i class="fas fa-circle-xmark"></i>
+
+                    <div>
+
+                        <strong>
+                            Rejected by Admin
+                        </strong>
+
+                        <span>
+                            This order was rejected during final admin review.
+                        </span>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<form id="approveOrderForm"
+      asp-controller="Admin"
+      asp-action="UpdateOrderStatus"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           id="approveOrderId" />
+
+    <input type="hidden"
+           name="status"
+           value="Approved" />
+
+</form>
+
+
+<form id="rejectOrderForm"
+      asp-controller="Admin"
+      asp-action="UpdateOrderStatus"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           id="rejectOrderId" />
+
+    <input type="hidden"
+           name="status"
+           value="AdminRejected" />
+
+</form>
+
+
+<form id="detailsDeleteForm"
+      asp-controller="Admin"
+      asp-action="RemoveOrder"
+      method="post"
+      style="display:none;">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           name="id"
+           id="detailsDeleteId" />
+
+</form>
+
+
+@section Scripts {
+
+    <script>
+
+        function approveOrder(id, orderNumber) {
+
+            Swal.fire({
+
+                icon: "question",
+
+                title: "Final Approve Order?",
+
+                html:
+                    "Are you sure you want to approve " +
+                    "<strong>" +
+                    orderNumber +
+                    "</strong>?" +
+                    "<br><small>" +
+                    "The customer will see this order as " +
+                    "<strong>Approved</strong>." +
+                    "</small>",
+
+                showCancelButton: true,
+
+                confirmButtonText:
+                    '<i class="fas fa-check"></i> Yes, Approve',
+
+                cancelButtonText:
+                    "Cancel",
+
+                reverseButtons: true,
+
+                confirmButtonColor:
+                    "#4f9d69",
+
+                cancelButtonColor:
+                    "#6c757d"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    document.getElementById(
+                        "approveOrderId"
+                    ).value = id;
+
+                    document.getElementById(
+                        "approveOrderForm"
+                    ).submit();
+
+                }
+
+            });
+
+        }
+
+
+        function rejectOrder(id, orderNumber) {
+
+            Swal.fire({
+
+                icon: "warning",
+
+                title: "Reject Order?",
+
+                html:
+                    "Are you sure you want to reject " +
+                    "<strong>" +
+                    orderNumber +
+                    "</strong>?" +
+                    "<br><small>" +
+                    "The customer will see this order as " +
+                    "<strong>Rejected by Admin</strong>." +
+                    "</small>",
+
+                showCancelButton: true,
+
+                confirmButtonText:
+                    '<i class="fas fa-xmark"></i> Yes, Reject',
+
+                cancelButtonText:
+                    "Cancel",
+
+                reverseButtons: true,
+
+                confirmButtonColor:
+                    "#dc3545",
+
+                cancelButtonColor:
+                    "#6c757d"
+
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+
+                    document.getElementById(
+                        "rejectOrderId"
+                    ).value = id;
+
+                    document.getElementById(
+                        "rejectOrderForm"
+                    ).submit();
+
+                }
+
+            });
+
+        }
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                @if (TempData["Success"] != null)
+                {
+                        <text>
+
+                            Swal.fire({
+
+                                icon: "success",
+
+                                title: "Success",
+
+                                text:
+                                    "@TempData["Success"]",
+
+                                confirmButtonColor:
+                                    "#0b3037",
+
+                                timer: 2400,
+
+                                timerProgressBar: true
+
+                            });
+
+                        </text>
+                }
+
+
+                @if (TempData["Error"] != null)
+                {
+                        <text>
+
+                            Swal.fire({
+
+                                icon: "error",
+
+                                title: "Something went wrong",
+
+                                text:
+                                    "@TempData["Error"]",
+
+                                confirmButtonColor:
+                                    "#0b3037"
+
+                            });
+
+                        </text>
+                }
+
+            }
+        );
+
+    </script>
+
+}

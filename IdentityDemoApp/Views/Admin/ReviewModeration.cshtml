@@ -1,0 +1,687 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Review>
+
+@{
+    ViewData["Title"] = "Review Moderation";
+
+    var search = ViewBag.Search as string ?? "";
+    var status = ViewBag.Status as string ?? "All";
+    var selectedRating = ViewBag.Rating != null
+        ? (int)ViewBag.Rating
+        : 0;
+}
+
+<link rel="stylesheet"
+      href="~/css/admin-ReviewModeration.css"
+      asp-append-version="true" />
+
+<div class="rm-page">
+
+   
+
+    <div class="rm-header">
+
+        <div class="rm-header-content">
+
+            <span class="rm-eyebrow">
+                <i class="fas fa-star"></i>
+                CONTENT MANAGEMENT
+            </span>
+
+            <h1>Review Moderation</h1>
+
+            <p>
+                Review, approve, reject and manage customer reviews.
+            </p>
+
+        </div>
+
+        <div class="rm-header-actions">
+
+            <a asp-controller="Admin"
+               asp-action="Dashboard"
+               class="rm-dashboard-btn">
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+ 
+
+    <div class="rm-stats">
+
+        <div class="rm-stat-card">
+
+            <div class="rm-stat-icon total">
+                <i class="fas fa-comments"></i>
+            </div>
+
+            <div>
+                <span>Total Reviews</span>
+                <strong>@ViewBag.TotalReviews</strong>
+            </div>
+
+        </div>
+
+
+        <div class="rm-stat-card">
+
+            <div class="rm-stat-icon pending">
+                <i class="fas fa-clock"></i>
+            </div>
+
+            <div>
+                <span>Pending</span>
+                <strong>@ViewBag.PendingReviews</strong>
+            </div>
+
+        </div>
+
+
+        <div class="rm-stat-card">
+
+            <div class="rm-stat-icon approved">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <div>
+                <span>Approved</span>
+                <strong>@ViewBag.ApprovedReviews</strong>
+            </div>
+
+        </div>
+
+
+        <div class="rm-stat-card">
+
+            <div class="rm-stat-icon stars">
+                <i class="fas fa-star"></i>
+            </div>
+
+            <div>
+                <span>5 Star Reviews</span>
+                <strong>@ViewBag.FiveStarReviews</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+
+    <div class="rm-filter-card">
+
+        <form asp-controller="Admin"
+              asp-action="ReviewModeration"
+              method="get"
+              class="rm-filter-form">
+
+            <div class="rm-search-box">
+
+                <i class="fas fa-search"></i>
+
+                <input type="text"
+                       name="search"
+                       value="@search"
+                       placeholder="Search customer, product, vendor or comment..." />
+
+            </div>
+
+
+            <div class="rm-filter-select">
+
+                <select name="status">
+
+                    <option value="All"
+                            selected="@(status == "All")">
+                        All Status
+                    </option>
+
+                    <option value="Pending"
+                            selected="@(status == "Pending")">
+                        Pending
+                    </option>
+
+                    <option value="Approved"
+                            selected="@(status == "Approved")">
+                        Approved
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="rm-filter-select">
+
+                <select name="rating">
+
+                    <option value="0"
+                            selected="@(selectedRating == 0)">
+                        All Ratings
+                    </option>
+
+                    <option value="5"
+                            selected="@(selectedRating == 5)">
+                        ★★★★★ 5 Stars
+                    </option>
+
+                    <option value="4"
+                            selected="@(selectedRating == 4)">
+                        ★★★★ 4 Stars
+                    </option>
+
+                    <option value="3"
+                            selected="@(selectedRating == 3)">
+                        ★★★ 3 Stars
+                    </option>
+
+                    <option value="2"
+                            selected="@(selectedRating == 2)">
+                        ★★ 2 Stars
+                    </option>
+
+                    <option value="1"
+                            selected="@(selectedRating == 1)">
+                        ★ 1 Star
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button type="submit"
+                    class="rm-filter-btn">
+
+                <i class="fas fa-filter"></i>
+                Filter
+
+            </button>
+
+
+            <a asp-controller="Admin"
+               asp-action="ReviewModeration"
+               class="rm-clear-btn">
+
+                <i class="fas fa-rotate-left"></i>
+                Clear
+
+            </a>
+
+        </form>
+
+    </div>
+
+
+
+    <div class="rm-table-card">
+
+        <div class="rm-table-header">
+
+            <div>
+
+                <span class="rm-table-label">
+                    CUSTOMER REVIEWS
+                </span>
+
+                <h2>Review List</h2>
+
+            </div>
+
+            <div class="rm-result-count">
+                @Model.Count() Reviews
+            </div>
+
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="rm-table-wrapper">
+
+                <table class="rm-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Customer</th>
+
+                            <th>Product</th>
+
+                            <th>Vendor</th>
+
+                            <th>Rating</th>
+
+                            <th>Comment</th>
+
+                            <th>Status</th>
+
+                            <th>Date</th>
+
+                            <th class="rm-action-heading">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var review in Model)
+                        {
+                            <tr>
+
+
+                                <td>
+
+                                    <div class="rm-customer">
+
+                                        <div class="rm-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @(review.CustomerProfile?.FullName
+                                                                                        ?? "Customer")
+                                                                                                  </strong>
+
+                                            <small>
+                                                Customer
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                          
+
+                                <td>
+
+                                    <div class="rm-product">
+
+                                        <strong>
+                                            @(review.Product?.ProductName
+                                                                                ?? "Unknown Product")
+                                                                                                 </strong>
+
+                                        <small>
+                                            @(review.Product?.Category?.CategoryName
+                                                                                ?? "No Category")
+                                                                                             </small>
+
+                                    </div>
+
+                                </td>
+
+
+                          
+
+                                <td>
+
+                                    <span class="rm-vendor-name">
+
+                                        <i class="fas fa-store"></i>
+
+                                        @(review.Product?.VendorProfile?.FarmName
+                                                                        ?? "Unknown Vendor")
+
+                            </span>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <div class="rm-rating">
+
+                                @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= review.Rating)
+                                            {
+                                                <i class="fas fa-star active"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="far fa-star"></i>
+                                            }
+                                        }
+
+                                        <span>
+                                            @review.Rating/5
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <div class="rm-comment">
+
+                                        @if (!string.IsNullOrWhiteSpace(review.Comment))
+                                        {
+                                            @(review.Comment.Length > 75
+                                                                            ? review.Comment.Substring(0, 75) + "..."
+                                                                            : review.Comment)
+                                                                }
+                                        else
+                                        {
+                                            <span class="rm-no-comment">
+                                                No comment
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+
+                            
+
+                                <td>
+
+                                    @if (review.IsApproved)
+                                    {
+                                        <span class="rm-status approved">
+                                            <i class="fas fa-check"></i>
+                                            Approved
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rm-status pending">
+                                            <i class="fas fa-clock"></i>
+                                            Pending
+                                        </span>
+                                    }
+
+                                </td>
+
+
+
+
+                                <td>
+                                    <span class="rm-date">
+                                        @review.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                                    </span>
+                                </td>
+
+
+                            
+
+                                <td>
+
+                                    <div class="rm-actions">
+
+                                   
+
+                                        <a asp-controller="Admin"
+                                           asp-action="ReviewModerationDetails"
+                                           asp-route-id="@review.ReviewId"
+                                           class="rm-action-btn details"
+                                           title="View Details">
+
+                                            <i class="fas fa-eye"></i>
+
+                                        </a>
+
+
+                                       
+
+                                        @if (!review.IsApproved)
+                                        {
+                                            <form asp-controller="Admin"
+                                                  asp-action="ApproveReview"
+                                                  asp-route-id="@review.ReviewId"
+                                                  method="post"
+                                                  class="rm-inline-form approve-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="rm-action-btn approve"
+                                                        title="Approve">
+
+                                                    <i class="fas fa-check"></i>
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                       
+
+                                        @if (review.IsApproved)
+                                        {
+                                            <form asp-controller="Admin"
+                                                  asp-action="RejectReview"
+                                                  asp-route-id="@review.ReviewId"
+                                                  method="post"
+                                                  class="rm-inline-form reject-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="rm-action-btn reject"
+                                                        title="Reject">
+
+                                                    <i class="fas fa-ban"></i>
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                    
+
+                                        <form asp-controller="Admin"
+                                              asp-action="RemoveReview"
+                                              asp-route-id="@review.ReviewId"
+                                              method="post"
+                                              class="rm-inline-form remove-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="rm-action-btn remove"
+                                                    title="Remove">
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="rm-empty-state">
+
+                <div class="rm-empty-icon">
+                    <i class="fas fa-comment-slash"></i>
+                </div>
+
+                <h3>No Reviews Found</h3>
+
+                <p>
+                    No reviews match your current search or filters.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="ReviewModeration"
+                   class="rm-empty-btn">
+
+                    View All Reviews
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+
+
+        document.querySelectorAll(".approve-form").forEach(function (form) {
+
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Approve Review?",
+                    text: "This review will become visible to customers.",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Approve",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#0b3037",
+                    cancelButtonColor: "#6c757d"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+
+     
+
+        document.querySelectorAll(".reject-form").forEach(function (form) {
+
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Reject Review?",
+                    text: "This review will remain hidden from customers.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Reject",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#dc3545",
+                    cancelButtonColor: "#6c757d"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+
+
+        document.querySelectorAll(".remove-form").forEach(function (form) {
+
+            form.addEventListener("submit", function (e) {
+
+                e.preventDefault();
+
+                Swal.fire({
+                    title: "Remove Review?",
+                    text: "This action will permanently remove the review.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, Remove",
+                    cancelButtonText: "Cancel",
+                    confirmButtonColor: "#dc3545",
+                    cancelButtonColor: "#6c757d"
+                }).then((result) => {
+
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+
+                });
+
+            });
+
+        });
+
+    });
+
+</script>
+
+
+
+
+@if (TempData["Success"] != null)
+{
+    <script>
+
+        Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "@TempData["Success"]",
+            confirmButtonColor: "#0b3037"
+        });
+
+    </script>
+}
+
+@if (TempData["Error"] != null)
+{
+    <script>
+
+        Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "@TempData["Error"]",
+            confirmButtonColor: "#0b3037"
+        });
+
+    </script>
+}

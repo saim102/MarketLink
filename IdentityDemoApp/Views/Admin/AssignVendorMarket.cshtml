@@ -1,0 +1,159 @@
+﻿@{
+    ViewData["Title"] = "Assign Vendor to Market";
+}
+
+<link rel="stylesheet" href="~/css/admin-VendorMarkets.css" />
+
+<div class="vm-page">
+
+    <div class="vm-header">
+        <div>
+            <span class="vm-eyebrow">MARKET MANAGEMENT</span>
+            <h1>Assign Vendor to Market</h1>
+            <p>
+                Assign an approved vendor to an active market.
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="VendorMarkets"
+           class="vm-back-btn">
+            <i class="fas fa-arrow-left"></i>
+            Back to Assignments
+        </a>
+    </div>
+
+
+    <div class="vm-form-card">
+
+        <div class="vm-card-icon">
+            <i class="fas fa-store-alt"></i>
+        </div>
+
+        <div class="vm-card-heading">
+            <h2>Market Assignment</h2>
+            <p>
+                Select a vendor and the market where the vendor will sell.
+            </p>
+        </div>
+
+
+        <form asp-controller="Admin"
+              asp-action="AssignVendorMarket"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div class="vm-form-grid">
+
+                
+                <div class="vm-form-group">
+
+                    <label>
+                        Vendor
+                        <span>*</span>
+                    </label>
+
+                    <select name="VendorProfileId"
+                            class="vm-input"
+                            required>
+
+                        <option value="">
+                            Select Vendor
+                        </option>
+
+                        @foreach (var vendor in ViewBag.Vendors)
+                        {
+                            <option value="@vendor.VendorProfileId">
+                                @vendor.FarmName
+                                @if (!string.IsNullOrWhiteSpace(vendor.City))
+                                {
+                                    <text> - @vendor.City</text>
+                                }
+                            </option>
+                        }
+
+                    </select>
+
+                    <small>
+                        Only approved vendors are shown.
+                    </small>
+
+                </div>
+
+
+              
+                <div class="vm-form-group">
+
+                    <label>
+                        Market
+                        <span>*</span>
+                    </label>
+
+                    <select name="MarketId"
+                            class="vm-input"
+                            required>
+
+                        <option value="">
+                            Select Market
+                        </option>
+
+                        @foreach (var market in ViewBag.Markets)
+                        {
+                            <option value="@market.MarketId">
+                                @market.MarketName
+                                @if (!string.IsNullOrWhiteSpace(market.City))
+                                {
+                                    <text> - @market.City</text>
+                                }
+                            </option>
+                        }
+
+                    </select>
+
+                    <small>
+                        Only active markets are shown.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="vm-info-box">
+
+                <i class="fas fa-info-circle"></i>
+
+                <div>
+                    <strong>How this works</strong>
+
+                    <p>
+                        After assigning a vendor to a market,
+                        the vendor can sell products through that market.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="vm-form-actions">
+
+                <a asp-controller="Admin"
+                   asp-action="VendorMarkets"
+                   class="vm-cancel-btn">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="vm-submit-btn">
+                    <i class="fas fa-link"></i>
+                    Assign Vendor
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

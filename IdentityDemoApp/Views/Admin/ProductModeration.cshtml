@@ -1,0 +1,683 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Product>
+
+@{
+    ViewData["Title"] = "Product Moderation";
+
+    var search = ViewBag.Search as string ?? "";
+    var status = ViewBag.Status as string ?? "All";
+    var categoryId = ViewBag.CategoryId as int? ?? 0;
+
+    var categories = ViewBag.Categories
+        as IEnumerable<IdentityDemoApp.Models.Category>
+        ?? Enumerable.Empty<IdentityDemoApp.Models.Category>();
+}
+
+<link rel="stylesheet" href="~/css/admin-ProductModeration.css" />
+
+<div class="pm-page">
+
+
+    <div class="pm-header">
+
+        <div class="pm-header-left">
+
+            <div class="pm-title-icon">
+                <i class="fas fa-box-open"></i>
+            </div>
+
+            <div>
+                <h1>Product Moderation</h1>
+                <p>Review and manage vendor product listings</p>
+            </div>
+
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="Dashboard"
+           class="pm-dashboard-btn">
+
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Dashboard</span>
+
+        </a>
+
+    </div>
+
+
+   
+
+    <div class="pm-stats">
+
+        <div class="pm-stat-card total">
+
+            <div class="pm-stat-icon">
+                <i class="fas fa-boxes"></i>
+            </div>
+
+            <div class="pm-stat-content">
+                <span>Total Products</span>
+                <strong>@ViewBag.TotalProducts</strong>
+            </div>
+
+        </div>
+
+
+        <div class="pm-stat-card pending">
+
+            <div class="pm-stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+
+            <div class="pm-stat-content">
+                <span>Pending</span>
+                <strong>@ViewBag.PendingProducts</strong>
+            </div>
+
+        </div>
+
+
+        <div class="pm-stat-card approved">
+
+            <div class="pm-stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <div class="pm-stat-content">
+                <span>Approved</span>
+                <strong>@ViewBag.ApprovedProducts</strong>
+            </div>
+
+        </div>
+
+
+        <div class="pm-stat-card rejected">
+
+            <div class="pm-stat-icon">
+                <i class="fas fa-times-circle"></i>
+            </div>
+
+            <div class="pm-stat-content">
+                <span>Rejected</span>
+                <strong>@ViewBag.RejectedProducts</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    
+
+    <div class="pm-filter-card">
+
+        <div class="pm-filter-heading">
+
+            <div>
+                <i class="fas fa-filter"></i>
+                <strong>Search & Filter Products</strong>
+            </div>
+
+            <span>Find products quickly</span>
+
+        </div>
+
+
+        <form asp-controller="Admin"
+              asp-action="ProductModeration"
+              method="get"
+              class="pm-filter-form">
+
+    
+
+            <div class="pm-input-group search-group">
+
+                <label>Search</label>
+
+                <div class="pm-input-wrapper">
+
+                    <i class="fas fa-search"></i>
+
+                    <input type="text"
+                           name="search"
+                           value="@search"
+                           placeholder="Product, vendor, category..." />
+
+                </div>
+
+            </div>
+
+
+            
+
+            <div class="pm-input-group">
+
+                <label>Status</label>
+
+                <select name="status">
+
+                    <option value="All"
+                            selected="@(status == "All")">
+                        All Status
+                    </option>
+
+                    <option value="Pending"
+                            selected="@(status == "Pending")">
+                        Pending
+                    </option>
+
+                    <option value="Approved"
+                            selected="@(status == "Approved")">
+                        Approved
+                    </option>
+
+                    <option value="Rejected"
+                            selected="@(status == "Rejected")">
+                        Rejected
+                    </option>
+
+                </select>
+
+            </div>
+
+
+          
+
+            <div class="pm-input-group">
+
+                <label>Category</label>
+
+                <select name="categoryId">
+
+                    <option value="0">All Categories</option>
+
+                    @foreach (var category in categories)
+                    {
+                        <option value="@category.CategoryId"
+                                selected="@(categoryId == category.CategoryId)">
+                            @category.CategoryName
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+         
+
+            <div class="pm-filter-actions">
+
+                <button type="submit"
+                        class="pm-search-btn">
+
+                    <i class="fas fa-search"></i>
+                    Search
+
+                </button>
+
+                <a asp-controller="Admin"
+                   asp-action="ProductModeration"
+                   class="pm-reset-btn">
+
+                    <i class="fas fa-redo"></i>
+                    Reset
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+ 
+
+    <div class="pm-products-card">
+
+        <div class="pm-products-header">
+
+            <div>
+                <h2>Product Listings</h2>
+                <p>
+                    Review vendor-submitted products before they are shown to customers.
+                </p>
+            </div>
+
+            <div class="pm-record-count">
+                @Model.Count() Products
+            </div>
+
+        </div>
+
+
+        @if (Model.Any())
+        {
+            <div class="pm-table-wrapper">
+
+                <table class="pm-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Product</th>
+                            <th>Vendor / Farm</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Unit</th>
+                            <th>Availability</th>
+                            <th>Status</th>
+                            <th class="pm-action-column">Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var product in Model)
+                        {
+                            <tr>
+
+                                
+
+                                <td>
+
+                                    <div class="pm-product-info">
+
+                                        <div class="pm-product-icon">
+                                            <i class="fas fa-leaf"></i>
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @product.ProductName
+                                            </strong>
+
+                                            <small>
+                                                Added
+                                                @product.CreatedAt.ToLocalTime().ToString("dd MMM yyyy")
+                                            </small>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                              
+
+                                <td>
+
+                                    @if (product.VendorProfile != null)
+                                    {
+                                        <div class="pm-vendor">
+
+                                            <span class="pm-vendor-icon">
+                                                <i class="fas fa-user"></i>
+                                            </span>
+
+                                            <span>
+                                                @product.VendorProfile.FarmName
+                                            </span>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="pm-muted">
+                                            Vendor unavailable
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                          
+
+                                <td>
+
+                                    @if (product.Category != null)
+                                    {
+                                        <span class="pm-category">
+                                            @product.Category.CategoryName
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="pm-muted">
+                                            No Category
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                          
+
+                                <td>
+
+                                    <strong class="pm-price">
+                                        Rs. @product.Price.ToString("N2")
+                                    </strong>
+
+                                </td>
+
+
+
+                                <td>
+                                    <span class="pm-unit">
+                                        @product.Unit
+                                    </span>
+                                </td>
+
+
+                            
+
+                                <td>
+
+                                    @if (product.IsAvailable)
+                                    {
+                                        <span class="pm-availability available">
+                                            <i class="fas fa-check"></i>
+                                            Available
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="pm-availability unavailable">
+                                            <i class="fas fa-minus-circle"></i>
+                                            Unavailable
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                               
+
+                                <td>
+
+                                    @if (product.ModerationStatus == "Pending")
+                                    {
+                                        <span class="pm-status pending-status">
+                                            <i class="fas fa-clock"></i>
+                                            Pending
+                                        </span>
+                                    }
+                                    else if (product.ModerationStatus == "Approved")
+                                    {
+                                        <span class="pm-status approved-status">
+                                            <i class="fas fa-check"></i>
+                                            Approved
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="pm-status rejected-status">
+                                            <i class="fas fa-times"></i>
+                                            Rejected
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                              
+
+                                <td>
+
+                                    <div class="pm-actions">
+
+                                     
+
+                                        <a asp-controller="Admin"
+                                           asp-action="ProductModerationDetails"
+                                           asp-route-id="@product.ProductId"
+                                           class="pm-action-btn view"
+                                           title="View Details">
+
+                                            <i class="fas fa-eye"></i>
+
+                                        </a>
+
+
+                                 
+
+                                        @if (product.ModerationStatus != "Approved")
+                                        {
+                                            <button type="button"
+                                                    class="pm-action-btn approve"
+                                                    title="Approve"
+                                                    onclick="confirmApprove('@product.ProductId', '@Html.Raw(product.ProductName.Replace("'", "\\'"))')">
+
+                                                <i class="fas fa-check"></i>
+
+                                            </button>
+                                        }
+
+
+                                  
+
+                                        @if (product.ModerationStatus != "Rejected")
+                                        {
+                                            <button type="button"
+                                                    class="pm-action-btn reject"
+                                                    title="Reject"
+                                                    onclick="confirmReject('@product.ProductId', '@Html.Raw(product.ProductName.Replace("'", "\\'"))')">
+
+                                                <i class="fas fa-times"></i>
+
+                                            </button>
+                                        }
+
+
+
+                                        <button type="button"
+                                                class="pm-action-btn delete"
+                                                title="Remove Product"
+                                                onclick="confirmRemove('@product.ProductId', '@Html.Raw(product.ProductName.Replace("'", "\\'"))')">
+
+                                            <i class="fas fa-trash-alt"></i>
+
+                                        </button>
+
+                                    </div>
+
+
+                                 
+
+                                    <form id="approveForm-@product.ProductId"
+                                          asp-controller="Admin"
+                                          asp-action="ApproveProduct"
+                                          method="post"
+                                          class="d-none">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@product.ProductId" />
+
+                                    </form>
+
+
+                                 
+
+                                    <form id="rejectForm-@product.ProductId"
+                                          asp-controller="Admin"
+                                          asp-action="RejectProduct"
+                                          method="post"
+                                          class="d-none">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@product.ProductId" />
+
+                                    </form>
+
+
+                                  
+
+                                    <form id="removeForm-@product.ProductId"
+                                          asp-controller="Admin"
+                                          asp-action="RemoveProduct"
+                                          method="post"
+                                          class="d-none">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@product.ProductId" />
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="pm-empty">
+
+                <div class="pm-empty-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+
+                <h3>No Products Found</h3>
+
+                <p>
+                    There are no products matching your current search or filters.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="ProductModeration"
+                   class="pm-empty-btn">
+
+                    <i class="fas fa-redo"></i>
+                    View All Products
+
+                </a>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    function confirmApprove(id, productName) {
+
+        Swal.fire({
+            title: 'Approve Product?',
+            html: '<strong>' + productName + '</strong><br><br>' +
+                  'This product will be marked as approved.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Approve',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            confirmButtonColor: '#0b6b57'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                document.getElementById('approveForm-' + id).submit();
+            }
+
+        });
+    }
+
+
+    function confirmReject(id, productName) {
+
+        Swal.fire({
+            title: 'Reject Product?',
+            html: '<strong>' + productName + '</strong><br><br>' +
+                  'This product will be marked as rejected.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Reject',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            confirmButtonColor: '#c0392b'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                document.getElementById('rejectForm-' + id).submit();
+            }
+
+        });
+    }
+
+
+    function confirmRemove(id, productName) {
+
+        Swal.fire({
+            title: 'Remove Product?',
+            html: '<strong>' + productName + '</strong><br><br>' +
+                  'This action will permanently remove this product listing.',
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Remove',
+            cancelButtonText: 'Cancel',
+            reverseButtons: true,
+            confirmButtonColor: '#b42318'
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                document.getElementById('removeForm-' + id).submit();
+            }
+
+        });
+    }
+
+
+
+    @if (TempData["Success"] != null)
+    {
+            <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '@Html.Raw(TempData["Success"])',
+                    confirmButtonColor: '#0b3037',
+                    timer: 2200,
+                    showConfirmButton: false
+                });
+            </text>
+    }
+
+
+
+
+    @if (TempData["Error"] != null)
+    {
+            <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Something went wrong',
+                    text: '@Html.Raw(TempData["Error"])',
+                    confirmButtonColor: '#0b3037'
+                });
+            </text>
+    }
+
+</script>

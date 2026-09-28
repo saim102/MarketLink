@@ -1,0 +1,285 @@
+﻿@model IdentityDemoApp.Models.Review
+
+@{
+    ViewData["Title"] = "Write Review";
+
+    var product = ViewBag.Product as IdentityDemoApp.Models.Product;
+
+    var productName = product?.ProductName ?? "Product";
+    var farmerName = product?.VendorProfile?.FarmName ?? "Local Farmer";
+    var categoryName = product?.Category?.CategoryName ?? "Fresh Produce";
+}
+
+<link rel="stylesheet"
+      href="~/css/customer-Reviews.css"
+      asp-append-version="true" />
+
+<div class="review-form-page">
+
+    <div class="review-form-container">
+
+        <a asp-controller="Customer"
+           asp-action="Reviews"
+           class="back-review-link">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Back to Reviews
+
+        </a>
+
+
+        <div class="review-form-card">
+
+            <div class="review-form-header">
+
+                <div class="review-product-icon">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                </div>
+
+                <div>
+
+                    <span>Share Your Experience</span>
+
+                    <h1>@productName</h1>
+
+                    <p>
+                        <i class="fa-solid fa-store"></i>
+                        @farmerName
+                        <span class="review-header-separator">•</span>
+                        @categoryName
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="review-form-intro">
+
+                <div class="intro-icon">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+
+                <div>
+                    <strong>Your feedback helps other customers</strong>
+
+                    <p>
+                        Tell us about your experience with this product.
+                        Your review will be submitted for approval before
+                        appearing publicly.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form asp-controller="Customer"
+                  asp-action="CreateReview"
+                  method="post"
+                  class="review-form">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       asp-for="ProductId" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="validation-summary"></div>
+
+
+                <div class="rating-section">
+
+                    <label>
+                        How would you rate this product?
+                    </label>
+
+                    <div class="rating-selector">
+
+                        @for (var star = 5; star >= 1; star--)
+                        {
+                            <input type="radio"
+                                   asp-for="Rating"
+                                   value="@star"
+                                   id="create-star-@star" />
+
+                            <label for="create-star-@star"
+                                   title="@star Star@(star > 1 ? "s" : "")">
+
+                                <i class="fa-solid fa-star"></i>
+
+                            </label>
+                        }
+
+                    </div>
+
+                    <div class="rating-hint">
+
+                        <i class="fa-solid fa-star"></i>
+
+                        <span>
+                            Select between 1 and 5 stars
+                        </span>
+
+                    </div>
+
+                    <span asp-validation-for="Rating"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="comment-section">
+
+                    <div class="comment-label-row">
+
+                        <label asp-for="Comment">
+                            Your Review
+                        </label>
+
+                        <span>
+                            Optional
+                        </span>
+
+                    </div>
+
+                    <textarea asp-for="Comment"
+                              id="reviewComment"
+                              rows="6"
+                              maxlength="1000"
+                              placeholder="What did you like about this product? How was the quality? Share your honest experience..."></textarea>
+
+                    <div class="comment-footer">
+
+                        <span class="comment-helper">
+
+                            <i class="fa-solid fa-pen"></i>
+
+                            Write up to 1000 characters
+
+                        </span>
+
+                        <span class="character-count">
+                            0 / 1000
+                        </span>
+
+                    </div>
+
+                    <span asp-validation-for="Comment"
+                          class="field-error"></span>
+
+                </div>
+
+
+                <div class="review-guidelines">
+
+                    <div class="guideline-icon">
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>Keep it helpful</strong>
+
+                        <p>
+                            Please share genuine and respectful feedback
+                            about your product experience.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="review-form-actions">
+
+                    <a asp-controller="Customer"
+                       asp-action="Reviews"
+                       class="cancel-review-btn">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="save-review-btn">
+
+                        <i class="fa-solid fa-paper-plane"></i>
+
+                        Submit Review
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const comment = document.getElementById("reviewComment");
+            const counter = document.querySelector(".character-count");
+
+            if (comment && counter) {
+
+                function updateCounter() {
+
+                    counter.textContent =
+                        comment.value.length + " / 1000";
+
+                }
+
+                comment.addEventListener("input", updateCounter);
+
+                updateCounter();
+            }
+
+
+            const ratingInputs =
+                document.querySelectorAll(".rating-selector input");
+
+            const ratingHint =
+                document.querySelector(".rating-hint span");
+
+            ratingInputs.forEach(function (input) {
+
+                input.addEventListener("change", function () {
+
+                    if (ratingHint) {
+
+                        const rating = parseInt(this.value);
+
+                        const messages = {
+                            1: "Poor experience",
+                            2: "Could be better",
+                            3: "Good experience",
+                            4: "Very good experience",
+                            5: "Excellent experience"
+                        };
+
+                        ratingHint.textContent =
+                            messages[rating] || "Select your rating";
+
+                    }
+
+                });
+
+            });
+
+        });
+    </script>
+
+}

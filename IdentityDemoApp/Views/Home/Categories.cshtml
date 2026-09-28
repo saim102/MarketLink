@@ -1,0 +1,301 @@
+﻿@model List<IdentityDemoApp.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+
+    string? search = ViewBag.Search;
+}
+
+<link rel="stylesheet"
+      href="~/css/categories.css"
+      asp-append-version="true" />
+
+<div class="ml-categories-page">
+
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+    <section class="ml-categories-hero">
+
+        <div class="container">
+
+            <div class="ml-categories-hero-content">
+
+                <span class="ml-categories-label">
+                    MARKETPLACE
+                </span>
+
+                <h1>
+                    Explore Our
+                    <span>Categories</span>
+                </h1>
+
+                <p>
+                    Browse different product categories and discover
+                    quality products from local vendors.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CATEGORIES SECTION
+         ===================================================== -->
+
+    <section class="ml-categories-section">
+
+        <div class="container">
+
+            <!-- =================================================
+                 HEADER
+                 ================================================= -->
+
+            <div class="ml-categories-header">
+
+                <div>
+
+                    <span class="ml-section-label">
+                        SHOP BY CATEGORY
+                    </span>
+
+                    <h2>
+                        Find What You
+                        <span>Need</span>
+                    </h2>
+
+                    <p>
+                        Choose a category to explore products available
+                        from our registered local vendors.
+                    </p>
+
+                </div>
+
+                <div class="ml-category-count">
+
+                    <strong>
+                        @Model.Count
+                    </strong>
+
+                    <span>
+                        Categories
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 SEARCH
+                 ================================================= -->
+
+            <form asp-controller="Home"
+                  asp-action="Categories"
+                  method="get"
+                  class="ml-categories-search">
+
+                <div class="ml-category-search-box">
+
+                    <i class="fas fa-magnifying-glass"></i>
+
+                    <input type="text"
+                           name="search"
+                           value="@search"
+                           placeholder="Search categories..." />
+
+                </div>
+
+                <button type="submit"
+                        class="ml-category-search-btn">
+
+                    <i class="fas fa-search"></i>
+
+                    Search
+
+                </button>
+
+                @if (!string.IsNullOrWhiteSpace(search))
+                {
+                    <a asp-controller="Home"
+                       asp-action="Categories"
+                       class="ml-category-clear">
+
+                        <i class="fas fa-xmark"></i>
+
+                        Clear
+
+                    </a>
+                }
+
+            </form>
+
+
+            <!-- =================================================
+                 CATEGORY CARDS
+                 ================================================= -->
+            @if (Model != null && Model.Any())
+            {
+                <div class="ml-categories-grid">
+
+                    @foreach (var category in Model)
+                    {
+                        <div class="ml-category-card">
+
+                            <!-- IMAGE -->
+
+                            <div class="ml-category-card-image">
+
+                                <div class="ml-category-image-placeholder">
+
+                                    <i class="fas fa-leaf"></i>
+
+                                </div>
+
+                                <span class="ml-category-number">
+                                    @category.CategoryId.ToString("D2")
+                                </span>
+
+                            </div>
+
+
+                            <!-- CONTENT -->
+
+                            <div class="ml-category-card-content">
+
+                                <span class="ml-category-small-label">
+                                    CATEGORY
+                                </span>
+
+                                <h3>
+                                    @category.CategoryName
+                                </h3>
+
+                                @if (!string.IsNullOrWhiteSpace(category.Description))
+                                {
+                                    <p>
+                                        @category.Description
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p>
+                                        Explore quality products available
+                                        in this category.
+                                    </p>
+                                }
+
+
+                                <div class="ml-category-card-footer">
+
+                                    <span>
+                                        <i class="fas fa-store"></i>
+                                        Local Vendors
+                                    </span>
+
+                                    <span class="ml-category-arrow">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <!-- =================================================
+                     EMPTY STATE
+                     ================================================= -->
+
+                <div class="ml-categories-empty">
+
+                    <div class="ml-empty-icon">
+
+                        <i class="fas fa-layer-group"></i>
+
+                    </div>
+
+                    <h3>
+                        No Categories Found
+                    </h3>
+
+                    <p>
+                        We couldn't find any active categories matching
+                        your search.
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(search))
+                    {
+                        <a asp-controller="Home"
+                           asp-action="Categories"
+                           class="ml-category-empty-btn">
+
+                            <i class="fas fa-rotate-left"></i>
+
+                            View All Categories
+
+                        </a>
+                    }
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         CTA
+         ===================================================== -->
+
+    <section class="ml-categories-cta">
+
+        <div class="container">
+
+            <div class="ml-categories-cta-box">
+
+                <div>
+
+                    <span class="ml-section-label">
+                        DISCOVER MORE
+                    </span>
+
+                    <h2>
+                        Looking For
+                        <span>Products?</span>
+                    </h2>
+
+                    <p>
+                        Explore all available products from registered
+                        local vendors on MarketLink.
+                    </p>
+
+                </div>
+
+                <a asp-controller="Home"
+                   asp-action="Products"
+                   class="ml-category-cta-btn">
+
+                    Browse Products
+
+                    <i class="fas fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

@@ -1,0 +1,553 @@
+﻿@model IEnumerable<IdentityDemoApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Incoming Orders";
+}
+
+<link rel="stylesheet"
+      href="~/css/vendor-orders.css"
+      asp-append-version="true" />
+
+<div class="orders-page">
+
+    <div class="orders-header">
+
+        <div>
+            <span class="page-label">VENDOR PANEL</span>
+
+            <h1>Incoming Orders</h1>
+
+            <p>
+                Review customer pre-orders and approve them for admin
+                final approval.
+            </p>
+        </div>
+
+        <div class="header-actions">
+
+            <a asp-controller="Vendor"
+               asp-action="Dashboard"
+               class="dashboard-btn">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                <span>Back to Dashboard</span>
+
+            </a>
+
+            <div class="order-count">
+
+                <span>@Model.Count()</span>
+
+                <small>Total Orders</small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="success-alert">
+
+            <span class="alert-icon">
+                <i class="fa-solid fa-check"></i>
+            </span>
+
+            <span>
+                @TempData["SuccessMessage"]
+            </span>
+
+        </div>
+    }
+
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="error-alert">
+
+            <span class="alert-icon">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </span>
+
+            <span>
+                @TempData["ErrorMessage"]
+            </span>
+
+        </div>
+    }
+
+
+    @if (!Model.Any())
+    {
+        <div class="empty-orders">
+
+            <div class="empty-icon">
+                <i class="fa-solid fa-box-open"></i>
+            </div>
+
+            <h2>No Incoming Orders</h2>
+
+            <p>
+                You don't have any orders for your products yet.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        <div class="orders-table-card">
+
+            <div class="table-responsive">
+
+                <table class="orders-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Order</th>
+                            <th>Customer</th>
+                            <th>Products</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var order in Model)
+                        {
+                            var vendorItems = order.OrderItems
+                            .Where(x => x.Product != null)
+                            .ToList();
+
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="order-number">
+                                        #@order.OrderNumber
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="customer-info">
+
+                                        <div class="customer-avatar">
+
+                                            <i class="fa-solid fa-user"></i>
+
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                Customer #@order.CustomerProfileId
+                                            </strong>
+
+                                            <span>
+                                                Customer
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="product-list">
+
+                                        @foreach (var item in vendorItems)
+                                        {
+                                            <div class="product-row">
+
+                                                <span class="product-name">
+
+                                                    @item.Product!.ProductName
+
+                                                </span>
+
+                                                <span class="product-qty">
+
+                                                    @item.Quantity
+                                                    @item.Product.Unit
+
+                                                </span>
+
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong class="amount">
+
+                                        Rs.
+                                        @order.TotalAmount.ToString("N2")
+
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="date-info">
+
+
+
+                                        <strong>
+                                            @order.OrderDate.ToLocalTime().ToString("dd MMM yyyy")
+                                        </strong>
+
+                                        <span>
+                                            @order.OrderDate.ToLocalTime().ToString("hh:mm tt")
+                                        </span>
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    @{
+                                        var statusClass = order.Status switch
+                                        {
+                                            "Pending" => "status-pending",
+
+                                            "VendorApproved" =>
+                                            "status-vendor-approved",
+
+                                            "VendorRejected" =>
+                                            "status-rejected",
+
+                                            "Approved" =>
+                                            "status-approved",
+
+                                            "AdminRejected" =>
+                                            "status-rejected",
+
+                                            _ => "status-pending"
+                                        };
+
+
+                                        var statusText = order.Status switch
+                                        {
+                                            "Pending" =>
+                                            "Pending Review",
+
+                                            "VendorApproved" =>
+                                            "Awaiting Admin",
+
+                                            "VendorRejected" =>
+                                            "Rejected",
+
+                                            "Approved" =>
+                                            "Approved",
+
+                                            "AdminRejected" =>
+                                            "Admin Rejected",
+
+                                            _ =>
+                                            order.Status
+                                        };
+                                    }
+
+
+                                    <span class="status-badge @statusClass">
+
+                                        @if (order.Status == "Pending")
+                                        {
+                                            <i class="fa-solid fa-clock"></i>
+                                        }
+                                        else if (order.Status == "VendorApproved")
+                                        {
+                                            <i class="fa-solid fa-user-check"></i>
+                                        }
+                                        else if (order.Status == "VendorRejected")
+                                        {
+                                            <i class="fa-solid fa-xmark"></i>
+                                        }
+                                        else if (order.Status == "Approved")
+                                        {
+                                            <i class="fa-solid fa-circle-check"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-solid fa-circle-exclamation"></i>
+                                        }
+
+                                        @statusText
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+                                        <a asp-action="OrderDetails"
+                                           asp-route-id="@order.OrderId"
+                                           class="view-btn">
+
+                                            <i class="fa-solid fa-eye"></i>
+                                            View
+
+                                        </a>
+
+
+                                        @if (order.Status == "Pending")
+                                        {
+                                            <form asp-action="UpdateOrderStatus"
+                                                  method="post"
+                                                  class="order-status-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@order.OrderId" />
+
+                                                <input type="hidden"
+                                                       name="status"
+                                                       value="VendorApproved" />
+
+                                                <button type="button"
+                                                        class="accept-btn approve-order-btn"
+                                                        data-order="@order.OrderNumber">
+
+                                                    <i class="fa-solid fa-check"></i>
+
+                                                    Approve
+
+                                                </button>
+
+                                            </form>
+
+
+                                            <form asp-action="UpdateOrderStatus"
+                                                  method="post"
+                                                  class="order-status-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@order.OrderId" />
+
+                                                <input type="hidden"
+                                                       name="status"
+                                                       value="VendorRejected" />
+
+                                                <button type="button"
+                                                        class="reject-btn reject-order-btn"
+                                                        data-order="@order.OrderNumber">
+
+                                                    <i class="fa-solid fa-xmark"></i>
+
+                                                    Reject
+
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                        @if (order.Status == "VendorApproved")
+                                        {
+                                            <span class="awaiting-admin">
+
+                                                <i class="fa-solid fa-hourglass-half"></i>
+
+                                                Awaiting Admin
+
+                                            </span>
+                                        }
+
+
+                                        @if (order.Status == "VendorRejected")
+                                        {
+                                            <span class="order-closed">
+
+                                                <i class="fa-solid fa-ban"></i>
+
+                                                Rejected
+
+                                            </span>
+                                        }
+
+
+                                        @if (order.Status == "Approved")
+                                        {
+                                            <span class="order-approved">
+
+                                                <i class="fa-solid fa-circle-check"></i>
+
+                                                Approved
+
+                                            </span>
+                                        }
+
+
+                                        @if (order.Status == "AdminRejected")
+                                        {
+                                            <span class="order-closed">
+
+                                                <i class="fa-solid fa-ban"></i>
+
+                                                Admin Rejected
+
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const approveButtons =
+            document.querySelectorAll(".approve-order-btn");
+
+        const rejectButtons =
+            document.querySelectorAll(".reject-order-btn");
+
+
+        approveButtons.forEach(button => {
+
+            button.addEventListener("click", async function () {
+
+                const form = this.closest("form");
+
+                const orderNumber =
+                    this.dataset.order;
+
+
+                const result = await Swal.fire({
+
+                    icon: "question",
+
+                    title: "Approve Order?",
+
+                    text:
+                        `Are you sure you want to approve order #${orderNumber}? It will be sent to admin for final approval.`,
+
+                    showCancelButton: true,
+
+                    confirmButtonText:
+                        "Yes, Approve",
+
+                    cancelButtonText:
+                        "Review Again",
+
+                    confirmButtonColor:
+                        "#4f9d69",
+
+                    cancelButtonColor:
+                        "#6c757d",
+
+                    reverseButtons: true
+
+                });
+
+
+                if (result.isConfirmed) {
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+
+        rejectButtons.forEach(button => {
+
+            button.addEventListener("click", async function () {
+
+                const form = this.closest("form");
+
+                const orderNumber =
+                    this.dataset.order;
+
+
+                const result = await Swal.fire({
+
+                    icon: "warning",
+
+                    title: "Reject Order?",
+
+                    text:
+                        `Are you sure you want to reject order #${orderNumber}?`,
+
+                    showCancelButton: true,
+
+                    confirmButtonText:
+                        "Yes, Reject",
+
+                    cancelButtonText:
+                        "Cancel",
+
+                    confirmButtonColor:
+                        "#dc3545",
+
+                    cancelButtonColor:
+                        "#6c757d",
+
+                    reverseButtons: true
+
+                });
+
+
+                if (result.isConfirmed) {
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+    });
+
+</script>
